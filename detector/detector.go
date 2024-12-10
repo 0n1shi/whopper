@@ -29,6 +29,7 @@ func Detect(url string) error {
 	fmt.Println("Navigating to URL...")
 	page.MustNavigate(url)
 	page.MustWaitLoad()
+	fmt.Println("Page loaded")
 
 	time.Sleep(1 * time.Second) // Wait for all events to be processed
 
