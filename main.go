@@ -12,18 +12,28 @@ import (
 
 func main() {
 	app := &cli.App{
-		Name:  "whopper",
-		Usage: "A CLI tool to detect the technology stack used on a website",
+		Name:      "whopper",
+		Usage:     "A CLI tool to detect the technology stack used on a website",
+		ArgsUsage: "<http(s)://...>",
 		Action: func(c *cli.Context) error {
 			mustBeURL := c.Args().First()
 			if mustBeURL == "" {
-				return fmt.Errorf("URL is required")
+				return cli.ShowAppHelp(c)
 			}
 			if !util.IsValidURL(mustBeURL) {
-				return fmt.Errorf("invalid URL")
+				return fmt.Errorf("invalid URL: %s", mustBeURL)
 			}
 			return detector.Detect(mustBeURL)
 		},
+		CustomAppHelpTemplate: `NAME:
+   {{.Name}} - {{.Usage}}
+
+USAGE:
+   {{.HelpName}} [global options] {{if .ArgsUsage}}{{.ArgsUsage}}{{end}}
+{{if .VisibleFlags}}
+GLOBAL OPTIONS:
+   {{range .VisibleFlags}}{{.}}{{end}}
+{{end}}`,
 	}
 
 	if err := app.Run(os.Args); err != nil {
