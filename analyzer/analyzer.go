@@ -2,6 +2,7 @@ package analyzer
 
 import "github.com/go-rod/rod/lib/proto"
 
+// 2. Add the signatures here
 var signatures = []signature{
 	&nginxSignature{},
 }

@@ -2,6 +2,7 @@ package analyzer
 
 import "github.com/go-rod/rod/lib/proto"
 
+// 1. Implement the signature interface
 type signature interface {
 	Name() string
 	Check(responses []*proto.NetworkResponseReceived) bool
