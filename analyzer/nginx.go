@@ -6,15 +6,15 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-type NginxSignature struct{}
+type nginxSignature struct{}
 
-var _ Signature = (*NginxSignature)(nil)
+var _ signature = (*nginxSignature)(nil)
 
-func (n *NginxSignature) Name() string {
+func (n *nginxSignature) Name() string {
 	return "nginx"
 }
 
-func (s *NginxSignature) Check(responses []*proto.NetworkResponseReceived) bool {
+func (s *nginxSignature) Check(responses []*proto.NetworkResponseReceived) bool {
 	for _, response := range responses {
 		headers := response.Response.Headers
 		if val, ok := headers["Server"]; ok {
@@ -29,22 +29,22 @@ func (s *NginxSignature) Check(responses []*proto.NetworkResponseReceived) bool 
 	return false
 }
 
-func (n *NginxSignature) Versions(responses []*proto.NetworkResponseReceived) []string {
+func (n *nginxSignature) Versions(responses []*proto.NetworkResponseReceived) []string {
 	versions := []string{}
 	for _, response := range responses {
 		headers := response.Response.Headers
 		if val, ok := headers["Server"]; ok {
 			server := ""
 			if val.Unmarshal(&server) == nil {
-				if strings.Contains(server, "nginx") {
-					versions = append(versions, server)
+				if strings.Contains(server, "nginx/") {
+					versions = append(versions, strings.TrimPrefix(server, "nginx/"))
 				}
 			}
 		}
 	}
-	return versions
+	return unique(versions)
 }
 
-func (n *NginxSignature) Tags() []Tag {
+func (n *nginxSignature) Tags() []Tag {
 	return []Tag{TagWebServer, TagReverseProxy}
 }

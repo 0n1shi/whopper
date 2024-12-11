@@ -2,8 +2,8 @@ package analyzer
 
 import "github.com/go-rod/rod/lib/proto"
 
-var signatures = []Signature{
-	&NginxSignature{},
+var signatures = []signature{
+	&nginxSignature{},
 }
 
 func Analyze(responses []*proto.NetworkResponseReceived) []*Result {
