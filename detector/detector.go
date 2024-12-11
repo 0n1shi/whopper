@@ -16,7 +16,6 @@ func Detect(url string) error {
 	}
 
 	results := analyzer.Analyze(responses)
-
 	for _, result := range results {
 		slog.Info("detected", "name", result.Name, "versions", result.Versions, "tags", result.Tags)
 	}

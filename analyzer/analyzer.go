@@ -8,7 +8,6 @@ var signatures = []signature{
 
 func Analyze(responses []*proto.NetworkResponseReceived) []*Result {
 	results := []*Result{}
-
 	for _, sig := range signatures {
 		if sig.Check(responses) {
 			results = append(results, &Result{
@@ -18,6 +17,5 @@ func Analyze(responses []*proto.NetworkResponseReceived) []*Result {
 			})
 		}
 	}
-
 	return results
 }
