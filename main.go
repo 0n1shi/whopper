@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/0n1shi/whopper/detector"
@@ -19,13 +20,13 @@ func main() {
 				return fmt.Errorf("URL is required")
 			}
 			if !util.IsValidURL(mustBeURL) {
-				return fmt.Errorf("Invalid URL")
+				return fmt.Errorf("invalid URL")
 			}
 			return detector.Detect(mustBeURL)
 		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		fmt.Println(err)
+		slog.Error(err.Error())
 	}
 }

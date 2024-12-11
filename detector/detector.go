@@ -1,40 +1,25 @@
 package detector
 
 import (
-	"fmt"
-	"time"
+	"log/slog"
 
-	"github.com/go-rod/rod"
-	"github.com/go-rod/rod/lib/launcher"
-	"github.com/go-rod/rod/lib/proto"
+	"github.com/0n1shi/whopper/analyzer"
+	"github.com/0n1shi/whopper/crawler"
 )
 
 func Detect(url string) error {
-	fmt.Printf("Detecting technology stack for %s...\n", url)
+	slog.Info("starting to detect", "url", url)
 
-	debugUrl := launcher.New().Headless(true).MustLaunch()
-	fmt.Printf("Debug URL: %s\n", debugUrl)
+	responses, err := crawler.Crawl(url)
+	if err != nil {
+		return err
+	}
 
-	fmt.Println("Connecting to browser...")
-	browser := rod.New().ControlURL(debugUrl).MustConnect()
-	defer browser.MustClose()
+	results := analyzer.Analyze(responses)
 
-	receivedResponses := []*proto.NetworkResponseReceived{}
-	page := browser.MustPage()
-	go page.EachEvent(func(e *proto.NetworkResponseReceived) {
-		fmt.Printf("Response URL: %s [%d]\n", e.Response.URL, e.Response.Status)
-		receivedResponses = append(receivedResponses, e)
-	})()
+	for _, result := range results {
+		slog.Info("detected", "name", result.Name, "versions", result.Versions, "tags", result.Tags)
+	}
 
-	fmt.Println("Navigating to URL...")
-	page.MustNavigate(url)
-	page.MustWaitLoad()
-	fmt.Println("Page loaded")
-
-	time.Sleep(1 * time.Second) // Wait for all events to be processed
-
-	fmt.Printf("Received %d responses\n", len(receivedResponses))
-
-	fmt.Println("Closing browser...")
 	return nil
 }
