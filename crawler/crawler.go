@@ -19,9 +19,12 @@ func Crawl(url string) ([]*proto.NetworkResponseReceived, error) {
 
 	receivedResponses := []*proto.NetworkResponseReceived{}
 	page := browser.MustPage()
-	go page.EachEvent(func(e *proto.NetworkResponseReceived) {
-		slog.Info("response URL", "url", e.Response.URL, "status", e.Response.Status)
-		receivedResponses = append(receivedResponses, e)
+	go page.EachEvent(func(res *proto.NetworkResponseReceived) {
+		slog.Info("response URL", "url", res.Response.URL, "status", res.Response.Status)
+		receivedResponses = append(receivedResponses, res)
+	})()
+	go page.EachEvent(func(res *proto.NetworkGetResponseBodyResult) {
+		slog.Info("response body", "body", res.Body)
 	})()
 
 	slog.Info("navigating to the URL")
