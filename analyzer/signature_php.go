@@ -10,7 +10,7 @@ type phpSignature struct{}
 
 var _ signature = (*phpSignature)(nil)
 
-func (n *phpSignature) Name() string {
+func (s *phpSignature) Name() string {
 	return "php"
 }
 
@@ -25,7 +25,7 @@ func (s *phpSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (n *phpSignature) Versions(responses []*crawler.Response) []string {
+func (s *phpSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		if server, ok := response.Headers["Server"]; ok {
@@ -37,6 +37,6 @@ func (n *phpSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (n *phpSignature) Tags() []Tag {
+func (s *phpSignature) Tags() []Tag {
 	return []Tag{TagProgrammingLanguage}
 }

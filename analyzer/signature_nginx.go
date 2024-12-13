@@ -10,7 +10,7 @@ type nginxSignature struct{}
 
 var _ signature = (*nginxSignature)(nil)
 
-func (n *nginxSignature) Name() string {
+func (s *nginxSignature) Name() string {
 	return "nginx"
 }
 
@@ -25,7 +25,7 @@ func (s *nginxSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (n *nginxSignature) Versions(responses []*crawler.Response) []string {
+func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		if server, ok := response.Headers["Server"]; ok {
@@ -37,6 +37,6 @@ func (n *nginxSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (n *nginxSignature) Tags() []Tag {
+func (s *nginxSignature) Tags() []Tag {
 	return []Tag{TagWebServer, TagReverseProxy}
 }
