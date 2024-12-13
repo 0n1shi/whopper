@@ -1,13 +1,10 @@
 package analyzer
 
-import "github.com/go-rod/rod/lib/proto"
+import (
+	"github.com/0n1shi/whopper/crawler"
+)
 
-// 2. Add the signatures here
-var signatures = []signature{
-	&nginxSignature{},
-}
-
-func Analyze(responses []*proto.NetworkResponseReceived) []*Result {
+func Analyze(responses []*crawler.Response) []*Result {
 	results := []*Result{}
 	for _, sig := range signatures {
 		if sig.Check(responses) {

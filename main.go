@@ -15,6 +15,14 @@ func main() {
 		Name:      "whopper",
 		Usage:     "A CLI tool to detect the technology stack used on a website",
 		ArgsUsage: "<http(s)://...>",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:  "dump",
+				Usage: "dump every response (status, headers, body)",
+				Value: false,
+				Aliases: []string{"d"},
+			},
+		},
 		Action: func(c *cli.Context) error {
 			mustBeURL := c.Args().First()
 			if mustBeURL == "" {
@@ -23,7 +31,8 @@ func main() {
 			if !util.IsValidURL(mustBeURL) {
 				return fmt.Errorf("invalid URL: %s", mustBeURL)
 			}
-			return detector.Detect(mustBeURL)
+			d := detector.NewDetector(c.Bool("dump"))
+			return d.Detect(mustBeURL)
 		},
 		CustomAppHelpTemplate: `NAME:
    {{.Name}} - {{.Usage}}
@@ -32,7 +41,8 @@ USAGE:
    {{.HelpName}} [global options] {{if .ArgsUsage}}{{.ArgsUsage}}{{end}}
 {{if .VisibleFlags}}
 GLOBAL OPTIONS:
-   {{range .VisibleFlags}}{{.}}{{end}}
+   {{range .VisibleFlags}}{{.}}
+   {{end}}
 {{end}}`,
 	}
 

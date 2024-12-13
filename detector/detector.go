@@ -7,12 +7,26 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func Detect(url string) error {
+type Detector struct {
+	dumpResponse bool
+}
+
+func NewDetector(dumpResponse bool) *Detector {
+	return &Detector{dumpResponse: dumpResponse}
+}
+
+func (detector *Detector) Detect(url string) error {
 	slog.Info("starting to detect", "url", url)
 
 	responses, err := crawler.Crawl(url)
 	if err != nil {
 		return err
+	}
+
+	if detector.dumpResponse {
+		for _, response := range responses {
+			crawler.DumpResponse(response)
+		}
 	}
 
 	results := analyzer.Analyze(responses)
