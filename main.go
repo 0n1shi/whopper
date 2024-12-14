@@ -11,6 +11,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var version = "0.1.0"
+var author = "@0n1shi"
+
 func main() {
 	app := &cli.App{
 		Name:      "whopper",
@@ -60,6 +63,17 @@ func main() {
 			default:
 				return fmt.Errorf("invalid log level: %s", logLevel)
 			}
+
+			fmt.Println("------------------------------------------")
+			fmt.Println(` _    _ _
+| |  | | |__   ___  _ __  _ __   ___ _ __
+| |/\| | '_ \ / _ \| '_ \| '_ \ / _ \ '__|
+\  /\  / | | | (_) | |_) | |_) |  __/ |
+ \/  \/|_| |_|\___/| .__/| .__/ \___|_|
+                   |_|   |_|              `)
+			fmt.Printf("%42s\n", "version "+version)
+			fmt.Printf("%42s\n", "developed by "+author)
+			fmt.Println("------------------------------------------")
 
 			debugMode := c.Bool("debug")
 			if debugMode {
