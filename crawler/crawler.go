@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -10,27 +11,28 @@ import (
 )
 
 func Crawl(url string) ([]*Response, error) {
-	slog.Info("launching browser ...")
+	slog.Debug("launching browser ...")
 	debugUrl := launcher.New().Headless(true).MustLaunch()
-	slog.Info("debug URL", "url", debugUrl)
+	slog.Debug("debug URL", "url", debugUrl)
 
-	slog.Info("connecting to browser ...")
+	slog.Debug("connecting to browser ...")
 	browser := rod.New().ControlURL(debugUrl).MustConnect()
 	defer browser.MustClose()
 
 	responses := []*Response{}
 	page := browser.MustPage()
 	go page.EachEvent(func(res *proto.NetworkResponseReceived) {
-		slog.Info("received response", "url", res.Response.URL, "status", res.Response.Status)
+		slog.Debug("received response", "url", res.Response.URL, "status", res.Response.Status)
 		responseBody, err := proto.NetworkGetResponseBody{RequestID: res.RequestID}.Call(page)
 		if err != nil {
 			slog.Warn("failed to get response body", "error", err)
 			return
 		}
+		statusText := http.StatusText(res.Response.Status)
 		responses = append(responses, &Response{
 			Url:          res.Response.URL,
 			Status:       res.Response.Status,
-			StatusText:   res.Response.StatusText,
+			StatusText:   statusText,
 			Protocol:     res.Response.Protocol,
 			ResourceType: ResourceType(res.Type),
 			Headers:      headerToMap(res.Response.Headers),
@@ -48,6 +50,6 @@ func Crawl(url string) ([]*Response, error) {
 
 	slog.Info("received responses", "count", len(responses))
 
-	slog.Info("closing browser ...")
+	slog.Debug("closing browser ...")
 	return responses, nil
 }

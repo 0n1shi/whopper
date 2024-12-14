@@ -23,7 +23,7 @@ func headerToMap(headers proto.NetworkHeaders) map[string]string {
 }
 
 func DumpResponse(response *Response) {
-	slog.Info("response", "url", response.Url)
+	slog.Debug("response", "url", response.Url)
 	fmt.Printf("%s %d %s\n", response.Protocol, response.Status, response.StatusText)
 	for key, val := range response.Headers {
 		fmt.Printf("%s: %s\n", key, val)
