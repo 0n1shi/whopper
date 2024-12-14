@@ -64,16 +64,7 @@ func main() {
 				return fmt.Errorf("invalid log level: %s", logLevel)
 			}
 
-			fmt.Println("------------------------------------------")
-			fmt.Println(` _    _ _
-| |  | | |__   ___  _ __  _ __   ___ _ __
-| |/\| | '_ \ / _ \| '_ \| '_ \ / _ \ '__|
-\  /\  / | | | (_) | |_) | |_) |  __/ |
- \/  \/|_| |_|\___/| .__/| .__/ \___|_|
-                   |_|   |_|              `)
-			fmt.Printf("%42s\n", "version "+version)
-			fmt.Printf("%42s\n", "developed by "+author)
-			fmt.Println("------------------------------------------")
+			printLogo()
 
 			debugMode := c.Bool("debug")
 			if debugMode {
@@ -87,7 +78,28 @@ func main() {
 			w := whopper.NewWhopper(c.Bool("debug"), printer)
 			return w.Run(mustBeURL)
 		},
-		CustomAppHelpTemplate: `NAME:
+		CustomAppHelpTemplate: helpTextTemplate,
+	}
+
+	if err := app.Run(os.Args); err != nil {
+		slog.Error(err.Error())
+	}
+}
+
+func printLogo() {
+	fmt.Println("------------------------------------------")
+	fmt.Println(` _    _ _
+| |  | | |__   ___  _ __  _ __   ___ _ __
+| |/\| | '_ \ / _ \| '_ \| '_ \ / _ \ '__|
+\  /\  / | | | (_) | |_) | |_) |  __/ |
+ \/  \/|_| |_|\___/| .__/| .__/ \___|_|
+                   |_|   |_|              `)
+	fmt.Printf("%42s\n", "version "+version)
+	fmt.Printf("%42s\n", "developed by "+author)
+	fmt.Println("------------------------------------------")
+}
+
+const helpTextTemplate = `NAME:
    {{.Name}} - {{.Usage}}
 
 USAGE:
@@ -96,10 +108,4 @@ USAGE:
 GLOBAL OPTIONS:
    {{range .VisibleFlags}}{{.}}
    {{end}}
-{{end}}`,
-	}
-
-	if err := app.Run(os.Args); err != nil {
-		slog.Error(err.Error())
-	}
-}
+{{end}}`
