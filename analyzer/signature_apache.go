@@ -30,7 +30,12 @@ func (s *apacheSignature) Versions(responses []*crawler.Response) []string {
 	for _, response := range responses {
 		if server, ok := response.Headers["Server"]; ok {
 			if strings.Contains(server, "Apache/") {
-				versions = append(versions, strings.TrimPrefix(server, "Apache/"))
+				version := strings.TrimPrefix(server, "Apache/")
+				if strings.Contains(version, "(") {
+					version = strings.Split(version, "(")[0]
+					version = strings.TrimSpace(version)
+				}
+				versions = append(versions, version)
 			}
 		}
 	}

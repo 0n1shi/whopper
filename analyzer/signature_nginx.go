@@ -30,7 +30,12 @@ func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
 	for _, response := range responses {
 		if server, ok := response.Headers["Server"]; ok {
 			if strings.Contains(server, "nginx/") {
-				versions = append(versions, strings.TrimPrefix(server, "nginx/"))
+				version := strings.TrimPrefix(server, "nginx/")
+				if strings.Contains(version, "(") {
+					version = strings.Split(version, "(")[0]
+					version = strings.TrimSpace(version)
+				}
+				versions = append(versions, version)
 			}
 		}
 	}
