@@ -5,14 +5,16 @@ import (
 
 	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
+	"github.com/0n1shi/whopper/printer"
 )
 
 type Whopper struct {
 	debugMode bool
+	printer   printer.Printer
 }
 
-func NewWhopper(debugMode bool) *Whopper {
-	return &Whopper{debugMode: debugMode}
+func NewWhopper(debugMode bool, printer printer.Printer) *Whopper {
+	return &Whopper{debugMode: debugMode, printer: printer}
 }
 
 func (w *Whopper) Run(url string) error {
@@ -33,9 +35,8 @@ func (w *Whopper) Run(url string) error {
 	}
 
 	results := analyzer.Analyze(responses)
-	for _, result := range results {
-		slog.Error("detected", "name", result.Name, "versions", result.Versions, "tags", result.Tags)
-	}
+
+	w.printer.Print(results)
 
 	return nil
 }

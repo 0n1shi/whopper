@@ -9,9 +9,10 @@ func Analyze(responses []*crawler.Response) []*Result {
 	for _, sig := range signatures {
 		if sig.Check(responses) {
 			results = append(results, &Result{
-				Name:     sig.Name(),
-				Versions: sig.Versions(responses),
-				Tags:     sig.Tags(),
+				Name:        sig.Name(),
+				Description: sig.Description(),
+				Versions:    sig.Versions(responses),
+				Tags:        sig.Tags(),
 			})
 		}
 	}

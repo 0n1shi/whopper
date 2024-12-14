@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/0n1shi/whopper/printer"
 	"github.com/0n1shi/whopper/util"
 	"github.com/0n1shi/whopper/whopper"
 	"github.com/urfave/cli/v2"
@@ -68,7 +69,8 @@ func main() {
 				slog.Info("debug mode enabled (log level: debug)")
 			}
 
-			w := whopper.NewWhopper(c.Bool("debug"))
+			printer := printer.NewTextPrinter()
+			w := whopper.NewWhopper(c.Bool("debug"), printer)
 			return w.Run(mustBeURL)
 		},
 		CustomAppHelpTemplate: `NAME:
