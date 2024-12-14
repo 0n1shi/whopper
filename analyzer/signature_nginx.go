@@ -11,7 +11,11 @@ type nginxSignature struct{}
 var _ signature = (*nginxSignature)(nil)
 
 func (s *nginxSignature) Name() string {
-	return "nginx"
+	return "Nginx"
+}
+
+func (s *nginxSignature) Description() string {
+	return "An HTTP web server, reverse proxy, content cache, load balancer, TCP/UDP proxy server, and mail proxy server."
 }
 
 func (s *nginxSignature) Check(responses []*crawler.Response) bool {

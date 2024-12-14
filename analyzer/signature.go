@@ -7,6 +7,7 @@ import (
 // 1. Implement the signature interface
 type signature interface {
 	Name() string
+	Description() string
 	Check(responses []*crawler.Response) bool
 	Versions(responses []*crawler.Response) []string
 	Tags() []Tag
@@ -17,4 +18,5 @@ var signatures = []signature{
 	&nginxSignature{},
 	&apacheSignature{},
 	&phpSignature{},
+	&swiperSignature{},
 }

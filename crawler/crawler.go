@@ -22,11 +22,15 @@ func Crawl(url string) ([]*Response, error) {
 	responses := []*Response{}
 	page := browser.MustPage()
 	go page.EachEvent(func(res *proto.NetworkResponseReceived) {
-		slog.Debug("received response", "url", res.Response.URL, "status", res.Response.Status)
-		responseBody, err := proto.NetworkGetResponseBody{RequestID: res.RequestID}.Call(page)
-		if err != nil {
-			slog.Warn("failed to get response body", "error", err)
-			return
+		// slog.Debug("received response", "url", res.Response.URL, "status", res.Response.Status)
+		body := ""
+		resourceType := ResourceType(res.Type)
+		if resourceType == ResourceTypeDocument || resourceType == ResourceTypeScript || resourceType == ResourceTypeStylesheet {
+			responseBody, err := proto.NetworkGetResponseBody{RequestID: res.RequestID}.Call(page)
+			if err != nil {
+				// slog.Warn("failed to get response body", "requestID", res.RequestID, "error", err.Error())
+			}
+			body = responseBody.Body
 		}
 		statusText := http.StatusText(res.Response.Status)
 		responses = append(responses, &Response{
@@ -37,7 +41,7 @@ func Crawl(url string) ([]*Response, error) {
 			ResourceType: ResourceType(res.Type),
 			Headers:      headerToMap(res.Response.Headers),
 			MimeType:     res.Response.MIMEType,
-			Body:         responseBody.Body,
+			Body:         body,
 		})
 	})()
 

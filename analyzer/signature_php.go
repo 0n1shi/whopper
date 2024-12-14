@@ -11,7 +11,11 @@ type phpSignature struct{}
 var _ signature = (*phpSignature)(nil)
 
 func (s *phpSignature) Name() string {
-	return "php"
+	return "PHP"
+}
+
+func (s *phpSignature) Description() string {
+	return "A general-purpose scripting language geared towards web development."
 }
 
 func (s *phpSignature) Check(responses []*crawler.Response) bool {

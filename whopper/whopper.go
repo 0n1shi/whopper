@@ -24,7 +24,10 @@ func (w *Whopper) Run(url string) error {
 	}
 
 	if w.debugMode {
-		for _, response := range responses {
+		for i, response := range responses {
+			if i > 10 {
+				break
+			}
 			crawler.DumpResponse(response)
 		}
 	}

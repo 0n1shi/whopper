@@ -11,7 +11,11 @@ type apacheSignature struct{}
 var _ signature = (*apacheSignature)(nil)
 
 func (n *apacheSignature) Name() string {
-	return "apache"
+	return "Apache"
+}
+
+func (n *apacheSignature) Description() string {
+	return "A free and open-source cross-platform web server, released under the terms of Apache License 2.0."
 }
 
 func (s *apacheSignature) Check(responses []*crawler.Response) bool {
