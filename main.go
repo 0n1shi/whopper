@@ -45,21 +45,13 @@ func main() {
 			logLevel := c.String("level")
 			switch logLevel {
 			case "debug":
-				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-					Level: slog.LevelDebug,
-				})))
+				slog.SetLogLoggerLevel(slog.LevelDebug)
 			case "info":
-				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-					Level: slog.LevelInfo,
-				})))
+				slog.SetLogLoggerLevel(slog.LevelInfo)
 			case "warn":
-				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-					Level: slog.LevelWarn,
-				})))
+				slog.SetLogLoggerLevel(slog.LevelWarn)
 			case "error":
-				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-					Level: slog.LevelError,
-				})))
+				slog.SetLogLoggerLevel(slog.LevelError)
 			default:
 				return fmt.Errorf("invalid log level: %s", logLevel)
 			}
@@ -68,9 +60,7 @@ func main() {
 
 			debugMode := c.Bool("debug")
 			if debugMode {
-				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-					Level: slog.LevelDebug,
-				})))
+				slog.SetLogLoggerLevel(slog.LevelDebug)
 				slog.Info("debug mode enabled (log level: debug)")
 			}
 

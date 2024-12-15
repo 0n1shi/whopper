@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/go-rod/rod v0.116.2
 	github.com/urfave/cli/v2 v2.27.5
+	golang.org/x/net v0.32.0
 )
 
 require (

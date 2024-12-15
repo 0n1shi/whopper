@@ -7,4 +7,5 @@ const (
 	TagReverseProxy        Tag = "reverse-proxy"
 	TagProgrammingLanguage Tag = "programming-language"
 	TagFramework           Tag = "framework"
+	TagLibrary             Tag = "library"
 )

@@ -19,4 +19,5 @@ var signatures = []signature{
 	&apacheSignature{},
 	&phpSignature{},
 	&swiperSignature{},
+	&jquerySignature{},
 }
