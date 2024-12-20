@@ -8,4 +8,5 @@ const (
 	TagProgrammingLanguage Tag = "programming-language"
 	TagFramework           Tag = "framework"
 	TagLibrary             Tag = "library"
+	TagAnalytics           Tag = "analytics"
 )
