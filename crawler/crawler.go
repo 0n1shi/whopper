@@ -26,8 +26,8 @@ func Crawl(url string) ([]*Response, error) {
 		body := ""
 		resourceType := ResourceType(res.Type)
 		if resourceType == ResourceTypeDocument ||
-		resourceType == ResourceTypeScript ||
-		resourceType == ResourceTypeStylesheet {
+			resourceType == ResourceTypeScript ||
+			resourceType == ResourceTypeStylesheet {
 			responseBody, err := proto.NetworkGetResponseBody{RequestID: res.RequestID}.Call(page)
 			if err != nil {
 				slog.Warn(
