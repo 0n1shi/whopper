@@ -3,6 +3,7 @@ package crawler
 import (
 	"log/slog"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -19,46 +20,70 @@ func Crawl(url string) ([]*Response, error) {
 	browser := rod.New().ControlURL(debugUrl).MustConnect()
 	defer browser.MustClose()
 
-	responses := []*Response{}
+	responseMap := map[string]*Response{}
+	notFoundRequestIDs := []string{}
+	mu := &sync.Mutex{}
 	page := browser.MustPage()
-	go page.EachEvent(func(res *proto.NetworkResponseReceived) {
-		slog.Debug("received response", "url", res.Response.URL, "status", res.Response.Status)
-		body := ""
-		resourceType := ResourceType(res.Type)
-		if resourceType == ResourceTypeDocument ||
-			resourceType == ResourceTypeScript ||
-			resourceType == ResourceTypeStylesheet {
-			responseBody, err := proto.NetworkGetResponseBody{RequestID: res.RequestID}.Call(page)
-			if err != nil {
-				slog.Warn(
-					"failed to get response body",
-					"url", res.Response.URL,
-					"requestID", res.RequestID,
-					"error", err,
-				)
-			}
-			body = responseBody.Body
+	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
+		slog.Debug("received response", "url", event.Response.URL, "status", event.Response.Status)
+		mu.Lock()
+		responseMap[string(event.RequestID)] = &Response{
+			Url:          event.Response.URL,
+			Status:       event.Response.Status,
+			StatusText:   http.StatusText(event.Response.Status),
+			Protocol:     event.Response.Protocol,
+			ResourceType: ResourceType(event.Type),
+			Headers:      headerToMap(event.Response.Headers),
+			MimeType:     event.Response.MIMEType,
+			Body:         "",
 		}
-		statusText := http.StatusText(res.Response.Status)
-		responses = append(responses, &Response{
-			Url:          res.Response.URL,
-			Status:       res.Response.Status,
-			StatusText:   statusText,
-			Protocol:     res.Response.Protocol,
-			ResourceType: ResourceType(res.Type),
-			Headers:      headerToMap(res.Response.Headers),
-			MimeType:     res.Response.MIMEType,
-			Body:         body,
-		})
+		mu.Unlock()
+	}, func(event *proto.NetworkLoadingFinished) {
+		response, ok := responseMap[string(event.RequestID)]
+		if !ok {
+			notFoundRequestIDs = append(notFoundRequestIDs, string(event.RequestID))
+			return
+		}
+
+		if response.ResourceType != ResourceTypeDocument &&
+			response.ResourceType != ResourceTypeScript &&
+			response.ResourceType != ResourceTypeStylesheet {
+			return
+		}
+
+		reply, err := proto.NetworkGetResponseBody{RequestID: event.RequestID}.Call(page)
+		if err != nil {
+			slog.Warn(
+				"failed to get response body",
+				"requestID", event.RequestID,
+				"error", err,
+			)
+			return
+		}
+
+		mu.Lock()
+		response.Body = reply.Body
+		mu.Unlock()
 	})()
+	time.Sleep(3 * time.Second) // Wait for the event handler to be registered
 
 	slog.Info("navigating to the URL ...")
 	page.MustNavigate(url)
 	page.MustWaitLoad()
 	slog.Info("page loaded")
 
-	time.Sleep(1 * time.Second) // Wait for all events to be processed
+	time.Sleep(3 * time.Second) // Wait for all events to be processed
 
+	for _, requestID := range notFoundRequestIDs {
+		if res, ok := responseMap[requestID]; ok {
+			slog.Warn("failed to get response body", "URL", res.Url)
+		}
+	}
+
+	responses := []*Response{}
+	for _, response := range responseMap {
+		responses = append(responses, response)
+	}
 	slog.Info("received responses", "count", len(responses))
 
 	slog.Debug("closing browser ...")
