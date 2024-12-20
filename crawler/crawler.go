@@ -18,6 +18,9 @@ func Crawl(url string) ([]*Response, error) {
 
 	slog.Debug("connecting to browser ...")
 	browser := rod.New().ControlURL(debugUrl).MustConnect()
+	if err := browser.IgnoreCertErrors(true); err != nil {
+		slog.Warn("failed to ignore certificate errors", "error", err)
+	}
 	defer browser.MustClose()
 
 	responseMap := map[string]*Response{}
