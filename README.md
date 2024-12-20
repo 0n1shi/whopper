@@ -3,7 +3,7 @@
 A simple, fast, and lightweight utility for uncovering the technology stack of a website.
 
 ```bash
-whopper -h
+$ whopper -h
 NAME:
    whopper - A CLI tool to detect the technology stack used on a website
 

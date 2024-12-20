@@ -57,6 +57,7 @@ func main() {
 			}
 
 			printLogo()
+			fmt.Println()
 
 			debugMode := c.Bool("debug")
 			if debugMode {
