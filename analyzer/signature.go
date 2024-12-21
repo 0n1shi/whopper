@@ -21,6 +21,7 @@ var signatures = []signature{
 	&swiperSignature{},
 	&jquerySignature{},
 	&jqueryCookieSignature{},
+	&jqueryUiSignature{},
 	&claritySignature{},
 	&wordpressPluginYoastSEOSignature{},
 }
