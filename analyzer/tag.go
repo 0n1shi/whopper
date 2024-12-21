@@ -1,11 +1,11 @@
 package analyzer
 
 const (
-	TagWebServer           = "web-server"
-	TagReverseProxy        = "reverse-proxy"
-	TagProgrammingLanguage = "programming-language"
-	TagFramework           = "framework"
-	TagLibrary             = "library"
-	TagAnalytics           = "analytics"
-	TagWordPressPlugin     = "wordpress-plugin"
+	TagWebServer           = "#web-server"
+	TagReverseProxy        = "#reverse-proxy"
+	TagProgrammingLanguage = "#programming-language"
+	TagFramework           = "#framework"
+	TagLibrary             = "#library"
+	TagAnalytics           = "#analytics"
+	TagWordPressPlugin     = "#wordpress-plugin"
 )
