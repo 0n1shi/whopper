@@ -48,3 +48,10 @@ func getAttribute(node *html.Node, key string) (string, bool) {
 	}
 	return "", false
 }
+
+func removeVersionPrefix(version string) string {
+	if strings.HasPrefix(version, "v") {
+		version = strings.TrimPrefix(version, "v")
+	}
+	return version
+}
