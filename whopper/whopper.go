@@ -5,29 +5,37 @@ import (
 
 	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
+	"github.com/0n1shi/whopper/investigator"
 	"github.com/0n1shi/whopper/printer"
 )
 
 type Whopper struct {
-	debugMode bool
-	printer   printer.Printer
-	crawler   crawler.Crawler
+	debugMode  bool
+	printer    printer.Printer
+	crawler    crawler.Crawler
+	integrator *investigator.Investigator
 }
 
-func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler) *Whopper {
+func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, i *investigator.Investigator) *Whopper {
 	return &Whopper{
-		debugMode: debugMode,
-		printer:   p,
-		crawler:   c,
+		debugMode:  debugMode,
+		printer:    p,
+		crawler:    c,
+		integrator: i,
 	}
 }
 
 func (w *Whopper) Run(url string) error {
-	slog.Info("starting to detect ...", "url", url)
+	slog.Info("starting ...", "url", url)
 
 	responses, err := w.crawler.Crawl(url)
 	if err != nil {
 		return err
+	}
+
+	if w.integrator != nil {
+		w.integrator.SearchWord(responses)
+		return nil
 	}
 
 	if w.debugMode {
