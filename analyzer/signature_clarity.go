@@ -61,6 +61,6 @@ func (s *claritySignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *claritySignature) Tags() []Tag {
-	return []Tag{TagAnalytics}
+func (s *claritySignature) Tags() []string {
+	return []string{TagAnalytics}
 }

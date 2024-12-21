@@ -51,6 +51,6 @@ func (s *wordpressPluginYoastSEOSignature) Versions(responses []*crawler.Respons
 	return unique(versions)
 }
 
-func (s *wordpressPluginYoastSEOSignature) Tags() []Tag {
-	return []Tag{TagWordPressPlugin}
+func (s *wordpressPluginYoastSEOSignature) Tags() []string {
+	return []string{TagWordPressPlugin}
 }

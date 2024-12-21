@@ -10,7 +10,7 @@ type signature interface {
 	Description() string
 	Check(responses []*crawler.Response) bool
 	Versions(responses []*crawler.Response) []string
-	Tags() []Tag
+	Tags() []string
 }
 
 // 2. Add the signatures here

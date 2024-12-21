@@ -2,6 +2,7 @@ package printer
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
 )
@@ -15,16 +16,10 @@ func NewTextPrinter() *TextPrinter {
 func (p *TextPrinter) Print(results []*analyzer.Result) {
 	fmt.Println()
 	for _, result := range results {
-		fmt.Println("Name:", result.Name)
-		fmt.Println("Description:", result.Description)
-		fmt.Println("Versions:")
-		for _, version := range result.Versions {
-			fmt.Printf("  * %s\n", version)
-		}
-		fmt.Println("Tags:")
-		for _, tag := range result.Tags {
-			fmt.Printf("  * %s\n", tag)
-		}
+		fmt.Print("[+] ", result.Name)
+		fmt.Printf(" %s\n", strings.Join(result.Versions, ", "))
+		fmt.Println("   ", result.Description)
+		fmt.Printf("    [%s]\n", strings.Join(result.Tags, "], ["))
 		fmt.Println()
 	}
 }

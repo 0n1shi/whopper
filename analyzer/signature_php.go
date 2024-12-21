@@ -41,6 +41,6 @@ func (s *phpSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *phpSignature) Tags() []Tag {
-	return []Tag{TagProgrammingLanguage}
+func (s *phpSignature) Tags() []string{
+	return []string{TagProgrammingLanguage}
 }

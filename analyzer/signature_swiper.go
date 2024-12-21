@@ -42,6 +42,6 @@ func (s *swiperSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *swiperSignature) Tags() []Tag {
-	return []Tag{TagFramework}
+func (s *swiperSignature) Tags() []string{
+	return []string{TagFramework}
 }

@@ -65,6 +65,6 @@ func (s *jqueryCookieSignature) Versions(responses []*crawler.Response) []string
 	return unique(versions)
 }
 
-func (s *jqueryCookieSignature) Tags() []Tag {
-	return []Tag{TagLibrary}
+func (s *jqueryCookieSignature) Tags() []string{
+	return []string{TagLibrary}
 }

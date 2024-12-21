@@ -46,6 +46,6 @@ func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *nginxSignature) Tags() []Tag {
-	return []Tag{TagWebServer, TagReverseProxy}
+func (s *nginxSignature) Tags() []string{
+	return []string{TagWebServer, TagReverseProxy}
 }

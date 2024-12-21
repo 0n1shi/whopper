@@ -46,6 +46,6 @@ func (s *apacheSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *apacheSignature) Tags() []Tag {
-	return []Tag{TagWebServer, TagReverseProxy}
+func (s *apacheSignature) Tags() []string {
+	return []string{TagWebServer, TagReverseProxy}
 }

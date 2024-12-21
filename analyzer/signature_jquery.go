@@ -65,6 +65,6 @@ func (s *jquerySignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *jquerySignature) Tags() []Tag {
-	return []Tag{TagLibrary}
+func (s *jquerySignature) Tags() []string{
+	return []string{TagLibrary}
 }
