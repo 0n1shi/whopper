@@ -9,4 +9,5 @@ const (
 	TagFramework           Tag = "framework"
 	TagLibrary             Tag = "library"
 	TagAnalytics           Tag = "analytics"
+	TagWordPressPlugin     Tag = "wordpress-plugin"
 )

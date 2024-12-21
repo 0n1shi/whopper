@@ -22,4 +22,5 @@ var signatures = []signature{
 	&jquerySignature{},
 	&jqueryCookieSignature{},
 	&claritySignature{},
+	&wordpressPluginYoastSEOSignature{},
 }

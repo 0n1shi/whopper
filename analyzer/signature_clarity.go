@@ -6,6 +6,11 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
+const (
+	microsoftClarityfileName = "clarity.js"
+	microsoftClarityBanner   = "/* clarity-js"
+)
+
 type claritySignature struct{}
 
 var _ signature = (*claritySignature)(nil)
@@ -13,11 +18,6 @@ var _ signature = (*claritySignature)(nil)
 func (n *claritySignature) Name() string {
 	return "Microsoft Clarity"
 }
-
-const (
-	microsoftClarityfileName = "clarity.js"
-	microsoftClarityBanner   = "/* clarity-js"
-)
 
 func (n *claritySignature) Description() string {
 	return "Clarity is a free product that captures how people use your site. Setup is easy and you'll start getting data in minutes."
@@ -55,6 +55,7 @@ func (s *claritySignature) Versions(responses []*crawler.Response) []string {
 		version := strings.TrimPrefix(line, microsoftClarityBanner)
 		version = strings.Split(version, ":")[0]
 		version = strings.TrimSpace(version)
+		version = removeVersionPrefix(version)
 		versions = append(versions, version)
 	}
 	return unique(versions)
