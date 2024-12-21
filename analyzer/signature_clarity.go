@@ -15,8 +15,8 @@ func (n *claritySignature) Name() string {
 }
 
 const (
-	fileName = "clarity.js"
-	banner   = "/* clarity-js"
+	microsoftClarityfileName = "clarity.js"
+	microsoftClarityBanner   = "/* clarity-js"
 )
 
 func (n *claritySignature) Description() string {
@@ -28,7 +28,7 @@ func (s *claritySignature) Check(responses []*crawler.Response) bool {
 		if response.ResourceType != crawler.ResourceTypeScript {
 			continue
 		}
-		if strings.HasSuffix(response.Url, fileName) {
+		if strings.HasSuffix(response.Url, microsoftClarityfileName) {
 			return true
 		}
 	}
@@ -41,7 +41,7 @@ func (s *claritySignature) Versions(responses []*crawler.Response) []string {
 		if response.ResourceType != crawler.ResourceTypeScript {
 			continue
 		}
-		if !strings.HasSuffix(response.Url, fileName) {
+		if !strings.HasSuffix(response.Url, microsoftClarityfileName) {
 			continue
 		}
 		lines := strings.Split(response.Body, "\n")
@@ -49,10 +49,10 @@ func (s *claritySignature) Versions(responses []*crawler.Response) []string {
 			continue
 		}
 		line := lines[0]
-		if !strings.HasPrefix(line, banner) {
+		if !strings.HasPrefix(line, microsoftClarityBanner) {
 			continue
 		}
-		version := strings.TrimPrefix(line, banner)
+		version := strings.TrimPrefix(line, microsoftClarityBanner)
 		version = strings.Split(version, ":")[0]
 		version = strings.TrimSpace(version)
 		versions = append(versions, version)
