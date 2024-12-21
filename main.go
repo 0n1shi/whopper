@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/0n1shi/whopper/crawler"
 	"github.com/0n1shi/whopper/printer"
 	"github.com/0n1shi/whopper/util"
 	"github.com/0n1shi/whopper/whopper"
@@ -33,16 +34,16 @@ func main() {
 				Aliases: []string{"l"},
 			},
 		},
-		Action: func(c *cli.Context) error {
-			mustBeURL := c.Args().First()
+		Action: func(ctx *cli.Context) error {
+			mustBeURL := ctx.Args().First()
 			if mustBeURL == "" {
-				return cli.ShowAppHelp(c)
+				return cli.ShowAppHelp(ctx)
 			}
 			if !util.IsValidURL(mustBeURL) {
 				return fmt.Errorf("invalid URL: %s", mustBeURL)
 			}
 
-			logLevel := c.String("level")
+			logLevel := ctx.String("level")
 			switch logLevel {
 			case "debug":
 				slog.SetLogLoggerLevel(slog.LevelDebug)
@@ -59,14 +60,15 @@ func main() {
 			printLogo()
 			fmt.Println()
 
-			debugMode := c.Bool("debug")
+			debugMode := ctx.Bool("debug")
 			if debugMode {
 				slog.SetLogLoggerLevel(slog.LevelDebug)
 				slog.Info("debug mode enabled (log level: debug)")
 			}
 
-			printer := printer.NewTextPrinter()
-			w := whopper.NewWhopper(c.Bool("debug"), printer)
+			p := printer.NewTextPrinter()
+			c := crawler.NewRodCrawler()
+			w := whopper.NewWhopper(ctx.Bool("debug"), p, c)
 			return w.Run(mustBeURL)
 		},
 		CustomAppHelpTemplate: helpTextTemplate,
