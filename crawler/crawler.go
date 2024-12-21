@@ -13,7 +13,9 @@ import (
 
 func Crawl(url string) ([]*Response, error) {
 	slog.Debug("launching browser ...")
-	debugUrl := launcher.New().Headless(true).MustLaunch()
+	launcher := launcher.New()
+	defer launcher.Cleanup() // remove user data such as cookies, cache, etc.
+	debugUrl := launcher.Headless(true).MustLaunch()
 	slog.Debug("debug URL", "url", debugUrl)
 
 	slog.Debug("connecting to browser ...")
@@ -27,6 +29,7 @@ func Crawl(url string) ([]*Response, error) {
 	notFoundRequestIDs := []string{}
 	mu := &sync.Mutex{}
 	page := browser.MustPage()
+	defer page.MustClose()
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
 		slog.Debug("received response", "url", event.Response.URL, "status", event.Response.Status)
 		mu.Lock()
