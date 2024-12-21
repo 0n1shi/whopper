@@ -20,5 +20,6 @@ var signatures = []signature{
 	&phpSignature{},
 	&swiperSignature{},
 	&jquerySignature{},
+	&jqueryCookieSignature{},
 	&claritySignature{},
 }
