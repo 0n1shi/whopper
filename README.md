@@ -16,3 +16,7 @@ GLOBAL OPTIONS:
    --help, -h               show help
 
 ```
+
+## Contributing
+
+You can contribute like: https://github.com/0n1shi/whopper/pull/4
