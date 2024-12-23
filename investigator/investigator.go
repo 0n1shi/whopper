@@ -8,6 +8,10 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
+const (
+	showLineLength = 97
+)
+
 type Investigator struct {
 	wordToSearch string
 }
@@ -22,31 +26,41 @@ func (i *Investigator) SearchWord(responses []*crawler.Response) {
 	slog.Info("searching for ...", "word", i.wordToSearch)
 	lowerCaseWord := strings.ToLower(i.wordToSearch)
 
-	// Search for the word in the URLs
+	slog.Info("searching in URLs ...")
 	for _, response := range responses {
 		lowerCaseUrl := strings.ToLower(response.Url)
 		if strings.Contains(lowerCaseUrl, lowerCaseWord) {
-			fmt.Println(response.Url)
+			url := response.Url
+			if len(strings.TrimSpace(url)) > showLineLength {
+				url = url[:showLineLength] + "..."
+			}
+			fmt.Println(url)
 		}
 	}
 
-	// Search for the word in the headers
+	slog.Info("searching in headers ...")
 	for _, response := range responses {
 		for key, value := range response.Headers {
 			lowerCaseKey := strings.ToLower(key)
 			lowerCaseValue := strings.ToLower(value)
 			if strings.Contains(lowerCaseKey, lowerCaseWord) ||
 				strings.Contains(lowerCaseValue, lowerCaseWord) {
+				if len(strings.TrimSpace(value)) > showLineLength {
+					value = value[:showLineLength] + "..."
+				}
 				fmt.Printf("%s: %s\n", strings.TrimSpace(key), strings.TrimSpace(value))
 			}
 		}
 	}
 
-	// Search for the word in the bodies
+	slog.Info("searching in bodies ...")
 	for _, response := range responses {
 		for i, line := range strings.Split(response.Body, "\n") {
 			lowerCaseLine := strings.ToLower(line)
 			if strings.Contains(lowerCaseLine, lowerCaseWord) {
+				if len(strings.TrimSpace(line)) > showLineLength {
+					line = line[:showLineLength] + "..."
+				}
 				fmt.Printf("%s:%d: %s\n", response.Url, i+1, strings.TrimSpace(line))
 			}
 		}
