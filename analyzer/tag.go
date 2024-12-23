@@ -8,4 +8,6 @@ const (
 	TagLibrary             = "#library"
 	TagAnalytics           = "#analytics"
 	TagWordPressPlugin     = "#wordpress-plugin"
+	TagLoadBalancer        = "#load-balancer"
+	TagAWS                 = "#aws"
 )
