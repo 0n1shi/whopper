@@ -23,16 +23,6 @@ GLOBAL OPTIONS:
 
 ```bash
 $ whopper https://innerfreshshiningsunrise.neverssl.com/
-------------------------------------------
- _    _ _
-| |  | | |__   ___  _ __  _ __   ___ _ __
-| |/\| | '_ \ / _ \| '_ \| '_ \ / _ \ '__|
-\  /\  / | | | (_) | |_) | |_) |  __/ |
- \/  \/|_| |_|\___/| .__/| .__/ \___|_|
-                   |_|   |_|              
-                             version 0.1.0
-                      developed by @0n1shi
-------------------------------------------
 
 2024/12/23 23:06:10 INFO starting ... url=https://shinyastoundingbrightmorning.neverssl.com/
 2024/12/23 23:06:14 INFO navigating to the URL ...
@@ -47,16 +37,6 @@ $ whopper https://innerfreshshiningsunrise.neverssl.com/
 
 ```bash
 $ whopper -w Apache https://innerfreshshiningsunrise.neverssl.com/
-------------------------------------------
- _    _ _
-| |  | | |__   ___  _ __  _ __   ___ _ __
-| |/\| | '_ \ / _ \| '_ \| '_ \ / _ \ '__|
-\  /\  / | | | (_) | |_) | |_) |  __/ |
- \/  \/|_| |_|\___/| .__/| .__/ \___|_|
-                   |_|   |_|              
-                             version 0.1.0
-                      developed by @0n1shi
-------------------------------------------
 
 2024/12/23 23:13:47 INFO starting ... url=https://shinyastoundingbrightmorning.neverssl.com/
 2024/12/23 23:13:50 INFO navigating to the URL ...
