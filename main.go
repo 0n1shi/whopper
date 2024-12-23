@@ -36,7 +36,7 @@ func main() {
 			},
 			&cli.StringFlag{
 				Name:    "search",
-				Usage:   "search for a specific word in the response (url, body, headers)",
+				Usage:   "search for a specific word in the response (url, body, headers) *skips the analysis",
 				Value:   "",
 				Aliases: []string{"s"},
 			},
