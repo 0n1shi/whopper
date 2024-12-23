@@ -20,8 +20,8 @@ func (s *nginxSignature) Description() string {
 
 func (s *nginxSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
-		if server, ok := response.Headers["Server"]; ok {
-			if strings.Contains(server, "nginx") {
+		for _, header := range response.Headers {
+			if header.Name == "Server" && strings.Contains(header.Value, "nginx") {
 				return true
 			}
 		}
@@ -32,9 +32,9 @@ func (s *nginxSignature) Check(responses []*crawler.Response) bool {
 func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
-		if server, ok := response.Headers["Server"]; ok {
-			if strings.Contains(server, "nginx/") {
-				version := strings.TrimPrefix(server, "nginx/")
+		for _, header := range response.Headers {
+			if header.Name == "Server" && strings.Contains(header.Value, "nginx/") {
+				version := strings.TrimPrefix(header.Value, "nginx/")
 				if strings.Contains(version, "(") {
 					version = strings.Split(version, "(")[0]
 					version = strings.TrimSpace(version)
@@ -46,6 +46,6 @@ func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *nginxSignature) Tags() []string{
+func (s *nginxSignature) Tags() []string {
 	return []string{TagWebServer, TagReverseProxy}
 }

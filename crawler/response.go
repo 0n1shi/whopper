@@ -8,7 +8,7 @@ type Response struct {
 	StatusText   string
 	Protocol     string
 	ResourceType ResourceType
-	Headers      map[string]string
+	Headers      []*Header
 	Cookies      []*Cookie
 	MimeType     string
 	Body         string

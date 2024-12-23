@@ -20,8 +20,8 @@ func (s *phpSignature) Description() string {
 
 func (s *phpSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
-		if server, ok := response.Headers["Server"]; ok {
-			if strings.Contains(server, "php") {
+		for _, header := range response.Headers {
+			if header.Name == "Server" && strings.Contains(header.Value, "php") {
 				return true
 			}
 		}
@@ -32,15 +32,20 @@ func (s *phpSignature) Check(responses []*crawler.Response) bool {
 func (s *phpSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
-		if server, ok := response.Headers["Server"]; ok {
-			if strings.Contains(server, "php/") {
-				versions = append(versions, strings.TrimPrefix(server, "php/"))
+		for _, header := range response.Headers {
+			if header.Name == "Server" && strings.Contains(header.Value, "php/") {
+				version := strings.TrimPrefix(header.Value, "php/")
+				if strings.Contains(version, "(") {
+					version = strings.Split(version, "(")[0]
+					version = strings.TrimSpace(version)
+				}
+				versions = append(versions, version)
 			}
 		}
 	}
 	return unique(versions)
 }
 
-func (s *phpSignature) Tags() []string{
+func (s *phpSignature) Tags() []string {
 	return []string{TagProgrammingLanguage}
 }

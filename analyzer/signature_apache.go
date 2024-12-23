@@ -20,8 +20,8 @@ func (n *apacheSignature) Description() string {
 
 func (s *apacheSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
-		if server, ok := response.Headers["Server"]; ok {
-			if strings.Contains(server, "Apache") {
+		for _, header := range response.Headers {
+			if header.Name == "Server" && strings.Contains(header.Value, "Apache") {
 				return true
 			}
 		}
@@ -32,9 +32,9 @@ func (s *apacheSignature) Check(responses []*crawler.Response) bool {
 func (s *apacheSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
-		if server, ok := response.Headers["Server"]; ok {
-			if strings.Contains(server, "Apache/") {
-				version := strings.TrimPrefix(server, "Apache/")
+		for _, header := range response.Headers {
+			if header.Name == "Server" && strings.Contains(header.Value, "Apache/") {
+				version := strings.TrimPrefix(header.Value, "Apache/")
 				if strings.Contains(version, "(") {
 					version = strings.Split(version, "(")[0]
 					version = strings.TrimSpace(version)

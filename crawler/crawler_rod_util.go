@@ -6,17 +6,20 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func headerToMap(headers proto.NetworkHeaders) map[string]string {
-	headerMap := make(map[string]string)
-	for key, val := range headers {
+func headerToModels(protoHeaders proto.NetworkHeaders) []*Header {
+	headers := []*Header{}
+	for key, val := range protoHeaders {
 		str := ""
 		if err := val.Unmarshal(&str); err != nil {
 			slog.Warn("failed to unmarshal header", "header", key, "value", val, "error", err)
 			continue
 		}
-		headerMap[key] = str
+		headers = append(headers, &Header{
+			Name:  key,
+			Value: str,
+		})
 	}
-	return headerMap
+	return headers
 }
 
 func cookieToModels(cookies []*proto.NetworkCookie) []*Cookie {

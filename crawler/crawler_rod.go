@@ -60,7 +60,7 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 			StatusText:   http.StatusText(event.Response.Status),
 			Protocol:     event.Response.Protocol,
 			ResourceType: ResourceType(event.Type),
-			Headers:      headerToMap(event.Response.Headers),
+			Headers:      headerToModels(event.Response.Headers),
 			Cookies:      cookies,
 			MimeType:     event.Response.MIMEType,
 			Body:         "",

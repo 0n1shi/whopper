@@ -49,20 +49,20 @@ func (i *Investigator) SearchWord(responses []*crawler.Response) {
 	slog.Info("searching in headers ...")
 	for _, response := range responses {
 		hit := false
-		for key, value := range response.Headers {
-			lowerCaseKey := strings.ToLower(key)
-			lowerCaseValue := strings.ToLower(value)
-			if strings.Contains(lowerCaseKey, lowerCaseWord) ||
+		for _, header := range response.Headers {
+			lowerCaseName := strings.ToLower(header.Name)
+			lowerCaseValue := strings.ToLower(header.Value)
+			if strings.Contains(lowerCaseName, lowerCaseWord) ||
 				strings.Contains(lowerCaseValue, lowerCaseWord) {
 				if !hit {
 					fmt.Println("URL:", response.Url)
 					hit = true
 				}
-				headerValue := strings.TrimSpace(value)
+				headerValue := strings.TrimSpace(header.Value)
 				if len(headerValue) > maxHeaderValueLengthToShow {
-					headerValue = value[:maxHeaderValueLengthToShow] + "..."
+					headerValue = headerValue[:maxHeaderValueLengthToShow] + "..."
 				}
-				fmt.Printf("%s: %s\n", strings.TrimSpace(key), headerValue)
+				fmt.Printf("%s: %s\n", strings.TrimSpace(header.Name), headerValue)
 			}
 		}
 	}
