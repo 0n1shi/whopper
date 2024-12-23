@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/0n1shi/whopper/crawler"
-	"github.com/0n1shi/whopper/investigator"
+	"github.com/0n1shi/whopper/inspector"
 	"github.com/0n1shi/whopper/printer"
 	"github.com/0n1shi/whopper/util"
 	"github.com/0n1shi/whopper/whopper"
@@ -35,10 +35,10 @@ func main() {
 				Aliases: []string{"l"},
 			},
 			&cli.StringFlag{
-				Name:    "search",
+				Name:    "word",
 				Usage:   "search for a specific word in the response (url, body, headers) *skips the analysis",
 				Value:   "",
-				Aliases: []string{"s"},
+				Aliases: []string{"w"},
 			},
 		},
 		Action: func(ctx *cli.Context) error {
@@ -75,9 +75,9 @@ func main() {
 
 			p := printer.NewTextPrinter()
 			c := crawler.NewRodCrawler()
-			var i *investigator.Investigator
-			if ctx.String("search") != "" {
-				i = investigator.NewInvestigator(ctx.String("search"))
+			var i *inspector.Inspector
+			if ctx.String("word") != "" {
+				i = inspector.NewInspector(ctx.String("word"))
 			}
 			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, i)
 			return w.Run(mustBeURL)

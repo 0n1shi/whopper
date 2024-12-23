@@ -83,7 +83,7 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 		if err != nil {
 			slog.Warn(
 				"failed to get response body",
-				"requestID", event.RequestID,
+				"url", response.Url,
 				"error", err,
 			)
 			return

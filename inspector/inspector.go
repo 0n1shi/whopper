@@ -1,4 +1,4 @@
-package investigator
+package inspector
 
 import (
 	"fmt"
@@ -15,17 +15,17 @@ const (
 	maxHeaderValueLengthToShow = 57
 )
 
-type Investigator struct {
+type Inspector struct {
 	wordToSearch string
 }
 
-func NewInvestigator(wordToSearch string) *Investigator {
-	return &Investigator{
+func NewInspector(wordToSearch string) *Inspector {
+	return &Inspector{
 		wordToSearch: wordToSearch,
 	}
 }
 
-func (i *Investigator) SearchWord(responses []*crawler.Response) {
+func (i *Inspector) SearchWord(responses []*crawler.Response) {
 	slog.Info("searching for ...", "word", i.wordToSearch)
 	lowerCaseWord := strings.ToLower(i.wordToSearch)
 
@@ -62,7 +62,7 @@ func (i *Investigator) SearchWord(responses []*crawler.Response) {
 				if len(headerValue) > maxHeaderValueLengthToShow {
 					headerValue = headerValue[:maxHeaderValueLengthToShow] + "..."
 				}
-				fmt.Printf("%s: %s\n", strings.TrimSpace(header.Name), headerValue)
+				fmt.Printf("\t%s: %s\n", strings.TrimSpace(header.Name), headerValue)
 			}
 		}
 	}
@@ -102,7 +102,7 @@ func (i *Investigator) SearchWord(responses []*crawler.Response) {
 				if len(bodyLine) > maxBodyLengthToShow {
 					bodyLine = line[:maxBodyLengthToShow] + "..."
 				}
-				fmt.Printf("%s:%d: %s\n", response.Url, i+1, bodyLine)
+				fmt.Printf("\t%s:%d: %s\n", response.Url, i+1, bodyLine)
 			}
 		}
 	}

@@ -5,7 +5,7 @@ import (
 
 	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
-	"github.com/0n1shi/whopper/investigator"
+	"github.com/0n1shi/whopper/inspector"
 	"github.com/0n1shi/whopper/printer"
 )
 
@@ -13,10 +13,10 @@ type Whopper struct {
 	debugMode  bool
 	printer    printer.Printer
 	crawler    crawler.Crawler
-	integrator *investigator.Investigator
+	integrator *inspector.Inspector
 }
 
-func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, i *investigator.Investigator) *Whopper {
+func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, i *inspector.Inspector) *Whopper {
 	return &Whopper{
 		debugMode:  debugMode,
 		printer:    p,
