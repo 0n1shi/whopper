@@ -35,6 +35,7 @@ func (w *Whopper) Run(url string) error {
 
 	if w.integrator != nil {
 		w.integrator.SearchWord(responses)
+		slog.Info("skipping analysis because search word is set")
 		return nil
 	}
 

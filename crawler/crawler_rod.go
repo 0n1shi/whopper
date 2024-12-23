@@ -40,6 +40,19 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 	defer page.MustClose()
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
 		slog.Debug("received response", "url", event.Response.URL, "status", event.Response.Status)
+
+		cookies := []*Cookie{}
+		cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Response.URL}}.Call(page)
+		if err != nil {
+			slog.Warn(
+				"failed to get cookies",
+				"url", event.Response.URL,
+				"error", err,
+			)
+		} else {
+			cookies = cookieToModels(cookieReply.Cookies)
+		}
+
 		mu.Lock()
 		responseMap[string(event.RequestID)] = &Response{
 			Url:          event.Response.URL,
@@ -48,6 +61,7 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 			Protocol:     event.Response.Protocol,
 			ResourceType: ResourceType(event.Type),
 			Headers:      headerToMap(event.Response.Headers),
+			Cookies:      cookies,
 			MimeType:     event.Response.MIMEType,
 			Body:         "",
 		}
