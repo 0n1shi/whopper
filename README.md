@@ -23,7 +23,6 @@ GLOBAL OPTIONS:
 
 ```bash
 $ whopper https://innerfreshshiningsunrise.neverssl.com/
-
 2024/12/23 23:06:10 INFO starting ... url=https://shinyastoundingbrightmorning.neverssl.com/
 2024/12/23 23:06:14 INFO navigating to the URL ...
 2024/12/23 23:06:15 INFO page loaded
@@ -37,7 +36,6 @@ $ whopper https://innerfreshshiningsunrise.neverssl.com/
 
 ```bash
 $ whopper -w Apache https://innerfreshshiningsunrise.neverssl.com/
-
 2024/12/23 23:13:47 INFO starting ... url=https://shinyastoundingbrightmorning.neverssl.com/
 2024/12/23 23:13:50 INFO navigating to the URL ...
 2024/12/23 23:13:51 INFO page loaded
