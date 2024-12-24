@@ -24,7 +24,7 @@ GLOBAL OPTIONS:
 ## Install
 
 ```bash
-$ go install github.com/0n1shi/whopper@latest
+go install github.com/0n1shi/whopper@latest
 ```
 
 ## Usage
@@ -41,6 +41,10 @@ $ whopper https://innerfreshshiningsunrise.neverssl.com/
 [+] Apache 2.4.62
     > A free and open-source cross-platform web server, released under the terms of Apache License 2.0.
 ```
+
+## Contributing
+
+You can contribute like: https://github.com/0n1shi/whopper/pull/4
 
 ### Searching for a specific word in the responses (skipping the detection)
 
@@ -63,7 +67,3 @@ URL: https://shinyastoundingbrightmorning.neverssl.com/
 2024/12/23 23:13:54 INFO searching in bodies ...
 2024/12/23 23:13:54 INFO skipping analysis because search word is set
 ```
-
-## Contributing
-
-You can contribute like: https://github.com/0n1shi/whopper/pull/4

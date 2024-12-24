@@ -13,8 +13,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var version = "dev"
-var author = "@0n1shi"
+var (
+	version = "dev"
+	author  = "@0n1shi"
+)
 
 func main() {
 	app := &cli.App{
@@ -40,8 +42,19 @@ func main() {
 				Value:   "",
 				Aliases: []string{"w"},
 			},
+			&cli.BoolFlag{
+				Name:    "version",
+				Usage:   "print the version",
+				Value:   false,
+				Aliases: []string{"v"},
+			},
 		},
 		Action: func(ctx *cli.Context) error {
+			if ctx.Bool("version") {
+				fmt.Println(version)
+				return nil
+			}
+
 			mustBeURL := ctx.Args().First()
 			if mustBeURL == "" {
 				return cli.ShowAppHelp(ctx)
