@@ -1,4 +1,4 @@
-# Whopper
+# <img src="./images/icon.png" width="50" height="50" /> Whopper
 
 A simple, fast, and lightweight utility for uncovering the technology stack of a website.
 

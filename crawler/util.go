@@ -23,7 +23,3 @@ func DumpResponse(response *Response) {
 		fmt.Println()
 	}
 }
-
-func isRedirect(statusCode int) bool {
-	return statusCode >= 300 && statusCode < 400
-}
