@@ -2,6 +2,8 @@
 
 ![Latest Tag](https://img.shields.io/github/v/tag/0n1shi/whopper?label=latest&sort=semver&color=blue)
 
+THIS PROJECT IS STILL EXPERIMENTAL AND UNDER DEVELOPMENT 🚧
+
 A simple, fast, and lightweight utility for uncovering the technology stack of a website.
 
 ```bash
