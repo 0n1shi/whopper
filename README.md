@@ -17,6 +17,12 @@ GLOBAL OPTIONS:
    --help, -h               show help
 ```
 
+## Install
+
+```bash
+$ go install github.com/0n1shi/whopper@latest
+```
+
 ## Usage
 
 ### Detecting the technology stack of a website
