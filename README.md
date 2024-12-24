@@ -1,5 +1,7 @@
 # <img src="./images/icon.png" width="50" height="50" /> Whopper
 
+![Latest Tag](https://img.shields.io/github/v/tag/0n1shi/whopper?label=latest&sort=semver&color=blue)
+
 A simple, fast, and lightweight utility for uncovering the technology stack of a website.
 
 ```bash
