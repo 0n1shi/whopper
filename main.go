@@ -13,10 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var (
-	version = "dev"
-	author  = "@0n1shi"
-)
+const version = "v0.1.0"
 
 func main() {
 	app := &cli.App{
@@ -112,7 +109,6 @@ func printLogo() {
  \/  \/|_| |_|\___/| .__/| .__/ \___|_|
                    |_|   |_|              `)
 	fmt.Printf("%42s\n", "version "+version)
-	fmt.Printf("%42s\n", "developed by "+author)
 	fmt.Println("------------------------------------------")
 }
 
