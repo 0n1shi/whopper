@@ -25,4 +25,5 @@ var signatures = []signature{
 	&claritySignature{},
 	&wordpressPluginYoastSEOSignature{},
 	&awsAlbSignature{},
+	&corejsSignature{},
 }
