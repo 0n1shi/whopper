@@ -7,6 +7,7 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 	"github.com/0n1shi/whopper/inspector"
 	"github.com/0n1shi/whopper/printer"
+	"github.com/0n1shi/whopper/signature"
 )
 
 type Whopper struct {
@@ -48,6 +49,7 @@ func (w *Whopper) Run(url string) error {
 		}
 	}
 
+	analyzer := analyzer.NewAnalyzer(signature.Signatures)
 	results := analyzer.Analyze(responses)
 
 	w.printer.Print(results)

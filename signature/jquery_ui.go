@@ -1,10 +1,11 @@
-package analyzer
+package signature
 
 import (
 	"fmt"
 	"regexp"
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -12,19 +13,19 @@ const (
 	jqueryUiBanner = "jQuery UI CSS Framework"
 )
 
-type jqueryUiSignature struct{}
+type JqueryUiSignature struct{}
 
-var _ signature = (*jqueryUiSignature)(nil)
+var _ analyzer.Signature = (*JqueryUiSignature)(nil)
 
-func (n *jqueryUiSignature) Name() string {
+func (n *JqueryUiSignature) Name() string {
 	return "jQuery UI CSS Framework"
 }
 
-func (n *jqueryUiSignature) Description() string {
+func (n *JqueryUiSignature) Description() string {
 	return "jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library."
 }
 
-func (s *jqueryUiSignature) Check(responses []*crawler.Response) bool {
+func (s *JqueryUiSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeStylesheet {
 			continue
@@ -38,7 +39,7 @@ func (s *jqueryUiSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *jqueryUiSignature) Versions(responses []*crawler.Response) []string {
+func (s *JqueryUiSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeStylesheet {
@@ -58,6 +59,6 @@ func (s *jqueryUiSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *jqueryUiSignature) Tags() []string {
-	return []string{TagLibrary}
+func (s *JqueryUiSignature) Tags() []string {
+	return []string{analyzer.TagLibrary}
 }

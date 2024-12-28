@@ -1,25 +1,26 @@
-package analyzer
+package signature
 
 import (
 	"regexp"
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type jquerySignature struct{}
+type JquerySignature struct{}
 
-var _ signature = (*jquerySignature)(nil)
+var _ analyzer.Signature = (*JquerySignature)(nil)
 
-func (n *jquerySignature) Name() string {
+func (n *JquerySignature) Name() string {
 	return "jQuery"
 }
 
-func (n *jquerySignature) Description() string {
+func (n *JquerySignature) Description() string {
 	return "A fast, small, and feature-rich JavaScript library."
 }
 
-func (s *jquerySignature) Check(responses []*crawler.Response) bool {
+func (s *JquerySignature) Check(responses []*crawler.Response) bool {
 	// Check if there is a script tag to load jQuery in the HTML
 	for _, response := range responses {
 		if hasScriptTagToLoadJQueryInHTML(response) {
@@ -37,7 +38,7 @@ func (s *jquerySignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *jquerySignature) Versions(responses []*crawler.Response) []string {
+func (s *JquerySignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 
 	// Check if there is a script tag to load jQuery in the HTML
@@ -65,8 +66,8 @@ func (s *jquerySignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *jquerySignature) Tags() []string {
-	return []string{TagLibrary}
+func (s *JquerySignature) Tags() []string {
+	return []string{analyzer.TagLibrary}
 }
 
 /**

@@ -4,9 +4,19 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func Analyze(responses []*crawler.Response) []*Result {
+type Analyzer struct {
+	signatures []Signature
+}
+
+func NewAnalyzer(signatures []Signature) *Analyzer {
+	return &Analyzer{
+		signatures: signatures,
+	}
+}
+
+func (a *Analyzer) Analyze(responses []*crawler.Response) []*Result {
 	results := []*Result{}
-	for _, sig := range signatures {
+	for _, sig := range a.signatures {
 		if sig.Check(responses) {
 			results = append(results, &Result{
 				Name:        sig.Name(),

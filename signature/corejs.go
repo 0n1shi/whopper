@@ -1,25 +1,26 @@
-package analyzer
+package signature
 
 import (
 	"regexp"
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type corejsSignature struct{}
+type CorejsSignature struct{}
 
-var _ signature = (*corejsSignature)(nil)
+var _ analyzer.Signature = (*CorejsSignature)(nil)
 
-func (n *corejsSignature) Name() string {
+func (n *CorejsSignature) Name() string {
 	return "core-js"
 }
 
-func (n *corejsSignature) Description() string {
+func (n *CorejsSignature) Description() string {
 	return "Modular standard library for JavaScript."
 }
 
-func (s *corejsSignature) Check(responses []*crawler.Response) bool {
+func (s *CorejsSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeScript {
 			continue
@@ -31,7 +32,7 @@ func (s *corejsSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *corejsSignature) Versions(responses []*crawler.Response) []string {
+func (s *CorejsSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeScript {
@@ -49,6 +50,6 @@ func (s *corejsSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *corejsSignature) Tags() []string {
-	return []string{TagLibrary}
+func (s *CorejsSignature) Tags() []string {
+	return []string{analyzer.TagLibrary}
 }

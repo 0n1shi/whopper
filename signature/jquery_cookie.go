@@ -1,25 +1,26 @@
-package analyzer
+package signature
 
 import (
 	"regexp"
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type jqueryCookieSignature struct{}
+type JqueryCookieSignature struct{}
 
-var _ signature = (*jqueryCookieSignature)(nil)
+var _ analyzer.Signature = (*JqueryCookieSignature)(nil)
 
-func (n *jqueryCookieSignature) Name() string {
+func (n *JqueryCookieSignature) Name() string {
 	return "jQuery Cookie"
 }
 
-func (n *jqueryCookieSignature) Description() string {
+func (n *JqueryCookieSignature) Description() string {
 	return "A simple, lightweight jQuery plugin for reading, writing and deleting cookies."
 }
 
-func (s *jqueryCookieSignature) Check(responses []*crawler.Response) bool {
+func (s *JqueryCookieSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeDocument {
 			continue
@@ -36,7 +37,7 @@ func (s *jqueryCookieSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *jqueryCookieSignature) Versions(responses []*crawler.Response) []string {
+func (s *JqueryCookieSignature) Versions(responses []*crawler.Response) []string {
 	re := regexp.MustCompile(`jquery-cookie[@/]\d+\.\d+\.\d+`)
 	versions := []string{}
 	for _, response := range responses {
@@ -65,6 +66,6 @@ func (s *jqueryCookieSignature) Versions(responses []*crawler.Response) []string
 	return unique(versions)
 }
 
-func (s *jqueryCookieSignature) Tags() []string{
-	return []string{TagLibrary}
+func (s *JqueryCookieSignature) Tags() []string {
+	return []string{analyzer.TagLibrary}
 }

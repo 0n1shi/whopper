@@ -1,25 +1,26 @@
-package analyzer
+package signature
 
 import (
 	"regexp"
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type signatureBackboneJs struct{}
+type BackboneJsSignature struct{}
 
-var _ signature = (*signatureBackboneJs)(nil)
+var _ analyzer.Signature = (*BackboneJsSignature)(nil)
 
-func (n *signatureBackboneJs) Name() string {
+func (n *BackboneJsSignature) Name() string {
 	return "Backbone.js"
 }
 
-func (n *signatureBackboneJs) Description() string {
-	return "Backbone.js gives structure to web applications by providing models with key-value binding and custom events, collections with a rich API of enumerable functions, views with declarative event handling, and connects it all to your existing API over a RESTful JSON interface."
+func (n *BackboneJsSignature) Description() string {
+	return "Backbone.js is a JavaScript rich-client web app framework based on the model–view–controller design paradigm, intended to connect to an API over a RESTful JSON interface."
 }
 
-func (s *signatureBackboneJs) Check(responses []*crawler.Response) bool {
+func (s *BackboneJsSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeScript {
 			continue
@@ -31,7 +32,7 @@ func (s *signatureBackboneJs) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *signatureBackboneJs) Versions(responses []*crawler.Response) []string {
+func (s *BackboneJsSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeScript {
@@ -49,6 +50,6 @@ func (s *signatureBackboneJs) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *signatureBackboneJs) Tags() []string {
-	return []string{TagLibrary}
+func (s *BackboneJsSignature) Tags() []string {
+	return []string{analyzer.TagLibrary}
 }

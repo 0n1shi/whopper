@@ -1,8 +1,9 @@
-package analyzer
+package signature
 
 import (
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -11,19 +12,19 @@ const (
 	microsoftClarityBanner   = "/* clarity-js"
 )
 
-type claritySignature struct{}
+type ClaritySignature struct{}
 
-var _ signature = (*claritySignature)(nil)
+var _ analyzer.Signature = (*ClaritySignature)(nil)
 
-func (n *claritySignature) Name() string {
+func (n *ClaritySignature) Name() string {
 	return "Microsoft Clarity"
 }
 
-func (n *claritySignature) Description() string {
+func (n *ClaritySignature) Description() string {
 	return "Clarity is a free product that captures how people use your site. Setup is easy and you'll start getting data in minutes."
 }
 
-func (s *claritySignature) Check(responses []*crawler.Response) bool {
+func (s *ClaritySignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeScript {
 			continue
@@ -35,7 +36,7 @@ func (s *claritySignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *claritySignature) Versions(responses []*crawler.Response) []string {
+func (s *ClaritySignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		if response.ResourceType != crawler.ResourceTypeScript {
@@ -61,6 +62,6 @@ func (s *claritySignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *claritySignature) Tags() []string {
-	return []string{TagAnalytics}
+func (s *ClaritySignature) Tags() []string {
+	return []string{analyzer.TagAnalytics}
 }

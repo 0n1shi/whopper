@@ -1,24 +1,25 @@
-package analyzer
+package signature
 
 import (
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type apacheSignature struct{}
+type ApacheSignature struct{}
 
-var _ signature = (*apacheSignature)(nil)
+var _ analyzer.Signature = (*ApacheSignature)(nil)
 
-func (n *apacheSignature) Name() string {
+func (n *ApacheSignature) Name() string {
 	return "Apache"
 }
 
-func (n *apacheSignature) Description() string {
+func (n *ApacheSignature) Description() string {
 	return "A free and open-source cross-platform web server, released under the terms of Apache License 2.0."
 }
 
-func (s *apacheSignature) Check(responses []*crawler.Response) bool {
+func (s *ApacheSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, header := range response.Headers {
 			if header.Name == "Server" && strings.Contains(header.Value, "Apache") {
@@ -29,7 +30,7 @@ func (s *apacheSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *apacheSignature) Versions(responses []*crawler.Response) []string {
+func (s *ApacheSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, header := range response.Headers {
@@ -46,6 +47,6 @@ func (s *apacheSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *apacheSignature) Tags() []string {
-	return []string{TagWebServer, TagReverseProxy}
+func (s *ApacheSignature) Tags() []string {
+	return []string{analyzer.TagWebServer, analyzer.TagReverseProxy}
 }

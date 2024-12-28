@@ -1,24 +1,25 @@
-package analyzer
+package signature
 
 import (
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type phpSignature struct{}
+type PhpSignature struct{}
 
-var _ signature = (*phpSignature)(nil)
+var _ analyzer.Signature = (*PhpSignature)(nil)
 
-func (s *phpSignature) Name() string {
+func (s *PhpSignature) Name() string {
 	return "PHP"
 }
 
-func (s *phpSignature) Description() string {
+func (s *PhpSignature) Description() string {
 	return "A general-purpose scripting language geared towards web development."
 }
 
-func (s *phpSignature) Check(responses []*crawler.Response) bool {
+func (s *PhpSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, header := range response.Headers {
 			if header.Name == "Server" && strings.Contains(header.Value, "php") {
@@ -29,7 +30,7 @@ func (s *phpSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *phpSignature) Versions(responses []*crawler.Response) []string {
+func (s *PhpSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, header := range response.Headers {
@@ -46,6 +47,6 @@ func (s *phpSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *phpSignature) Tags() []string {
-	return []string{TagProgrammingLanguage}
+func (s *PhpSignature) Tags() []string {
+	return []string{analyzer.TagProgrammingLanguage}
 }

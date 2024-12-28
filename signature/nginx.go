@@ -1,24 +1,25 @@
-package analyzer
+package signature
 
 import (
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type nginxSignature struct{}
+type NginxSignature struct{}
 
-var _ signature = (*nginxSignature)(nil)
+var _ analyzer.Signature = (*NginxSignature)(nil)
 
-func (s *nginxSignature) Name() string {
+func (s *NginxSignature) Name() string {
 	return "Nginx"
 }
 
-func (s *nginxSignature) Description() string {
+func (s *NginxSignature) Description() string {
 	return "An HTTP web server, reverse proxy, content cache, load balancer, TCP/UDP proxy server, and mail proxy server."
 }
 
-func (s *nginxSignature) Check(responses []*crawler.Response) bool {
+func (s *NginxSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, header := range response.Headers {
 			if header.Name == "Server" && strings.Contains(header.Value, "nginx") {
@@ -29,7 +30,7 @@ func (s *nginxSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
+func (s *NginxSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, header := range response.Headers {
@@ -46,6 +47,6 @@ func (s *nginxSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *nginxSignature) Tags() []string {
-	return []string{TagWebServer, TagReverseProxy}
+func (s *NginxSignature) Tags() []string {
+	return []string{analyzer.TagWebServer, analyzer.TagReverseProxy}
 }

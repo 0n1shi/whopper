@@ -1,8 +1,9 @@
-package analyzer
+package signature
 
 import (
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -10,19 +11,19 @@ const (
 	wordpressPluginYoastSEOBanner = "optimized with the Yoast SEO plugin"
 )
 
-type wordpressPluginYoastSEOSignature struct{}
+type WordpressPluginYoastSEOSignature struct{}
 
-var _ signature = (*wordpressPluginYoastSEOSignature)(nil)
+var _ analyzer.Signature = (*WordpressPluginYoastSEOSignature)(nil)
 
-func (n *wordpressPluginYoastSEOSignature) Name() string {
+func (n *WordpressPluginYoastSEOSignature) Name() string {
 	return "Yoast SEO"
 }
 
-func (n *wordpressPluginYoastSEOSignature) Description() string {
+func (n *WordpressPluginYoastSEOSignature) Description() string {
 	return "Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin."
 }
 
-func (s *wordpressPluginYoastSEOSignature) Check(responses []*crawler.Response) bool {
+func (s *WordpressPluginYoastSEOSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		lines := strings.Split(response.Body, "\n")
 		for _, line := range lines {
@@ -34,7 +35,7 @@ func (s *wordpressPluginYoastSEOSignature) Check(responses []*crawler.Response) 
 	return false
 }
 
-func (s *wordpressPluginYoastSEOSignature) Versions(responses []*crawler.Response) []string {
+func (s *WordpressPluginYoastSEOSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		lines := strings.Split(response.Body, "\n")
@@ -51,6 +52,6 @@ func (s *wordpressPluginYoastSEOSignature) Versions(responses []*crawler.Respons
 	return unique(versions)
 }
 
-func (s *wordpressPluginYoastSEOSignature) Tags() []string {
-	return []string{TagWordPressPlugin}
+func (s *WordpressPluginYoastSEOSignature) Tags() []string {
+	return []string{analyzer.TagWordPressPlugin}
 }

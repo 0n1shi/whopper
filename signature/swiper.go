@@ -1,24 +1,25 @@
-package analyzer
+package signature
 
 import (
 	"strings"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type swiperSignature struct{}
+type SwiperSignature struct{}
 
-var _ signature = (*swiperSignature)(nil)
+var _ analyzer.Signature = (*SwiperSignature)(nil)
 
-func (s *swiperSignature) Name() string {
+func (s *SwiperSignature) Name() string {
 	return "Swiper"
 }
 
-func (s *swiperSignature) Description() string {
+func (s *SwiperSignature) Description() string {
 	return "Most modern mobile touch slider and framework with hardware accelerated transitions."
 }
 
-func (s *swiperSignature) Check(responses []*crawler.Response) bool {
+func (s *SwiperSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, line := range strings.Split(response.Body, "\n") {
 			if strings.Contains(line, "* Swiper") {
@@ -29,7 +30,7 @@ func (s *swiperSignature) Check(responses []*crawler.Response) bool {
 	return false
 }
 
-func (s *swiperSignature) Versions(responses []*crawler.Response) []string {
+func (s *SwiperSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, line := range strings.Split(response.Body, "\n") {
@@ -42,6 +43,6 @@ func (s *swiperSignature) Versions(responses []*crawler.Response) []string {
 	return unique(versions)
 }
 
-func (s *swiperSignature) Tags() []string{
-	return []string{TagFramework}
+func (s *SwiperSignature) Tags() []string {
+	return []string{analyzer.TagFramework}
 }
