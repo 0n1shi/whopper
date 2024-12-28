@@ -1,6 +1,7 @@
 package signature
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
@@ -34,14 +35,14 @@ func (s *NginxSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, header := range response.Headers {
-			if header.Name == "server" && strings.Contains(header.Value, "nginx/") {
-				version := strings.TrimPrefix(header.Value, "nginx/")
-				if strings.Contains(version, "(") {
-					version = strings.Split(version, "(")[0]
-					version = strings.TrimSpace(version)
-				}
-				versions = append(versions, version)
+			if !(header.Name == "server" && strings.Contains(header.Value, "nginx/")) {
+				continue
 			}
+			matches := regexp.MustCompile(`nginx/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+			if len(matches) < 2 {
+				continue
+			}
+			versions = append(versions, matches[1])
 		}
 	}
 	return unique(versions)
