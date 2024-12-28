@@ -16,4 +16,5 @@ var Signatures = []analyzer.Signature{
 	&AwsAlbSignature{},
 	&CorejsSignature{},
 	&BackboneJsSignature{},
+	&OpenSSLSignature{},
 }

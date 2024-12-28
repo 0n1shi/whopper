@@ -2,6 +2,7 @@ package analyzer
 
 const (
 	TagWebServer           = "#web-server"
+	TagWebServerExtension  = "#web-server-extension"
 	TagReverseProxy        = "#reverse-proxy"
 	TagProgrammingLanguage = "#programming-language"
 	TagFramework           = "#framework"
