@@ -22,7 +22,7 @@ func (s *PhpSignature) Description() string {
 func (s *PhpSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, header := range response.Headers {
-			if header.Name == "Server" && strings.Contains(header.Value, "php") {
+			if header.Name == "server" && strings.Contains(header.Value, "php") {
 				return true
 			}
 		}
@@ -34,7 +34,7 @@ func (s *PhpSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, header := range response.Headers {
-			if header.Name == "Server" && strings.Contains(header.Value, "php/") {
+			if header.Name == "server" && strings.Contains(header.Value, "php/") {
 				version := strings.TrimPrefix(header.Value, "php/")
 				if strings.Contains(version, "(") {
 					version = strings.Split(version, "(")[0]

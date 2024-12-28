@@ -22,7 +22,7 @@ func (s *NginxSignature) Description() string {
 func (s *NginxSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, header := range response.Headers {
-			if header.Name == "Server" && strings.Contains(header.Value, "nginx") {
+			if header.Name == "server" && strings.Contains(header.Value, "nginx") {
 				return true
 			}
 		}
@@ -34,7 +34,7 @@ func (s *NginxSignature) Versions(responses []*crawler.Response) []string {
 	versions := []string{}
 	for _, response := range responses {
 		for _, header := range response.Headers {
-			if header.Name == "Server" && strings.Contains(header.Value, "nginx/") {
+			if header.Name == "server" && strings.Contains(header.Value, "nginx/") {
 				version := strings.TrimPrefix(header.Value, "nginx/")
 				if strings.Contains(version, "(") {
 					version = strings.Split(version, "(")[0]

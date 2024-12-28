@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"log/slog"
+	"strings"
 
 	"github.com/go-rod/rod/lib/proto"
 )
@@ -15,7 +16,7 @@ func headerToModels(protoHeaders proto.NetworkHeaders) []*Header {
 			continue
 		}
 		headers = append(headers, &Header{
-			Name:  key,
+			Name:  strings.ToLower(key),
 			Value: str,
 		})
 	}
