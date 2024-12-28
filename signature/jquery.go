@@ -96,16 +96,11 @@ func tryToGetJQueryVersionFromScriptTag(response *crawler.Response) []string {
 		if !ok {
 			continue
 		}
-		matches := regexp.MustCompile(`jquery[@/]\d+\.\d+\.\d+`).FindAllString(attr, -1)
-		for _, match := range matches {
-			if strings.Contains(match, "@") {
-				match = strings.Split(match, "@")[1]
-			}
-			if strings.Contains(match, "/") {
-				match = strings.Split(match, "/")[1]
-			}
-			versions = append(versions, match)
+		matches := regexp.MustCompile(`jquery[@/-](\d+\.\d+\.\d+)`).FindStringSubmatch(attr)
+		if len(matches) < 2 {
+			continue
 		}
+		versions = append(versions, matches[1])
 	}
 	return versions
 }
