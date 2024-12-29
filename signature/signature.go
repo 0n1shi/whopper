@@ -17,4 +17,5 @@ var Signatures = []analyzer.Signature{
 	&CorejsSignature{},
 	&BackboneJsSignature{},
 	&OpenSSLSignature{},
+	&StyledComponentsSignature{},
 }
