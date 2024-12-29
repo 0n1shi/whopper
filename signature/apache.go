@@ -1,7 +1,6 @@
 package signature
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
@@ -23,9 +22,6 @@ func (n *ApacheSignature) Description() string {
 func (s *ApacheSignature) Check(responses []*crawler.Response) bool {
 	for _, response := range responses {
 		for _, header := range response.Headers {
-			if header.Name == "server" {
-				fmt.Println(header.Value)
-			}
 			if header.Name == "server" && strings.Contains(header.Value, "Apache") {
 				return true
 			}
