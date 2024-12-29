@@ -52,6 +52,10 @@ func (s *JquerySignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *JquerySignature) CPE(version string) string {
+	return "cpe:/a:jquery:jquery:" + version // e.g. cpe:/a:jquery:jquery:3.6.0
+}
+
 func (s *JquerySignature) Tags() []string {
 	return []string{analyzer.TagLibrary}
 }

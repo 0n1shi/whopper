@@ -42,6 +42,10 @@ func (s *PhpSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *PhpSignature) CPE(version string) string {
+	return "cpe:/a:php:php:" + version // e.g. cpe:/a:php:php:8.0.11
+}
+
 func (s *PhpSignature) Tags() []string {
 	return []string{analyzer.TagProgrammingLanguage}
 }

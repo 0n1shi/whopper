@@ -35,6 +35,10 @@ func (s *AwsAlbSignature) Version(response *crawler.Response) string {
 	return "" // TODO: No version information available ?
 }
 
+func (s *AwsAlbSignature) CPE(version string) string {
+	return ""
+}
+
 func (s *AwsAlbSignature) Tags() []string {
 	return []string{analyzer.TagAWS, analyzer.TagLoadBalancer}
 }

@@ -56,6 +56,10 @@ func (s *StyledComponentsSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *StyledComponentsSignature) CPE(version string) string {
+	return ""
+}
+
 func (s *StyledComponentsSignature) Tags() []string {
 	return []string{analyzer.TagLibrary}
 }

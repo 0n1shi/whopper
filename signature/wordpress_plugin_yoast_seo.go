@@ -47,6 +47,10 @@ func (s *WordpressPluginYoastSEOSignature) Version(response *crawler.Response) s
 	return ""
 }
 
+func (s *WordpressPluginYoastSEOSignature) CPE(version string) string {
+	return "cpe:/a:yoast:yoast_seo:" + version
+}
+
 func (s *WordpressPluginYoastSEOSignature) Tags() []string {
 	return []string{analyzer.TagWordPressPlugin}
 }

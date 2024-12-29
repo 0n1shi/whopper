@@ -10,5 +10,6 @@ type Signature interface {
 	Description() string
 	Check(response *crawler.Response) bool
 	Version(response *crawler.Response) string
+	CPE(version string) string
 	Tags() []string
 }

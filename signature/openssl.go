@@ -43,6 +43,10 @@ func (s *OpenSSLSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *OpenSSLSignature) CPE(version string) string {
+	return "cpe:/a:openssl:openssl:" + version // e.g. cpe:/a:openssl:openssl:1.1.1
+}
+
 func (s *OpenSSLSignature) Tags() []string {
 	return []string{analyzer.TagWebServerExtension}
 }

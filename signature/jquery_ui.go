@@ -53,6 +53,10 @@ func (s *JqueryUiSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *JqueryUiSignature) CPE(version string) string {
+	return "cpe:/a:jqueryui:jquery_ui:" + version // e.g. cpe:/a:jqueryui:jquery_ui:1.12.1
+}
+
 func (s *JqueryUiSignature) Tags() []string {
 	return []string{analyzer.TagLibrary}
 }

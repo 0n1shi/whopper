@@ -39,6 +39,10 @@ func (s *SwiperSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *SwiperSignature) CPE(version string) string {
+	return "cpe:/a:swiperjs:swiper:" + version
+}
+
 func (s *SwiperSignature) Tags() []string {
 	return []string{analyzer.TagFramework}
 }

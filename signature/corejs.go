@@ -44,6 +44,10 @@ func (s *CorejsSignature) Version(response *crawler.Response) string {
 	return matches[1]
 }
 
+func (s *CorejsSignature) CPE(version string) string {
+	return "" // No CPE
+}
+
 func (s *CorejsSignature) Tags() []string {
 	return []string{analyzer.TagLibrary}
 }

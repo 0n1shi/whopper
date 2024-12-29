@@ -43,6 +43,10 @@ func (s *NginxSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *NginxSignature) CPE(version string) string {
+	return "cpe:/a:nginx:nginx:" + version // e.g. cpe:/a:nginx:nginx:1.21.0
+}
+
 func (s *NginxSignature) Tags() []string {
 	return []string{analyzer.TagWebServer, analyzer.TagReverseProxy}
 }

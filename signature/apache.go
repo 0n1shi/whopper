@@ -43,6 +43,10 @@ func (s *ApacheSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *ApacheSignature) CPE(version string) string {
+	return "cpe:/a:apache:http_server:" + version // e.g. cpe:/a:apache:http_server:2.4.57
+}
+
 func (s *ApacheSignature) Tags() []string {
 	return []string{analyzer.TagWebServer, analyzer.TagReverseProxy}
 }

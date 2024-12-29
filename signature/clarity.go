@@ -56,6 +56,10 @@ func (s *ClaritySignature) Version(response *crawler.Response) string {
 	return version
 }
 
+func (s *ClaritySignature) CPE(version string) string {
+	return "cpe:/a:microsoft:clarity:" + version
+}
+
 func (s *ClaritySignature) Tags() []string {
 	return []string{analyzer.TagAnalytics}
 }

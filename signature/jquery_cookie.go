@@ -55,6 +55,10 @@ func (s *JqueryCookieSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
+func (s *JqueryCookieSignature) CPE(version string) string {
+	return "cpe:/a:jquery.cookie_project:jquery.cookie:" + version // e.g. cpe:/a:jquery.cookie_project:jquery.cookie:1.4.1
+}
+
 func (s *JqueryCookieSignature) Tags() []string {
 	return []string{analyzer.TagLibrary}
 }

@@ -44,6 +44,10 @@ func (s *BackboneJsSignature) Version(response *crawler.Response) string {
 	return matches[1]
 }
 
+func (s *BackboneJsSignature) CPE(version string) string {
+	return "cpe:/a:backbone_project:backbone:" + version // e.g. cpe:/a:backbonejs:backbone:1.4.0
+}
+
 func (s *BackboneJsSignature) Tags() []string {
 	return []string{analyzer.TagLibrary}
 }
