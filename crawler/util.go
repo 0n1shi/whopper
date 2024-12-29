@@ -5,21 +5,32 @@ import (
 	"log/slog"
 )
 
-const responseDumpLimit = 300
+const urlMaxLengthToShow = 70
+const bodyMaxLengthToShow = 100
 
 func DumpResponse(response *Response) {
-	slog.Debug("response", "url", response.Url)
+	slog.Debug("dumping responses", "url", omitURL(response.Url))
 	fmt.Printf("%s %d %s\n", response.Protocol, response.Status, response.StatusText)
 	for _, header := range response.Headers {
 		fmt.Printf("%s: %s\n", header.Name, header.Value)
 	}
 	fmt.Println()
 	if response.ResourceType == ResourceTypeDocument || response.ResourceType == ResourceTypeScript || response.ResourceType == ResourceTypeStylesheet {
-		if len(response.Body) > responseDumpLimit {
-			fmt.Println(response.Body[:responseDumpLimit], "...")
-		} else {
-			fmt.Println(response.Body)
-		}
+		fmt.Println(omitBody(response.Body))
 		fmt.Println()
 	}
+}
+
+func omitURL(url string) string {
+	if len(url) > urlMaxLengthToShow {
+		return url[:urlMaxLengthToShow] + "..."
+	}
+	return url
+}
+
+func omitBody(body string) string {
+	if len(body) > bodyMaxLengthToShow {
+		return body[:bodyMaxLengthToShow] + "..."
+	}
+	return body
 }

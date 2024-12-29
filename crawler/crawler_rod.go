@@ -39,7 +39,8 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 	page := browser.MustPage()
 	defer page.MustClose()
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
-		slog.Debug("received response", "url", event.Response.URL, "status", event.Response.Status)
+		url := omitURL(event.Response.URL)
+		slog.Debug("received response", "url", url, "status", event.Response.Status)
 
 		cookies := []*Cookie{}
 		cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Response.URL}}.Call(page)
@@ -81,9 +82,10 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 
 		reply, err := proto.NetworkGetResponseBody{RequestID: event.RequestID}.Call(page)
 		if err != nil {
+			url := omitURL(response.Url)
 			slog.Warn(
 				"failed to get response body",
-				"url", response.Url,
+				"url", url,
 				"error", err,
 			)
 			return
