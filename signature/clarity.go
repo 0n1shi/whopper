@@ -24,42 +24,36 @@ func (n *ClaritySignature) Description() string {
 	return "Clarity is a free product that captures how people use your site. Setup is easy and you'll start getting data in minutes."
 }
 
-func (s *ClaritySignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeScript {
-			continue
-		}
-		if strings.HasSuffix(response.Url, microsoftClarityfileName) {
-			return true
-		}
+func (s *ClaritySignature) Check(response *crawler.Response) bool {
+	if response.ResourceType != crawler.ResourceTypeScript {
+		return false
+	}
+	if strings.HasSuffix(response.Url, microsoftClarityfileName) {
+		return true
 	}
 	return false
 }
 
-func (s *ClaritySignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeScript {
-			continue
-		}
-		if !strings.HasSuffix(response.Url, microsoftClarityfileName) {
-			continue
-		}
-		lines := strings.Split(response.Body, "\n")
-		if len(lines) < 1 {
-			continue
-		}
-		line := lines[0]
-		if !strings.HasPrefix(line, microsoftClarityBanner) {
-			continue
-		}
-		version := strings.TrimPrefix(line, microsoftClarityBanner)
-		version = strings.Split(version, ":")[0]
-		version = strings.TrimSpace(version)
-		version = removeVersionPrefix(version)
-		versions = append(versions, version)
+func (s *ClaritySignature) Version(response *crawler.Response) string {
+	if response.ResourceType != crawler.ResourceTypeScript {
+		return ""
 	}
-	return unique(versions)
+	if !strings.HasSuffix(response.Url, microsoftClarityfileName) {
+		return ""
+	}
+	lines := strings.Split(response.Body, "\n")
+	if len(lines) < 1 {
+		return ""
+	}
+	line := lines[0]
+	if !strings.HasPrefix(line, microsoftClarityBanner) {
+		return ""
+	}
+	version := strings.TrimPrefix(line, microsoftClarityBanner)
+	version = strings.Split(version, ":")[0]
+	version = strings.TrimSpace(version)
+	version = removeVersionPrefix(version)
+	return version
 }
 
 func (s *ClaritySignature) Tags() []string {

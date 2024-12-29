@@ -20,50 +20,36 @@ func (n *JquerySignature) Description() string {
 	return "A fast, small, and feature-rich JavaScript library."
 }
 
-func (s *JquerySignature) Check(responses []*crawler.Response) bool {
+func (s *JquerySignature) Check(response *crawler.Response) bool {
 	// Check if there is a script tag to load jQuery in the HTML
-	for _, response := range responses {
-		if hasScriptTagToLoadJQueryInHTML(response) {
-			return true
-		}
+	if hasScriptTagToLoadJQueryInHTML(response) {
+		return true
 	}
 
 	// Check if it is a minified jQuery
-	for _, response := range responses {
-		if isMinifiedJQuery(response) {
-			return true
-		}
+	if isMinifiedJQuery(response) {
+		return true
 	}
 
 	return false
 }
 
-func (s *JquerySignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-
+func (s *JquerySignature) Version(response *crawler.Response) string {
 	// Check if there is a script tag to load jQuery in the HTML
-	for _, response := range responses {
-		if !hasScriptTagToLoadJQueryInHTML(response) {
-			continue
-		}
-		foundVers := tryToGetJQueryVersionFromScriptTag(response)
-		if len(foundVers) > 0 {
-			versions = append(versions, foundVers...)
-		}
+	if !hasScriptTagToLoadJQueryInHTML(response) {
+		return ""
+	}
+	foundVer := tryToGetJQueryVersionFromScriptTag(response)
+	if foundVer != "" {
+		return foundVer
 	}
 
-	// Check if it is a minified jQuery
-	for _, response := range responses {
-		if !isMinifiedJQuery(response) {
-			continue
-		}
-		foundVer := tryToGetJQueryVersionFromMinified(response)
-		if foundVer != "" {
-			versions = append(versions, foundVer)
-		}
+	foundVer = tryToGetJQueryVersionFromMinified(response)
+	if foundVer != "" {
+		return foundVer
 	}
 
-	return unique(versions)
+	return ""
 }
 
 func (s *JquerySignature) Tags() []string {
@@ -88,8 +74,7 @@ func hasScriptTagToLoadJQueryInHTML(response *crawler.Response) bool {
 	return false
 }
 
-func tryToGetJQueryVersionFromScriptTag(response *crawler.Response) []string {
-	versions := []string{}
+func tryToGetJQueryVersionFromScriptTag(response *crawler.Response) string {
 	nodes := getHTMLTags(response.Body, "script")
 	for _, node := range nodes {
 		attr, ok := getAttribute(node, "src")
@@ -100,9 +85,9 @@ func tryToGetJQueryVersionFromScriptTag(response *crawler.Response) []string {
 		if len(matches) < 2 {
 			continue
 		}
-		versions = append(versions, matches[1])
+		return matches[1]
 	}
-	return versions
+	return ""
 }
 
 func isMinifiedJQuery(response *crawler.Response) bool {

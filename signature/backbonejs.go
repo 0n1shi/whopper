@@ -20,34 +20,28 @@ func (n *BackboneJsSignature) Description() string {
 	return "Backbone.js is a JavaScript rich-client web app framework based on the model–view–controller design paradigm, intended to connect to an API over a RESTful JSON interface."
 }
 
-func (s *BackboneJsSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeScript {
-			continue
-		}
-		if strings.Contains(response.Body, "Backbone.history has already been started") {
-			return true
-		}
+func (s *BackboneJsSignature) Check(response *crawler.Response) bool {
+	if response.ResourceType != crawler.ResourceTypeScript {
+		return false
+	}
+	if strings.Contains(response.Body, "Backbone.history has already been started") {
+		return true
 	}
 	return false
 }
 
-func (s *BackboneJsSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeScript {
-			continue
-		}
-		if !strings.Contains(response.Body, "Backbone.history has already been started") {
-			continue
-		}
-		matches := regexp.MustCompile(`t.VERSION="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
-		if len(matches) < 2 {
-			continue
-		}
-		versions = append(versions, matches[1])
+func (s *BackboneJsSignature) Version(response *crawler.Response) string {
+	if response.ResourceType != crawler.ResourceTypeScript {
+		return ""
 	}
-	return unique(versions)
+	if !strings.Contains(response.Body, "Backbone.history has already been started") {
+		return ""
+	}
+	matches := regexp.MustCompile(`t.VERSION="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
+	if len(matches) < 2 {
+		return ""
+	}
+	return matches[1]
 }
 
 func (s *BackboneJsSignature) Tags() []string {

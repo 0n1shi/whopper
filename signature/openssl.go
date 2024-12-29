@@ -20,32 +20,27 @@ func (s *OpenSSLSignature) Description() string {
 	return "OpenSSL is a software library for applications that provide secure communications over computer networks."
 }
 
-func (s *OpenSSLSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if header.Name == "server" && strings.Contains(header.Value, "OpenSSL") {
-				return true
-			}
+func (s *OpenSSLSignature) Check(response *crawler.Response) bool {
+	for _, header := range response.Headers {
+		if header.Name == "server" && strings.Contains(header.Value, "OpenSSL") {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *OpenSSLSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if !(header.Name == "server" && strings.Contains(header.Value, "OpenSSL/")) {
-				continue
-			}
-			matches := regexp.MustCompile(`OpenSSL/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
-			if len(matches) < 2 {
-				continue
-			}
-			versions = append(versions, matches[1])
+func (s *OpenSSLSignature) Version(response *crawler.Response) string {
+	for _, header := range response.Headers {
+		if !(header.Name == "server" && strings.Contains(header.Value, "OpenSSL/")) {
+			continue
 		}
+		matches := regexp.MustCompile(`OpenSSL/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+		if len(matches) < 2 {
+			continue
+		}
+		return matches[1]
 	}
-	return unique(versions)
+	return ""
 }
 
 func (s *OpenSSLSignature) Tags() []string {

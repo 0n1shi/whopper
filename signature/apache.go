@@ -20,32 +20,27 @@ func (n *ApacheSignature) Description() string {
 	return "A free and open-source cross-platform web server, released under the terms of Apache License 2.0."
 }
 
-func (s *ApacheSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if header.Name == "server" && strings.Contains(header.Value, "Apache") {
-				return true
-			}
+func (s *ApacheSignature) Check(response *crawler.Response) bool {
+	for _, header := range response.Headers {
+		if header.Name == "server" && strings.Contains(header.Value, "Apache") {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *ApacheSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if !(header.Name == "server" && strings.Contains(header.Value, "Apache/")) {
-				continue
-			}
-			matches := regexp.MustCompile(`Apache/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
-			if len(matches) < 2 {
-				continue
-			}
-			versions = append(versions, matches[1])
+func (s *ApacheSignature) Version(response *crawler.Response) string {
+	for _, header := range response.Headers {
+		if !(header.Name == "server" && strings.Contains(header.Value, "Apache/")) {
+			continue
 		}
+		matches := regexp.MustCompile(`Apache/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+		if len(matches) < 2 {
+			continue
+		}
+		return matches[1]
 	}
-	return unique(versions)
+	return ""
 }
 
 func (s *ApacheSignature) Tags() []string {

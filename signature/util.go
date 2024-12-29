@@ -6,19 +6,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-func unique(list []string) []string {
-	seen := map[string]struct{}{}
-	uniq := []string{}
-	for _, s := range list {
-		if _, ok := seen[s]; ok {
-			continue
-		}
-		seen[s] = struct{}{}
-		uniq = append(uniq, s)
-	}
-	return uniq
-}
-
 func getHTMLTags(str string, tag string) []*html.Node {
 	doc, err := html.Parse(strings.NewReader(str))
 	if err != nil {

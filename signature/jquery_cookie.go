@@ -20,50 +20,39 @@ func (n *JqueryCookieSignature) Description() string {
 	return "A simple, lightweight jQuery plugin for reading, writing and deleting cookies."
 }
 
-func (s *JqueryCookieSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeDocument {
-			continue
-		}
-		nodes := getHTMLTags(response.Body, "script")
-		for _, node := range nodes {
-			if attr, ok := getAttribute(node, "src"); ok {
-				if strings.Contains(attr, "jquery-cookie") {
-					return true
-				}
+func (s *JqueryCookieSignature) Check(response *crawler.Response) bool {
+	if response.ResourceType != crawler.ResourceTypeDocument {
+		return false
+	}
+	nodes := getHTMLTags(response.Body, "script")
+	for _, node := range nodes {
+		if attr, ok := getAttribute(node, "src"); ok {
+			if strings.Contains(attr, "jquery-cookie") {
+				return true
 			}
 		}
 	}
 	return false
 }
 
-func (s *JqueryCookieSignature) Versions(responses []*crawler.Response) []string {
+func (s *JqueryCookieSignature) Version(response *crawler.Response) string {
+	if response.ResourceType != crawler.ResourceTypeDocument {
+		return ""
+	}
 	re := regexp.MustCompile(`jquery-cookie[@/]\d+\.\d+\.\d+`)
-	versions := []string{}
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeDocument {
+	nodes := getHTMLTags(response.Body, "script")
+	for _, node := range nodes {
+		attr, ok := getAttribute(node, "src")
+		if !ok {
 			continue
 		}
-		nodes := getHTMLTags(response.Body, "script")
-		for _, node := range nodes {
-			attr, ok := getAttribute(node, "src")
-			if !ok {
-				continue
-			}
-			matches := re.FindAllString(attr, -1)
-			for _, match := range matches {
-				if strings.Contains(match, "@") {
-					match = strings.Split(match, "@")[1]
-				}
-				if strings.Contains(match, "/") {
-					match = strings.Split(match, "/")[1]
-				}
-				versions = append(versions, match)
-			}
+		matches := re.FindStringSubmatch(attr)
+		if len(matches) < 1 {
+			continue
 		}
+		return matches[1]
 	}
-
-	return unique(versions)
+	return ""
 }
 
 func (s *JqueryCookieSignature) Tags() []string {

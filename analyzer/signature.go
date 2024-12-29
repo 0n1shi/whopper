@@ -8,7 +8,7 @@ import (
 type Signature interface {
 	Name() string
 	Description() string
-	Check(responses []*crawler.Response) bool
-	Versions(responses []*crawler.Response) []string
+	Check(response *crawler.Response) bool
+	Version(response *crawler.Response) string
 	Tags() []string
 }

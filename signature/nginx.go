@@ -20,32 +20,27 @@ func (s *NginxSignature) Description() string {
 	return "An HTTP web server, reverse proxy, content cache, load balancer, TCP/UDP proxy server, and mail proxy server."
 }
 
-func (s *NginxSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if header.Name == "server" && strings.Contains(header.Value, "nginx") {
-				return true
-			}
+func (s *NginxSignature) Check(response *crawler.Response) bool {
+	for _, header := range response.Headers {
+		if header.Name == "server" && strings.Contains(header.Value, "nginx") {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *NginxSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if !(header.Name == "server" && strings.Contains(header.Value, "nginx/")) {
-				continue
-			}
-			matches := regexp.MustCompile(`nginx/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
-			if len(matches) < 2 {
-				continue
-			}
-			versions = append(versions, matches[1])
+func (s *NginxSignature) Version(response *crawler.Response) string {
+	for _, header := range response.Headers {
+		if !(header.Name == "server" && strings.Contains(header.Value, "nginx/")) {
+			continue
 		}
+		matches := regexp.MustCompile(`nginx/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+		if len(matches) < 2 {
+			continue
+		}
+		return matches[1]
 	}
-	return unique(versions)
+	return ""
 }
 
 func (s *NginxSignature) Tags() []string {

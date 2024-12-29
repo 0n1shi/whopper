@@ -19,32 +19,27 @@ func (s *PhpSignature) Description() string {
 	return "A general-purpose scripting language geared towards web development."
 }
 
-func (s *PhpSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if header.Name == "server" && strings.Contains(header.Value, "php") {
-				return true
-			}
+func (s *PhpSignature) Check(response *crawler.Response) bool {
+	for _, header := range response.Headers {
+		if header.Name == "server" && strings.Contains(header.Value, "php") {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *PhpSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		for _, header := range response.Headers {
-			if header.Name == "server" && strings.Contains(header.Value, "php/") {
-				version := strings.TrimPrefix(header.Value, "php/")
-				if strings.Contains(version, "(") {
-					version = strings.Split(version, "(")[0]
-					version = strings.TrimSpace(version)
-				}
-				versions = append(versions, version)
+func (s *PhpSignature) Version(response *crawler.Response) string {
+	for _, header := range response.Headers {
+		if header.Name == "server" && strings.Contains(header.Value, "php/") {
+			version := strings.TrimPrefix(header.Value, "php/")
+			if strings.Contains(version, "(") {
+				version = strings.Split(version, "(")[0]
+				version = strings.TrimSpace(version)
 			}
+			return version
 		}
 	}
-	return unique(versions)
+	return ""
 }
 
 func (s *PhpSignature) Tags() []string {

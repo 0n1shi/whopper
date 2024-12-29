@@ -19,22 +19,20 @@ func (n *AwsAlbSignature) Description() string {
 	return "Load balance HTTP and HTTPS traffic with advanced request routing targeted at the delivery of modern applications."
 }
 
-func (s *AwsAlbSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		for _, cookie := range response.Cookies {
-			if strings.Contains(cookie.Name, "AWSALB") {
-				return true
-			}
-			if strings.Contains(cookie.Name, "AWSALB") {
-				return true
-			}
+func (s *AwsAlbSignature) Check(response *crawler.Response) bool {
+	for _, cookie := range response.Cookies {
+		if strings.Contains(cookie.Name, "AWSALB") {
+			return true
+		}
+		if strings.Contains(cookie.Name, "AWSALB") {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *AwsAlbSignature) Versions(responses []*crawler.Response) []string {
-	return []string{} // TODO: No version information available ?
+func (s *AwsAlbSignature) Version(response *crawler.Response) string {
+	return "" // TODO: No version information available ?
 }
 
 func (s *AwsAlbSignature) Tags() []string {

@@ -20,34 +20,28 @@ func (n *CorejsSignature) Description() string {
 	return "Modular standard library for JavaScript."
 }
 
-func (s *CorejsSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeScript {
-			continue
-		}
-		if strings.Contains(response.Body, "github.com/zloirock/core-js") {
-			return true
-		}
+func (s *CorejsSignature) Check(response *crawler.Response) bool {
+	if response.ResourceType != crawler.ResourceTypeScript {
+		return false
+	}
+	if strings.Contains(response.Body, "github.com/zloirock/core-js") {
+		return true
 	}
 	return false
 }
 
-func (s *CorejsSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeScript {
-			continue
-		}
-		if !strings.Contains(response.Body, "github.com/zloirock/core-js") {
-			continue
-		}
-		matches := regexp.MustCompile(`https://github.com/zloirock/core-js/blob/v(\d+\.\d+\.\d+)/LICENSE`).FindStringSubmatch(response.Body)
-		if len(matches) < 2 {
-			continue
-		}
-		versions = append(versions, matches[1])
+func (s *CorejsSignature) Version(response *crawler.Response) string {
+	if response.ResourceType != crawler.ResourceTypeScript {
+		return ""
 	}
-	return unique(versions)
+	if !strings.Contains(response.Body, "github.com/zloirock/core-js") {
+		return ""
+	}
+	matches := regexp.MustCompile(`https://github.com/zloirock/core-js/blob/v(\d+\.\d+\.\d+)/LICENSE`).FindStringSubmatch(response.Body)
+	if len(matches) < 2 {
+		return ""
+	}
+	return matches[1]
 }
 
 func (s *CorejsSignature) Tags() []string {

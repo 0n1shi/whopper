@@ -25,38 +25,32 @@ func (n *JqueryUiSignature) Description() string {
 	return "jQuery UI is a curated set of user interface interactions, effects, widgets, and themes built on top of the jQuery JavaScript Library."
 }
 
-func (s *JqueryUiSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeStylesheet {
-			continue
-		}
-		for _, line := range strings.Split(response.Body, "\n") {
-			if strings.Contains(line, jqueryUiBanner) {
-				return true
-			}
+func (s *JqueryUiSignature) Check(response *crawler.Response) bool {
+	if response.ResourceType != crawler.ResourceTypeStylesheet {
+		return false
+	}
+	for _, line := range strings.Split(response.Body, "\n") {
+		if strings.Contains(line, jqueryUiBanner) {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *JqueryUiSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		if response.ResourceType != crawler.ResourceTypeStylesheet {
-			continue
-		}
-		for _, line := range strings.Split(response.Body, "\n") {
-			if strings.Contains(line, jqueryUiBanner) {
-				re := regexp.MustCompile(fmt.Sprintf(`%s (\d+\.\d+\.\d+)`, jqueryUiBanner))
-				matches := re.FindStringSubmatch(line)
-				if len(matches) > 1 {
-					versions = append(versions, matches[1])
-				}
+func (s *JqueryUiSignature) Version(response *crawler.Response) string {
+	if response.ResourceType != crawler.ResourceTypeStylesheet {
+		return ""
+	}
+	for _, line := range strings.Split(response.Body, "\n") {
+		if strings.Contains(line, jqueryUiBanner) {
+			re := regexp.MustCompile(fmt.Sprintf(`%s (\d+\.\d+\.\d+)`, jqueryUiBanner))
+			matches := re.FindStringSubmatch(line)
+			if len(matches) > 1 {
+				return matches[1]
 			}
 		}
 	}
-
-	return unique(versions)
+	return ""
 }
 
 func (s *JqueryUiSignature) Tags() []string {

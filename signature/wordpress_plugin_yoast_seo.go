@@ -23,33 +23,28 @@ func (n *WordpressPluginYoastSEOSignature) Description() string {
 	return "Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin."
 }
 
-func (s *WordpressPluginYoastSEOSignature) Check(responses []*crawler.Response) bool {
-	for _, response := range responses {
-		lines := strings.Split(response.Body, "\n")
-		for _, line := range lines {
-			if strings.Contains(line, wordpressPluginYoastSEOBanner) {
-				return true
-			}
+func (s *WordpressPluginYoastSEOSignature) Check(response *crawler.Response) bool {
+	lines := strings.Split(response.Body, "\n")
+	for _, line := range lines {
+		if strings.Contains(line, wordpressPluginYoastSEOBanner) {
+			return true
 		}
 	}
 	return false
 }
 
-func (s *WordpressPluginYoastSEOSignature) Versions(responses []*crawler.Response) []string {
-	versions := []string{}
-	for _, response := range responses {
-		lines := strings.Split(response.Body, "\n")
-		for _, line := range lines {
-			if strings.Contains(line, wordpressPluginYoastSEOBanner) {
-				version := strings.Split(line, wordpressPluginYoastSEOBanner)[1]
-				version = strings.Split(version, "-")[0]
-				version = strings.TrimSpace(version)
-				version = removeVersionPrefix(version)
-				versions = append(versions, version)
-			}
+func (s *WordpressPluginYoastSEOSignature) Version(response *crawler.Response) string {
+	lines := strings.Split(response.Body, "\n")
+	for _, line := range lines {
+		if strings.Contains(line, wordpressPluginYoastSEOBanner) {
+			version := strings.Split(line, wordpressPluginYoastSEOBanner)[1]
+			version = strings.Split(version, "-")[0]
+			version = strings.TrimSpace(version)
+			version = removeVersionPrefix(version)
+			return version
 		}
 	}
-	return unique(versions)
+	return ""
 }
 
 func (s *WordpressPluginYoastSEOSignature) Tags() []string {
