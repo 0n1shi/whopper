@@ -14,15 +14,15 @@ type Whopper struct {
 	debugMode  bool
 	printer    printer.Printer
 	crawler    crawler.Crawler
-	integrator *inspector.Inspector
+	inspectors []inspector.Inspector
 }
 
-func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, i *inspector.Inspector) *Whopper {
+func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, is []inspector.Inspector) *Whopper {
 	return &Whopper{
 		debugMode:  debugMode,
 		printer:    p,
 		crawler:    c,
-		integrator: i,
+		inspectors: is,
 	}
 }
 
@@ -34,10 +34,11 @@ func (w *Whopper) Run(url string) error {
 		return err
 	}
 
-	if w.integrator != nil {
-		w.integrator.SearchWord(responses)
-		slog.Info("skipping analysis because search word is set")
-		return nil
+	if len(w.inspectors) > 0 {
+		for _, inspector := range w.inspectors {
+			inspector.Inspect(responses)
+		}
+		return nil // skip the analysis
 	}
 
 	if w.debugMode {

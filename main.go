@@ -83,13 +83,13 @@ func main() {
 				slog.Info("debug mode enabled (log level: debug)")
 			}
 
+			inspectors := []inspector.Inspector{}
+			if ctx.String("word") != "" {
+				inspectors = append(inspectors, inspector.NewWordInspector(ctx.String("word")))
+			}
 			p := printer.NewTextPrinter()
 			c := crawler.NewRodCrawler()
-			var i *inspector.Inspector
-			if ctx.String("word") != "" {
-				i = inspector.NewInspector(ctx.String("word"))
-			}
-			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, i)
+			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors)
 			return w.Run(mustBeURL)
 		},
 		CustomAppHelpTemplate: helpTextTemplate,
