@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"log/slog"
+	"net/url"
 	"os"
 
 	"github.com/0n1shi/whopper/crawler"
 	"github.com/0n1shi/whopper/inspector"
 	"github.com/0n1shi/whopper/printer"
-	"github.com/0n1shi/whopper/util"
 	"github.com/0n1shi/whopper/whopper"
 	"github.com/urfave/cli/v2"
 )
@@ -56,7 +56,7 @@ func main() {
 			if mustBeURL == "" {
 				return cli.ShowAppHelp(ctx)
 			}
-			if !util.IsValidURL(mustBeURL) {
+			if !isValidURL(mustBeURL) {
 				return fmt.Errorf("invalid URL: %s", mustBeURL)
 			}
 
@@ -122,3 +122,8 @@ GLOBAL OPTIONS:
    {{range .VisibleFlags}}{{.}}
    {{end}}
 {{end}}`
+
+func isValidURL(str string) bool {
+	_, err := url.ParseRequestURI(str)
+	return err == nil
+}
