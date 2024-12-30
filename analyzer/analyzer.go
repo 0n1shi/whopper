@@ -5,7 +5,8 @@ import (
 )
 
 type analyzeItem struct {
-	signature     Signature
+	signature Signature
+
 	isDetected    bool
 	foundVersions []string
 }
@@ -32,6 +33,7 @@ func (a *Analyzer) Analyze(responses []*crawler.Response) []*Result {
 		for _, response := range responses {
 			if item.isDetected || item.signature.Check(response) {
 				item.isDetected = true
+
 				version := item.signature.Version(response)
 				if version != "" {
 					item.foundVersions = append(item.foundVersions, version)
@@ -43,6 +45,7 @@ func (a *Analyzer) Analyze(responses []*crawler.Response) []*Result {
 				Name:        item.signature.Name(),
 				Description: item.signature.Description(),
 				Versions:    unique(item.foundVersions),
+				CPEs:        unique(versToCPEs(item.foundVersions, item.signature.CPE)),
 				Tags:        item.signature.Tags(),
 			})
 		}

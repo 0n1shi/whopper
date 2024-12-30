@@ -16,6 +16,7 @@ import (
 const version = "v0.1.21"
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})))
 	app := &cli.App{
 		Name:      "whopper",
 		Usage:     "A CLI tool to detect the technology stack used on a website",
@@ -44,6 +45,12 @@ func main() {
 				Usage:   "print the version",
 				Value:   false,
 				Aliases: []string{"v"},
+			},
+			&cli.BoolFlag{
+				Name:    "json",
+				Usage:   "output the result in JSON format",
+				Value:   false,
+				Aliases: []string{"j"},
 			},
 		},
 		Action: func(ctx *cli.Context) error {
@@ -87,7 +94,14 @@ func main() {
 			if ctx.String("word") != "" {
 				inspectors = append(inspectors, inspector.NewWordInspector(ctx.String("word")))
 			}
-			p := printer.NewTextPrinter()
+
+			var p printer.Printer
+			if ctx.Bool("json") {
+				p = printer.NewJsonPrinter()
+			} else {
+				p = printer.NewTextPrinter()
+			}
+
 			c := crawler.NewRodCrawler()
 			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors)
 			return w.Run(mustBeURL)
