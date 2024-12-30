@@ -18,6 +18,8 @@ GLOBAL OPTIONS:
    --debug, -d              debug mode (default: false)
    --level value, -l value  log level (debug | info | warn | error) (default: "info")
    --word value, -w value   search for a specific word in the response (url, body, headers) *skips the analysis
+   --version, -v            print the version (default: false)
+   --json, -j               output the result in JSON format (default: false)
    --help, -h               show help
 ```
 
@@ -40,6 +42,36 @@ $ whopper https://innerfreshshiningsunrise.neverssl.com/
 
 [+] Apache 2.4.62
     > A free and open-source cross-platform web server, released under the terms of Apache License 2.0.
+```
+
+### Output in JSON format
+
+```bash
+$ whopper -j https://innerfreshshiningsunrise.neverssl.com/ 2> result.json
+2024/12/23 23:06:10 INFO starting ... url=https://shinyastoundingbrightmorning.neverssl.com/
+2024/12/23 23:06:14 INFO navigating to the URL ...
+2024/12/23 23:06:15 INFO page loaded
+2024/12/23 23:06:18 INFO received responses count=3
+
+$ cat result.json | jq .
+{
+  "results": [
+    {
+      "name": "Apache",
+      "description": "A free and open-source cross-platform web server, released under the terms of Apache License 2.0.",
+      "versions": [
+        "2.4.62"
+      ],
+      "cpes": [
+        "cpe:/a:apache:http_server:2.4.62"
+      ],
+      "tags": [
+        "#web-server",
+        "#reverse-proxy"
+      ]
+    }
+  ]
+}
 ```
 
 ## Contributing
