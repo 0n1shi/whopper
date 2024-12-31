@@ -21,6 +21,14 @@ func (n *JquerySignature) Description() string {
 }
 
 func (s *JquerySignature) Check(response *crawler.Response) bool {
+	if strings.Contains(response.Url, "jquery") {
+		return true
+	}
+
+	if strings.Contains(response.Body, "jQuery v") {
+		return true
+	}
+
 	// Check if there is a script tag to load jQuery in the HTML
 	if hasScriptTagToLoadJQueryInHTML(response) {
 		return true
@@ -35,12 +43,24 @@ func (s *JquerySignature) Check(response *crawler.Response) bool {
 }
 
 func (s *JquerySignature) Version(response *crawler.Response) string {
-	foundVer := tryToGetJQueryVersionFromScriptTag(response)
+	if strings.Contains(response.Url, "jquery") {
+		matches := regexp.MustCompile(`jquery[@/-](\d+\.\d+\.\d+)`).FindStringSubmatch(response.Url)
+		if len(matches) > 1 {
+			return matches[1]
+		}
+	}
+
+	matches := regexp.MustCompile(`jQuery v(\d+\.\d+\.\d+)`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+
+	foundVer := getJQueryVersionFromScriptTag(response)
 	if foundVer != "" {
 		return foundVer
 	}
 
-	foundVer = tryToGetJQueryVersionFromMinified(response)
+	foundVer = getJQueryVersionFromMinified(response)
 	if foundVer != "" {
 		return foundVer
 	}
@@ -57,7 +77,7 @@ func (s *JquerySignature) Tags() []string {
 }
 
 /**
- * Check if there is a script tag to load jQuery in the HTML
+ * HTML script tag to load jQuery
  */
 func hasScriptTagToLoadJQueryInHTML(response *crawler.Response) bool {
 	if response.ResourceType != crawler.ResourceTypeDocument {
@@ -74,7 +94,7 @@ func hasScriptTagToLoadJQueryInHTML(response *crawler.Response) bool {
 	return false
 }
 
-func tryToGetJQueryVersionFromScriptTag(response *crawler.Response) string {
+func getJQueryVersionFromScriptTag(response *crawler.Response) string {
 	nodes := getHTMLTags(response.Body, "script")
 	for _, node := range nodes {
 		attr, ok := getAttribute(node, "src")
@@ -90,6 +110,9 @@ func tryToGetJQueryVersionFromScriptTag(response *crawler.Response) string {
 	return ""
 }
 
+/**
+ * minified jQuery script
+ */
 func isMinifiedJQuery(response *crawler.Response) bool {
 	if response.ResourceType != crawler.ResourceTypeScript {
 		return false
@@ -97,7 +120,7 @@ func isMinifiedJQuery(response *crawler.Response) bool {
 	return strings.Contains(response.Body, "jQuery requires a window with a document")
 }
 
-func tryToGetJQueryVersionFromMinified(response *crawler.Response) string {
+func getJQueryVersionFromMinified(response *crawler.Response) string {
 	matches := regexp.MustCompile(`var C="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
 	if len(matches) < 2 {
 		return ""
