@@ -26,17 +26,9 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 
 	slog.Info("searching in URLs ...")
 	for _, response := range responses {
-		hit := false
 		lowerCaseUrl := strings.ToLower(response.Url)
 		if strings.Contains(lowerCaseUrl, lowerCaseWord) {
-			if !hit {
-				fmt.Println(response.Url)
-				hit = true
-			}
-			url := response.Url
-			if len(strings.TrimSpace(url)) > maxURLLengthToShow {
-				url = url[:maxURLLengthToShow] + "..."
-			}
+			url := omitURL(response.Url)
 			fmt.Println("\t", url)
 		}
 	}
@@ -53,10 +45,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 					fmt.Println(response.Url)
 					hit = true
 				}
-				headerValue := strings.TrimSpace(header.Value)
-				if len(headerValue) > maxHeaderValueLengthToShow {
-					headerValue = headerValue[:maxHeaderValueLengthToShow] + "..."
-				}
+				headerValue := omitHeaderValue(header.Value)
 				fmt.Printf("\t%s: %s\n", strings.TrimSpace(header.Name), headerValue)
 			}
 		}
@@ -74,10 +63,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 					fmt.Println(response.Url)
 					hit = true
 				}
-				cookieValue := strings.TrimSpace(cookie.Value)
-				if len(cookieValue) > maxCookieValueLengthToShow {
-					cookieValue = cookie.Value[:maxCookieValueLengthToShow] + "..."
-				}
+				cookieValue := omitCookieValue(cookie.Value)
 				fmt.Printf("\t%s: %s\n", strings.TrimSpace(cookie.Name), cookieValue)
 			}
 		}
@@ -93,10 +79,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 					fmt.Println(response.Url)
 					hit = true
 				}
-				bodyLine := strings.TrimSpace(line)
-				if len(bodyLine) > maxBodyLengthToShow {
-					bodyLine = line[:maxBodyLengthToShow] + "..."
-				}
+				bodyLine := omitBody(line)
 				fmt.Printf("\t%d: %s\n", i+1, bodyLine)
 			}
 		}
