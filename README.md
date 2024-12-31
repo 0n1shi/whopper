@@ -76,6 +76,14 @@ $ cat result.json | jq .
 
 ## Contributing
 
+### Requirements
+
+- [Go 1.23.x](https://go.dev/)
+- [Task](https://taskfile.dev/)
+- [gotestsum](https://github.com/gotestyourself/gotestsum)
+
+### Example
+
 You can contribute like: https://github.com/0n1shi/whopper/pull/4
 
 ### Searching for a specific word in the responses (skipping the detection)
