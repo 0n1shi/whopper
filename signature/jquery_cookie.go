@@ -21,33 +21,45 @@ func (n *JqueryCookieSignature) Description() string {
 }
 
 func (s *JqueryCookieSignature) Check(response *crawler.Response) bool {
-	if response.ResourceType != crawler.ResourceTypeDocument {
-		return false
-	}
-	nodes := getHTMLTags(response.Body, "script")
-	for _, node := range nodes {
-		if attr, ok := getAttribute(node, "src"); ok {
-			if strings.Contains(attr, "jquery-cookie") {
-				return true
+	if response.ResourceType == crawler.ResourceTypeDocument {
+		nodes := getHTMLTags(response.Body, "script")
+		for _, node := range nodes {
+			if attr, ok := getAttribute(node, "src"); ok {
+				if strings.Contains(attr, "jquery-cookie") {
+					return true
+				}
 			}
+		}
+	}
+	if response.ResourceType == crawler.ResourceTypeScript {
+		if strings.Contains(response.Body, "jQuery Cookie Plugin") {
+			return true
 		}
 	}
 	return false
 }
 
 func (s *JqueryCookieSignature) Version(response *crawler.Response) string {
-	re := regexp.MustCompile(`jquery-cookie[@/]\d+\.\d+\.\d+`)
-	nodes := getHTMLTags(response.Body, "script")
-	for _, node := range nodes {
-		attr, ok := getAttribute(node, "src")
-		if !ok {
-			continue
+	if response.ResourceType == crawler.ResourceTypeDocument {
+		re := regexp.MustCompile(`jquery-cookie[@/]\d+\.\d+\.\d+`)
+		nodes := getHTMLTags(response.Body, "script")
+		for _, node := range nodes {
+			attr, ok := getAttribute(node, "src")
+			if !ok {
+				continue
+			}
+			matches := re.FindStringSubmatch(attr)
+			if len(matches) < 2 {
+				continue
+			}
+			return matches[1]
 		}
-		matches := re.FindStringSubmatch(attr)
-		if len(matches) < 2 {
-			continue
+	}
+	if response.ResourceType == crawler.ResourceTypeScript {
+		matches := regexp.MustCompile(`jQuery Cookie Plugin v(\d+\.\d+)`).FindStringSubmatch(response.Body)
+		if len(matches) > 1 {
+			return matches[1]
 		}
-		return matches[1]
 	}
 	return ""
 }
