@@ -19,4 +19,5 @@ var Signatures = []analyzer.Signature{
 	&OpenSSLSignature{},
 	&StyledComponentsSignature{},
 	&AmazonS3Signature{},
+	&AmazonCloudFrontSignature{},
 }
