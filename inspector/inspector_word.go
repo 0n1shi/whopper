@@ -30,7 +30,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 		lowerCaseUrl := strings.ToLower(response.Url)
 		if strings.Contains(lowerCaseUrl, lowerCaseWord) {
 			if !hit {
-				fmt.Println("URL:", response.Url)
+				fmt.Println(response.Url)
 				hit = true
 			}
 			url := response.Url
@@ -50,7 +50,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 			if strings.Contains(lowerCaseName, lowerCaseWord) ||
 				strings.Contains(lowerCaseValue, lowerCaseWord) {
 				if !hit {
-					fmt.Println("URL:", response.Url)
+					fmt.Println(response.Url)
 					hit = true
 				}
 				headerValue := strings.TrimSpace(header.Value)
@@ -71,7 +71,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 			if strings.Contains(lowerCaseName, lowerCaseWord) ||
 				strings.Contains(lowerCaseValue, lowerCaseWord) {
 				if !hit {
-					fmt.Println("URL:", response.Url)
+					fmt.Println(response.Url)
 					hit = true
 				}
 				cookieValue := strings.TrimSpace(cookie.Value)
@@ -90,14 +90,14 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 			lowerCaseLine := strings.ToLower(line)
 			if strings.Contains(lowerCaseLine, lowerCaseWord) {
 				if !hit {
-					fmt.Println("URL:", response.Url)
+					fmt.Println(response.Url)
 					hit = true
 				}
 				bodyLine := strings.TrimSpace(line)
 				if len(bodyLine) > maxBodyLengthToShow {
 					bodyLine = line[:maxBodyLengthToShow] + "..."
 				}
-				fmt.Printf("\t%s:%d: %s\n", response.Url, i+1, bodyLine)
+				fmt.Printf("\t%d: %s\n", i+1, bodyLine)
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package signature
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
@@ -19,22 +20,22 @@ func (s *SwiperSignature) Description() string {
 	return "Most modern mobile touch slider and framework with hardware accelerated transitions."
 }
 
+// e.g. https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js?ver=0.1.12:2: * Swiper 8.4.7
 func (s *SwiperSignature) Check(response *crawler.Response) bool {
-	for _, line := range strings.Split(response.Body, "\n") {
-		if strings.Contains(line, "* Swiper") {
-			return true
-		}
+	if strings.Contains(response.Url, "npm/swiper@") {
+		return true
 	}
-	return false
+	return strings.Contains(response.Body, "* Swiper ")
 }
 
 func (s *SwiperSignature) Version(response *crawler.Response) string {
-	for _, line := range strings.Split(response.Body, "\n") {
-		if strings.Contains(line, "* Swiper") {
-			version := strings.Split(line, "Swiper")[1]
-			version = strings.TrimSpace(version)
-			return version
-		}
+	matches := regexp.MustCompile(`npm\/swiper@(\d+\.\d+\.\d+)\/`).FindStringSubmatch(response.Url)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	matches = regexp.MustCompile(`\* Swiper (\d+\.\d+\.\d+)`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
 	}
 	return ""
 }

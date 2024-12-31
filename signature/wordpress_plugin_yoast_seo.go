@@ -1,6 +1,7 @@
 package signature
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
@@ -8,7 +9,7 @@ import (
 )
 
 const (
-	wordpressPluginYoastSEOBanner = "optimized with the Yoast SEO plugin"
+	wordpressPluginYoastSEOBanner = "<!-- This site is optimized with the Yoast SEO plugin"
 )
 
 type WordpressPluginYoastSEOSignature struct{}
@@ -24,25 +25,16 @@ func (n *WordpressPluginYoastSEOSignature) Description() string {
 }
 
 func (s *WordpressPluginYoastSEOSignature) Check(response *crawler.Response) bool {
-	lines := strings.Split(response.Body, "\n")
-	for _, line := range lines {
-		if strings.Contains(line, wordpressPluginYoastSEOBanner) {
-			return true
-		}
+	if response.ResourceType != crawler.ResourceTypeDocument {
+		return false
 	}
-	return false
+	return strings.Contains(response.Body, wordpressPluginYoastSEOBanner)
 }
 
 func (s *WordpressPluginYoastSEOSignature) Version(response *crawler.Response) string {
-	lines := strings.Split(response.Body, "\n")
-	for _, line := range lines {
-		if strings.Contains(line, wordpressPluginYoastSEOBanner) {
-			version := strings.Split(line, wordpressPluginYoastSEOBanner)[1]
-			version = strings.Split(version, "-")[0]
-			version = strings.TrimSpace(version)
-			version = removeVersionPrefix(version)
-			return version
-		}
+	matches := regexp.MustCompile(`<!-- This site is optimized with the Yoast SEO plugin v(\d+\.\d+) -`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
 	}
 	return ""
 }
