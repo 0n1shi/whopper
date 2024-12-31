@@ -11,4 +11,5 @@ const (
 	TagWordPressPlugin     = "#wordpress-plugin"
 	TagLoadBalancer        = "#load-balancer"
 	TagAWS                 = "#aws"
+	TagCDN                 = "#cdn"
 )
