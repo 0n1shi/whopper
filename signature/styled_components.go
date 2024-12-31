@@ -21,22 +21,16 @@ func (n *StyledComponentsSignature) Description() string {
 }
 
 func (s *StyledComponentsSignature) Check(response *crawler.Response) bool {
-	if response.ResourceType != crawler.ResourceTypeScript {
-		return false
+	if response.ResourceType == crawler.ResourceTypeScript && strings.Contains(response.Body, "data-styled-version") {
+		return true
 	}
-	if strings.Contains(response.Body, "data-styled-version") {
+	if response.ResourceType == crawler.ResourceTypeDocument && strings.Contains(response.Body, "data-styled=\"true\"") {
 		return true
 	}
 	return false
 }
 
 func (s *StyledComponentsSignature) Version(response *crawler.Response) string {
-	if response.ResourceType != crawler.ResourceTypeScript {
-		return ""
-	}
-	if !strings.Contains(response.Body, "data-styled-version") {
-		return ""
-	}
 	matches := regexp.MustCompile(`data-styled-version="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
 	if len(matches) > 1 {
 		return matches[1]
@@ -50,6 +44,10 @@ func (s *StyledComponentsSignature) Version(response *crawler.Response) string {
 		return matches[1]
 	}
 	matches = regexp.MustCompile(`setAttribute\("data-styled-version","(\d+\.\d+\.\d+)"\)`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	matches = regexp.MustCompile(`<style data-styled="true" data-styled-version="(\d+\.\d+\.\d+)">`).FindStringSubmatch(response.Body)
 	if len(matches) > 1 {
 		return matches[1]
 	}
