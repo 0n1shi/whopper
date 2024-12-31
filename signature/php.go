@@ -1,6 +1,7 @@
 package signature
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
@@ -21,7 +22,7 @@ func (s *PhpSignature) Description() string {
 
 func (s *PhpSignature) Check(response *crawler.Response) bool {
 	for _, header := range response.Headers {
-		if header.Name == "server" && strings.Contains(header.Value, "php") {
+		if (header.Name == "server" || header.Name == "x-powered-by") && strings.Contains(header.Value, "PHP") {
 			return true
 		}
 	}
@@ -30,13 +31,11 @@ func (s *PhpSignature) Check(response *crawler.Response) bool {
 
 func (s *PhpSignature) Version(response *crawler.Response) string {
 	for _, header := range response.Headers {
-		if header.Name == "server" && strings.Contains(header.Value, "php/") {
-			version := strings.TrimPrefix(header.Value, "php/")
-			if strings.Contains(version, "(") {
-				version = strings.Split(version, "(")[0]
-				version = strings.TrimSpace(version)
+		if (header.Name == "server" || header.Name == "x-powered-by") && strings.Contains(header.Value, "PHP/") {
+			matches := regexp.MustCompile(`PHP/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+			if len(matches) > 1 {
+				return matches[1]
 			}
-			return version
 		}
 	}
 	return ""

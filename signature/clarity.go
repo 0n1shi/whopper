@@ -1,6 +1,7 @@
 package signature
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/0n1shi/whopper/analyzer"
@@ -31,6 +32,9 @@ func (s *ClaritySignature) Check(response *crawler.Response) bool {
 	if strings.HasSuffix(response.Url, microsoftClarityfileName) {
 		return true
 	}
+	if strings.Contains(response.Body, microsoftClarityBanner) {
+		return true
+	}
 	return false
 }
 
@@ -41,19 +45,21 @@ func (s *ClaritySignature) Version(response *crawler.Response) string {
 	if !strings.HasSuffix(response.Url, microsoftClarityfileName) {
 		return ""
 	}
-	lines := strings.Split(response.Body, "\n")
-	if len(lines) < 1 {
+	// https://www.clarity.ms/s/0.7.59/clarity.js
+	matches := regexp.MustCompile(`www\.clarity\.ms\/s\/(\d+\.\d+\.\d+)\/clarity\.js`).FindStringSubmatch(response.Url)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+
+	if !strings.Contains(response.Body, microsoftClarityBanner) {
 		return ""
 	}
-	line := lines[0]
-	if !strings.HasPrefix(line, microsoftClarityBanner) {
+	// /* clarity-js v0.7.59: https://...
+	matches = regexp.MustCompile(`\/\* clarity-js v([0-9.]+):`).FindStringSubmatch(response.Body)
+	if len(matches) < 2 {
 		return ""
 	}
-	version := strings.TrimPrefix(line, microsoftClarityBanner)
-	version = strings.Split(version, ":")[0]
-	version = strings.TrimSpace(version)
-	version = removeVersionPrefix(version)
-	return version
+	return matches[1]
 }
 
 func (s *ClaritySignature) CPE(version string) string {
