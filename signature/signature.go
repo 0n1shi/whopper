@@ -20,4 +20,5 @@ var Signatures = []analyzer.Signature{
 	&StyledComponentsSignature{},
 	&AmazonS3Signature{},
 	&AmazonCloudFrontSignature{},
+	&UnpkgSignature{},
 }
