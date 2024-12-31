@@ -3,7 +3,7 @@ package inspector
 import "strings"
 
 const (
-	maxURLLengthToShow         = 57
+	maxURLLengthToShow         = 97
 	maxBodyLengthToShow        = 97
 	maxCookieValueLengthToShow = 57
 	maxHeaderValueLengthToShow = 57

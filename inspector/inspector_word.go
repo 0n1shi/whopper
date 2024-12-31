@@ -29,7 +29,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 		lowerCaseUrl := strings.ToLower(response.Url)
 		if strings.Contains(lowerCaseUrl, lowerCaseWord) {
 			url := omitURL(response.Url)
-			fmt.Println("\t", url)
+			fmt.Println(url)
 		}
 	}
 
