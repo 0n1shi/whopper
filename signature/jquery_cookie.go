@@ -47,7 +47,7 @@ func (s *JqueryCookieSignature) Version(response *crawler.Response) string {
 			continue
 		}
 		matches := re.FindStringSubmatch(attr)
-		if len(matches) < 1 {
+		if len(matches) < 2 {
 			continue
 		}
 		return matches[1]
