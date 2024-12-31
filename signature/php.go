@@ -31,11 +31,9 @@ func (s *PhpSignature) Check(response *crawler.Response) bool {
 
 func (s *PhpSignature) Version(response *crawler.Response) string {
 	for _, header := range response.Headers {
-		if (header.Name == "server" || header.Name == "x-powered-by") && strings.Contains(header.Value, "PHP/") {
-			matches := regexp.MustCompile(`PHP/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
-			if len(matches) > 1 {
-				return matches[1]
-			}
+		matches := regexp.MustCompile(`PHP/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+		if len(matches) > 1 {
+			return matches[1]
 		}
 	}
 	return ""

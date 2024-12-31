@@ -31,12 +31,6 @@ func (s *CorejsSignature) Check(response *crawler.Response) bool {
 }
 
 func (s *CorejsSignature) Version(response *crawler.Response) string {
-	if response.ResourceType != crawler.ResourceTypeScript {
-		return ""
-	}
-	if !strings.Contains(response.Body, "github.com/zloirock/core-js") {
-		return ""
-	}
 	matches := regexp.MustCompile(`https://github.com/zloirock/core-js/blob/v(\d+\.\d+\.\d+)/LICENSE`).FindStringSubmatch(response.Body)
 	if len(matches) < 2 {
 		return ""

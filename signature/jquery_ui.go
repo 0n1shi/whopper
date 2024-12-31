@@ -38,9 +38,6 @@ func (s *JqueryUiSignature) Check(response *crawler.Response) bool {
 }
 
 func (s *JqueryUiSignature) Version(response *crawler.Response) string {
-	if response.ResourceType != crawler.ResourceTypeStylesheet {
-		return ""
-	}
 	for _, line := range strings.Split(response.Body, "\n") {
 		if strings.Contains(line, jqueryUiBanner) {
 			re := regexp.MustCompile(fmt.Sprintf(`%s (\d+\.\d+\.\d+)`, jqueryUiBanner))

@@ -31,9 +31,6 @@ func (s *NginxSignature) Check(response *crawler.Response) bool {
 
 func (s *NginxSignature) Version(response *crawler.Response) string {
 	for _, header := range response.Headers {
-		if !(header.Name == "server" && strings.Contains(header.Value, "nginx/")) {
-			continue
-		}
 		matches := regexp.MustCompile(`nginx/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
 		if len(matches) < 2 {
 			continue

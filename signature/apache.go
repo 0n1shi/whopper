@@ -31,9 +31,6 @@ func (s *ApacheSignature) Check(response *crawler.Response) bool {
 
 func (s *ApacheSignature) Version(response *crawler.Response) string {
 	for _, header := range response.Headers {
-		if !(header.Name == "server" && strings.Contains(header.Value, "Apache/")) {
-			continue
-		}
 		matches := regexp.MustCompile(`Apache/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
 		if len(matches) < 2 {
 			continue

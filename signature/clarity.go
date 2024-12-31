@@ -39,21 +39,12 @@ func (s *ClaritySignature) Check(response *crawler.Response) bool {
 }
 
 func (s *ClaritySignature) Version(response *crawler.Response) string {
-	if response.ResourceType != crawler.ResourceTypeScript {
-		return ""
-	}
-	if !strings.HasSuffix(response.Url, microsoftClarityfileName) {
-		return ""
-	}
 	// https://www.clarity.ms/s/0.7.59/clarity.js
 	matches := regexp.MustCompile(`www\.clarity\.ms\/s\/(\d+\.\d+\.\d+)\/clarity\.js`).FindStringSubmatch(response.Url)
 	if len(matches) > 1 {
 		return matches[1]
 	}
 
-	if !strings.Contains(response.Body, microsoftClarityBanner) {
-		return ""
-	}
 	// /* clarity-js v0.7.59: https://...
 	matches = regexp.MustCompile(`\/\* clarity-js v([0-9.]+):`).FindStringSubmatch(response.Body)
 	if len(matches) < 2 {

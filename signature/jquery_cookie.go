@@ -36,9 +36,6 @@ func (s *JqueryCookieSignature) Check(response *crawler.Response) bool {
 }
 
 func (s *JqueryCookieSignature) Version(response *crawler.Response) string {
-	if response.ResourceType != crawler.ResourceTypeDocument {
-		return ""
-	}
 	re := regexp.MustCompile(`jquery-cookie[@/]\d+\.\d+\.\d+`)
 	nodes := getHTMLTags(response.Body, "script")
 	for _, node := range nodes {

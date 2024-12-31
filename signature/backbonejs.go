@@ -31,12 +31,6 @@ func (s *BackboneJsSignature) Check(response *crawler.Response) bool {
 }
 
 func (s *BackboneJsSignature) Version(response *crawler.Response) string {
-	if response.ResourceType != crawler.ResourceTypeScript {
-		return ""
-	}
-	if !strings.Contains(response.Body, "Backbone.history has already been started") {
-		return ""
-	}
 	matches := regexp.MustCompile(`t.VERSION="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
 	if len(matches) < 2 {
 		return ""

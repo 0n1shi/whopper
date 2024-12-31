@@ -35,10 +35,6 @@ func (s *JquerySignature) Check(response *crawler.Response) bool {
 }
 
 func (s *JquerySignature) Version(response *crawler.Response) string {
-	// Check if there is a script tag to load jQuery in the HTML
-	if !hasScriptTagToLoadJQueryInHTML(response) {
-		return ""
-	}
 	foundVer := tryToGetJQueryVersionFromScriptTag(response)
 	if foundVer != "" {
 		return foundVer
