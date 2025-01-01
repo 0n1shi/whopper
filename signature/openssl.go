@@ -31,7 +31,7 @@ func (s *OpenSSLSignature) Check(response *crawler.Response) bool {
 
 func (s *OpenSSLSignature) Version(response *crawler.Response) string {
 	for _, header := range response.Headers {
-		matches := regexp.MustCompile(`OpenSSL/(\d+\.\d+\.\d+)`).FindStringSubmatch(header.Value)
+		matches := regexp.MustCompile(`OpenSSL/(\d+\.\d+\.\d+[a-zA-Z]?)`).FindStringSubmatch(header.Value)
 		if len(matches) < 2 {
 			continue
 		}

@@ -28,7 +28,7 @@ func TestOpenSSLSignatureCheck(t *testing.T) {
 			},
 		},
 		expected: true,
-		version:  "1.1.1",
+		version:  "1.1.1k",
 	}, {
 		name: "Server header 2",
 		response: &crawler.Response{
@@ -40,7 +40,7 @@ func TestOpenSSLSignatureCheck(t *testing.T) {
 			},
 		},
 		expected: true,
-		version:  "1.0.2",
+		version:  "1.0.2n",
 	}, {
 		name: "Server header 3",
 		response: &crawler.Response{
@@ -52,7 +52,7 @@ func TestOpenSSLSignatureCheck(t *testing.T) {
 			},
 		},
 		expected: true,
-		version:  "1.0.2",
+		version:  "1.0.2k",
 	}}
 
 	for _, tt := range tests {
