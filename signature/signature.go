@@ -21,4 +21,5 @@ var Signatures = []analyzer.Signature{
 	&AmazonS3Signature{},
 	&AmazonCloudFrontSignature{},
 	&UnpkgSignature{},
+	&WordpressPluginPageNaviSignature{},
 }
