@@ -23,4 +23,5 @@ var Signatures = []analyzer.Signature{
 	&UnpkgSignature{},
 	&WordpressPluginPageNaviSignature{},
 	&PerlSignature{},
+	&ModPerlSignature{},
 }
