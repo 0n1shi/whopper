@@ -22,4 +22,5 @@ var Signatures = []analyzer.Signature{
 	&AmazonCloudFrontSignature{},
 	&UnpkgSignature{},
 	&WordpressPluginPageNaviSignature{},
+	&PerlSignature{},
 }
