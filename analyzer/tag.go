@@ -12,4 +12,5 @@ const (
 	TagLoadBalancer        = "#load-balancer"
 	TagAWS                 = "#aws"
 	TagCDN                 = "#cdn"
+	TagCSSFramework        = "#css-framework"
 )
