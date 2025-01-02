@@ -31,7 +31,7 @@ func (a *Analyzer) Analyze(responses []*crawler.Response) []*Result {
 	results := []*Result{}
 	for _, item := range a.items {
 		for _, response := range responses {
-			if item.isDetected || item.signature.Check(response) {
+			if item.signature.Check(response) {
 				item.isDetected = true
 
 				version := item.signature.Version(response)
