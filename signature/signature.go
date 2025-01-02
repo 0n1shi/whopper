@@ -19,6 +19,7 @@ var Signatures = []analyzer.Signature{
 	&JqueryUiSignature{},
 	&LodashSignature{},
 	&ModPerlSignature{},
+	&MomentJsSignature{},
 	&NginxSignature{},
 	&OpenSSLSignature{},
 	&PerlSignature{},
