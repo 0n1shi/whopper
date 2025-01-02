@@ -27,4 +27,5 @@ var Signatures = []analyzer.Signature{
 	&BootstrapSignature{},
 	&AngularJSSignature{},
 	&LodashSignature{},
+	&ChartJsSignature{},
 }
