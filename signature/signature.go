@@ -17,6 +17,7 @@ var Signatures = []analyzer.Signature{
 	&JquerySignature{},
 	&JqueryCookieSignature{},
 	&JqueryUiSignature{},
+	&KongaSignature{},
 	&LodashSignature{},
 	&ModPerlSignature{},
 	&MomentJsSignature{},
