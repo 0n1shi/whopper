@@ -5,6 +5,7 @@ const (
 	TagWebServerExtension  = "#web-server-extension"
 	TagReverseProxy        = "#reverse-proxy"
 	TagProgrammingLanguage = "#programming-language"
+	TagJavaScript          = "#javascript"
 	TagFramework           = "#framework"
 	TagLibrary             = "#library"
 	TagAnalytics           = "#analytics"

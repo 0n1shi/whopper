@@ -25,4 +25,5 @@ var Signatures = []analyzer.Signature{
 	&PerlSignature{},
 	&ModPerlSignature{},
 	&BootstrapSignature{},
+	&AngularJSSignature{},
 }
