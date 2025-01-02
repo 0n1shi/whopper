@@ -37,7 +37,7 @@ func TestAngularJSSignatureCheck(t *testing.T) {
 	}}
 
 	for _, tt := range tests {
-		s := &AngularJSSignature{}
+		s := &AngularJsSignature{}
 		t.Run(tt.name, func(t *testing.T) {
 			if got := s.Check(tt.response); got != tt.expected {
 				t.Errorf("Check() = %v, want %v", got, tt.expected)

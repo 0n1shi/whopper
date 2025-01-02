@@ -8,19 +8,19 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-type AngularJSSignature struct{}
+type AngularJsSignature struct{}
 
-var _ analyzer.Signature = (*AngularJSSignature)(nil)
+var _ analyzer.Signature = (*AngularJsSignature)(nil)
 
-func (s *AngularJSSignature) Name() string {
+func (s *AngularJsSignature) Name() string {
 	return "AngularJS"
 }
 
-func (s *AngularJSSignature) Description() string {
+func (s *AngularJsSignature) Description() string {
 	return "A discontinued free and open-source JavaScript-based web framework for developing single-page applications."
 }
 
-func (s *AngularJSSignature) Check(response *crawler.Response) bool {
+func (s *AngularJsSignature) Check(response *crawler.Response) bool {
 	if response.ResourceType != crawler.ResourceTypeScript {
 		return false
 	}
@@ -33,7 +33,7 @@ func (s *AngularJSSignature) Check(response *crawler.Response) bool {
 	return false
 }
 
-func (s *AngularJSSignature) Version(response *crawler.Response) string {
+func (s *AngularJsSignature) Version(response *crawler.Response) string {
 	matches := regexp.MustCompile(`\* @license AngularJS v(\d+\.\d+\.\d+)`).FindStringSubmatch(response.Body)
 	if len(matches) > 1 {
 		return matches[1]
@@ -41,10 +41,10 @@ func (s *AngularJSSignature) Version(response *crawler.Response) string {
 	return ""
 }
 
-func (s *AngularJSSignature) CPE(version string) string {
+func (s *AngularJsSignature) CPE(version string) string {
 	return "cpe:/a:angularjs:angular.js:" + version // e.g. cpe:/a:apache:http_server:2.4.57
 }
 
-func (s *AngularJSSignature) Tags() []string {
+func (s *AngularJsSignature) Tags() []string {
 	return []string{analyzer.TagJavaScript, analyzer.TagFramework}
 }
