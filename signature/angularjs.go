@@ -30,11 +30,18 @@ func (s *AngularJsSignature) Check(response *crawler.Response) bool {
 	if strings.Contains(response.Body, "* @license AngularJS") {
 		return true
 	}
+	if strings.Contains(response.Body, "angular") {
+		return true
+	}
 	return false
 }
 
 func (s *AngularJsSignature) Version(response *crawler.Response) string {
 	matches := regexp.MustCompile(`\* @license AngularJS v(\d+\.\d+\.\d+)`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	matches = regexp.MustCompile(`http:\/\/errors.angularjs.org\/(\d+\.\d+\.\d+(-rc\.\d+)?)`).FindStringSubmatch(response.Body)
 	if len(matches) > 1 {
 		return matches[1]
 	}

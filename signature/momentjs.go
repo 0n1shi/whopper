@@ -27,7 +27,7 @@ func (s *MomentJsSignature) Check(response *crawler.Response) bool {
 	if strings.Contains(response.Url, "moment") {
 		return true
 	}
-	return strings.Contains(response.Body, "moment.js")
+	return strings.Contains(response.Body, "moment")
 }
 
 func (s *MomentJsSignature) Version(response *crawler.Response) string {
@@ -36,6 +36,10 @@ func (s *MomentJsSignature) Version(response *crawler.Response) string {
 		return matches[1]
 	}
 	matches = regexp.MustCompile(`VERSION = '(\d+\.\d+\.\d+)'`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	matches = regexp.MustCompile(`b.version="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
 	if len(matches) > 1 {
 		return matches[1]
 	}

@@ -27,6 +27,9 @@ func (s *JquerySignature) Check(response *crawler.Response) bool {
 	if strings.Contains(response.Url, "jquery") {
 		return true
 	}
+	if strings.Contains(response.Body, "jquery") {
+		return true
+	}
 	return strings.Contains(response.Body, "jQuery")
 }
 
@@ -44,6 +47,10 @@ func (s *JquerySignature) Version(response *crawler.Response) string {
 		return matches[1]
 	}
 	matches = regexp.MustCompile(`var C="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
+	if len(matches) > 1 {
+		return matches[1]
+	}
+	matches = regexp.MustCompile(`d="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
 	if len(matches) > 1 {
 		return matches[1]
 	}

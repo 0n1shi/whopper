@@ -34,6 +34,14 @@ func TestAngularJSSignatureCheck(t *testing.T) {
 		},
 		expected: true,
 		version:  "1.5.11",
+	}, {
+		name: "Body 2",
+		response: &crawler.Response{
+			ResourceType: crawler.ResourceTypeScript,
+			Body:         `http://errors.angularjs.org/1.3.0-rc.4/"+(e?e+"/":"")+i,r=2;`,
+		},
+		expected: true,
+		version:  "1.3.0-rc.4",
 	}}
 
 	for _, tt := range tests {
