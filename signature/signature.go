@@ -27,6 +27,7 @@ var Signatures = []analyzer.Signature{
 	&PhpSignature{},
 	&StyledComponentsSignature{},
 	&SwiperSignature{},
+	&UnderscoreSignature{},
 	&UnpkgSignature{},
 	&WebVitalsSignature{},
 	&WordpressPluginPageNaviSignature{},
