@@ -10,7 +10,7 @@ import (
 
 type KongaSignature struct{}
 
-var _ analyzer.Signature = (*KongaSignature)(nil)
+var _ analyzer.SignatureIf = (*KongaSignature)(nil)
 
 func (n *KongaSignature) Name() string {
 	return "Konga"

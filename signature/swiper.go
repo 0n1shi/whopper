@@ -10,7 +10,7 @@ import (
 
 type SwiperSignature struct{}
 
-var _ analyzer.Signature = (*SwiperSignature)(nil)
+var _ analyzer.SignatureIf = (*SwiperSignature)(nil)
 
 func (s *SwiperSignature) Name() string {
 	return "Swiper"

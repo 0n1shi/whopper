@@ -9,7 +9,7 @@ import (
 
 type AwsAlbSignature struct{}
 
-var _ analyzer.Signature = (*AwsAlbSignature)(nil)
+var _ analyzer.SignatureIf = (*AwsAlbSignature)(nil)
 
 func (n *AwsAlbSignature) Name() string {
 	return "AWS ALB (Application Load Balancer)"

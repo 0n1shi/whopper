@@ -10,7 +10,7 @@ import (
 
 type PhpSignature struct{}
 
-var _ analyzer.Signature = (*PhpSignature)(nil)
+var _ analyzer.SignatureIf = (*PhpSignature)(nil)
 
 func (s *PhpSignature) Name() string {
 	return "PHP"

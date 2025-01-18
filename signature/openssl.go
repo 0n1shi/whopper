@@ -10,7 +10,7 @@ import (
 
 type OpenSSLSignature struct{}
 
-var _ analyzer.Signature = (*OpenSSLSignature)(nil)
+var _ analyzer.SignatureIf = (*OpenSSLSignature)(nil)
 
 func (s *OpenSSLSignature) Name() string {
 	return "OpenSSL"

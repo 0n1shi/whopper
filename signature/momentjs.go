@@ -10,7 +10,7 @@ import (
 
 type MomentJsSignature struct{}
 
-var _ analyzer.Signature = (*MomentJsSignature)(nil)
+var _ analyzer.SignatureIf = (*MomentJsSignature)(nil)
 
 func (n *MomentJsSignature) Name() string {
 	return "Moment.js"

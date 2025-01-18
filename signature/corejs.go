@@ -10,7 +10,7 @@ import (
 
 type CorejsSignature struct{}
 
-var _ analyzer.Signature = (*CorejsSignature)(nil)
+var _ analyzer.SignatureIf = (*CorejsSignature)(nil)
 
 func (n *CorejsSignature) Name() string {
 	return "core-js"

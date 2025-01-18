@@ -10,7 +10,7 @@ import (
 
 type AngularJsSignature struct{}
 
-var _ analyzer.Signature = (*AngularJsSignature)(nil)
+var _ analyzer.SignatureIf = (*AngularJsSignature)(nil)
 
 func (s *AngularJsSignature) Name() string {
 	return "AngularJS"

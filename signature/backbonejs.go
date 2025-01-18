@@ -10,7 +10,7 @@ import (
 
 type BackboneJsSignature struct{}
 
-var _ analyzer.Signature = (*BackboneJsSignature)(nil)
+var _ analyzer.SignatureIf = (*BackboneJsSignature)(nil)
 
 func (n *BackboneJsSignature) Name() string {
 	return "Backbone.js"

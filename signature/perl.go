@@ -10,7 +10,7 @@ import (
 
 type PerlSignature struct{}
 
-var _ analyzer.Signature = (*PerlSignature)(nil)
+var _ analyzer.SignatureIf = (*PerlSignature)(nil)
 
 func (s *PerlSignature) Name() string {
 	return "Perl"

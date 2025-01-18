@@ -10,7 +10,7 @@ import (
 
 type ChartJsSignature struct{}
 
-var _ analyzer.Signature = (*ChartJsSignature)(nil)
+var _ analyzer.SignatureIf = (*ChartJsSignature)(nil)
 
 func (n *ChartJsSignature) Name() string {
 	return "Chart.js"

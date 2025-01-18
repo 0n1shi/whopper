@@ -10,7 +10,7 @@ import (
 
 type JqueryBxSliderSignature struct{}
 
-var _ analyzer.Signature = (*JqueryBxSliderSignature)(nil)
+var _ analyzer.SignatureIf = (*JqueryBxSliderSignature)(nil)
 
 func (n *JqueryBxSliderSignature) Name() string {
 	return "jQuery bxSlider"

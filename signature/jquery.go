@@ -10,7 +10,7 @@ import (
 
 type JquerySignature struct{}
 
-var _ analyzer.Signature = (*JquerySignature)(nil)
+var _ analyzer.SignatureIf = (*JquerySignature)(nil)
 
 func (n *JquerySignature) Name() string {
 	return "jQuery"

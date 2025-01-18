@@ -2,6 +2,7 @@ package whopper
 
 import (
 	"log/slog"
+	"net/url"
 
 	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
@@ -15,21 +16,23 @@ type Whopper struct {
 	printer    printer.Printer
 	crawler    crawler.Crawler
 	inspectors []inspector.Inspector
+	targetUrl  string
 }
 
-func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, is []inspector.Inspector) *Whopper {
+func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, is []inspector.Inspector, targetUrl string) *Whopper {
 	return &Whopper{
 		debugMode:  debugMode,
 		printer:    p,
 		crawler:    c,
 		inspectors: is,
+		targetUrl:  targetUrl,
 	}
 }
 
-func (w *Whopper) Run(url string) error {
-	slog.Info("starting ...", "url", url)
+func (w *Whopper) Run() error {
+	slog.Info("starting ...", "url", w.targetUrl)
 
-	responses, err := w.crawler.Crawl(url)
+	responses, err := w.crawler.Crawl(w.targetUrl)
 	if err != nil {
 		return err
 	}
@@ -50,8 +53,9 @@ func (w *Whopper) Run(url string) error {
 		}
 	}
 
-	analyzer := analyzer.NewAnalyzer(signature.Signatures)
-	results := analyzer.Analyze(responses)
+	targetUrl, _ := url.Parse(w.targetUrl)
+	targetHost := targetUrl.Hostname()
+	results := analyzer.AnalyzeAll(responses, signature.Signatures, targetHost)
 
 	w.printer.Print(results)
 

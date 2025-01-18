@@ -15,7 +15,7 @@ const (
 
 type ClaritySignature struct{}
 
-var _ analyzer.Signature = (*ClaritySignature)(nil)
+var _ analyzer.SignatureIf = (*ClaritySignature)(nil)
 
 func (n *ClaritySignature) Name() string {
 	return "Microsoft Clarity"

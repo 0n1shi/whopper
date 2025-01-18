@@ -9,7 +9,7 @@ import (
 
 type UnpkgSignature struct{}
 
-var _ analyzer.Signature = (*UnpkgSignature)(nil)
+var _ analyzer.SignatureIf = (*UnpkgSignature)(nil)
 
 func (n *UnpkgSignature) Name() string {
 	return "UNPKG"

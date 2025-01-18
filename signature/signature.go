@@ -3,11 +3,10 @@ package signature
 import "github.com/0n1shi/whopper/analyzer"
 
 // 2. Add the signatures here (sorted alphabetically)
-var Signatures = []analyzer.Signature{
+var SignatureIfs = []analyzer.SignatureIf{
 	&AmazonCloudFrontSignature{},
 	&AmazonS3Signature{},
 	&AngularJsSignature{},
-	&ApacheSignature{},
 	&AwsAlbSignature{},
 	&BackboneJsSignature{},
 	&BootstrapSignature{},
@@ -34,3 +33,5 @@ var Signatures = []analyzer.Signature{
 	&WordpressPluginPageNaviSignature{},
 	&WordpressPluginYoastSEOSignature{},
 }
+
+var Signatures = []*analyzer.Signature{&ApacheSignature}

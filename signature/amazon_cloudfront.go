@@ -9,7 +9,7 @@ import (
 
 type AmazonCloudFrontSignature struct{}
 
-var _ analyzer.Signature = (*AmazonCloudFrontSignature)(nil)
+var _ analyzer.SignatureIf = (*AmazonCloudFrontSignature)(nil)
 
 func (n *AmazonCloudFrontSignature) Name() string {
 	return "Amazon CloudFront"

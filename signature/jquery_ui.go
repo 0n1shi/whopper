@@ -15,7 +15,7 @@ const (
 
 type JqueryUiSignature struct{}
 
-var _ analyzer.Signature = (*JqueryUiSignature)(nil)
+var _ analyzer.SignatureIf = (*JqueryUiSignature)(nil)
 
 func (n *JqueryUiSignature) Name() string {
 	return "jQuery UI CSS Framework"

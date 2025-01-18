@@ -10,7 +10,7 @@ import (
 
 type WordpressPluginPageNaviSignature struct{}
 
-var _ analyzer.Signature = (*WordpressPluginPageNaviSignature)(nil)
+var _ analyzer.SignatureIf = (*WordpressPluginPageNaviSignature)(nil)
 
 func (n *WordpressPluginPageNaviSignature) Name() string {
 	return "WP-PageNavi"

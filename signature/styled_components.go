@@ -10,7 +10,7 @@ import (
 
 type StyledComponentsSignature struct{}
 
-var _ analyzer.Signature = (*StyledComponentsSignature)(nil)
+var _ analyzer.SignatureIf = (*StyledComponentsSignature)(nil)
 
 func (n *StyledComponentsSignature) Name() string {
 	return "styled components"

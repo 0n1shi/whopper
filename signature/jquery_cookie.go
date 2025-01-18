@@ -10,7 +10,7 @@ import (
 
 type JqueryCookieSignature struct{}
 
-var _ analyzer.Signature = (*JqueryCookieSignature)(nil)
+var _ analyzer.SignatureIf = (*JqueryCookieSignature)(nil)
 
 func (n *JqueryCookieSignature) Name() string {
 	return "jQuery Cookie"

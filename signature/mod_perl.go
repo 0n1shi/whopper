@@ -10,7 +10,7 @@ import (
 
 type ModPerlSignature struct{}
 
-var _ analyzer.Signature = (*ModPerlSignature)(nil)
+var _ analyzer.SignatureIf = (*ModPerlSignature)(nil)
 
 func (s *ModPerlSignature) Name() string {
 	return "mod_perl"

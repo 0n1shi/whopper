@@ -10,7 +10,7 @@ import (
 
 type BootstrapSignature struct{}
 
-var _ analyzer.Signature = (*BootstrapSignature)(nil)
+var _ analyzer.SignatureIf = (*BootstrapSignature)(nil)
 
 func (s *BootstrapSignature) Name() string {
 	return "Bootstrap"

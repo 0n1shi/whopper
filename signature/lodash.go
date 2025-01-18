@@ -10,7 +10,7 @@ import (
 
 type LodashSignature struct{}
 
-var _ analyzer.Signature = (*LodashSignature)(nil)
+var _ analyzer.SignatureIf = (*LodashSignature)(nil)
 
 func (n *LodashSignature) Name() string {
 	return "Lodash"

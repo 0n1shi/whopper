@@ -14,7 +14,7 @@ const (
 
 type WordpressPluginYoastSEOSignature struct{}
 
-var _ analyzer.Signature = (*WordpressPluginYoastSEOSignature)(nil)
+var _ analyzer.SignatureIf = (*WordpressPluginYoastSEOSignature)(nil)
 
 func (n *WordpressPluginYoastSEOSignature) Name() string {
 	return "Yoast SEO"

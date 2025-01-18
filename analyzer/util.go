@@ -13,18 +13,23 @@ func unique(list []string) []string {
 	return uniq
 }
 
-func versToCPEs(vers []string, toCPE func(string) string) []string {
-	if len(vers) == 0 {
-		cpe := toCPE("")
-		if cpe == "" {
-			return []string{}
+func verToCPE(ver string, cpeBase string) string {
+	if ver == "" {
+		if cpeBase == "" {
+			return ""
 		}
-		return []string{cpe + "*"}
+		return cpeBase + ":*"
 	}
+	return cpeBase + ":" + ver
+}
 
-	cpes := make([]string, 0, len(vers))
+func versToCPEs(vers []string, cpeBase string) []string {
+	cpes := []string{}
 	for _, ver := range vers {
-		cpes = append(cpes, toCPE(ver))
+		cpes = append(cpes, verToCPE(ver, cpeBase))
+	}
+	if len(cpes) == 0 {
+		cpes = append(cpes, verToCPE("", cpeBase))
 	}
 	return cpes
 }

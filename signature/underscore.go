@@ -10,7 +10,7 @@ import (
 
 type UnderscoreSignature struct{}
 
-var _ analyzer.Signature = (*UnderscoreSignature)(nil)
+var _ analyzer.SignatureIf = (*UnderscoreSignature)(nil)
 
 func (n *UnderscoreSignature) Name() string {
 	return "Underscore.js"

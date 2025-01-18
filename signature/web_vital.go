@@ -10,7 +10,7 @@ import (
 
 type WebVitalsSignature struct{}
 
-var _ analyzer.Signature = (*WebVitalsSignature)(nil)
+var _ analyzer.SignatureIf = (*WebVitalsSignature)(nil)
 
 func (s *WebVitalsSignature) Name() string {
 	return "Web Vitals"

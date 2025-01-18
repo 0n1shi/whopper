@@ -10,7 +10,7 @@ import (
 
 type NginxSignature struct{}
 
-var _ analyzer.Signature = (*NginxSignature)(nil)
+var _ analyzer.SignatureIf = (*NginxSignature)(nil)
 
 func (s *NginxSignature) Name() string {
 	return "Nginx"

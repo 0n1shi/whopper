@@ -7,7 +7,7 @@ import (
 
 type AmazonS3Signature struct{}
 
-var _ analyzer.Signature = (*AmazonS3Signature)(nil)
+var _ analyzer.SignatureIf = (*AmazonS3Signature)(nil)
 
 func (n *AmazonS3Signature) Name() string {
 	return "Amazon S3"
