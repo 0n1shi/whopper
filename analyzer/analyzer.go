@@ -2,65 +2,24 @@ package analyzer
 
 import (
 	"net/url"
-	"regexp"
 
 	"github.com/0n1shi/whopper/crawler"
+	"github.com/0n1shi/whopper/signature"
 )
 
-func Analyze(response *crawler.Response, signature *Signature, targetHost string) (detected bool, version string) {
-	responseUrl, _ := url.Parse(response.Url)
-	responseHost := responseUrl.Hostname()
-	if signature.OnlySameHost && responseHost != targetHost {
+func Analyze(res *crawler.Response, sig *signature.Signature, targetHost string) (detected bool, version string) {
+	resUrl, _ := url.Parse(res.Url)
+	resHost := resUrl.Hostname()
+	if sig.OnlySameHost && resHost != targetHost {
 		return false, ""
 	}
-	for _, re := range signature.BodyRegexps {
-		matches := regexp.MustCompile(re).FindStringSubmatch(response.Body)
-		if len(matches) > 1 {
-			return true, matches[1]
-		}
-		if len(matches) > 0 {
-			detected = true
-		}
+	if signature.Detect(res, sig, targetHost) {
+		return true, signature.ExtractVersion(res, sig)
 	}
-	for _, re := range signature.UrlRegexps {
-		matches := regexp.MustCompile(re).FindStringSubmatch(response.Url)
-		if len(matches) > 1 {
-			return true, matches[1]
-		}
-		if len(matches) > 0 {
-			detected = true
-		}
-	}
-	for _, sig := range signature.HeaderSignatures {
-		for _, header := range response.Headers {
-			if header.Name == sig.Name {
-				matches := regexp.MustCompile(sig.ValueRegexp).FindStringSubmatch(header.Value)
-				if len(matches) > 1 {
-					return true, matches[1]
-				}
-				if len(matches) > 0 {
-					detected = true
-				}
-			}
-		}
-	}
-	for _, sig := range signature.CookieSignatures {
-		for _, cookie := range response.Cookies {
-			if cookie.Name == sig.Name {
-				matches := regexp.MustCompile(sig.ValueRegexp).FindStringSubmatch(cookie.Value)
-				if len(matches) > 1 {
-					return true, matches[1]
-				}
-				if len(matches) > 0 {
-					detected = true
-				}
-			}
-		}
-	}
-	return detected, ""
+	return false, ""
 }
 
-func AnalyzeAll(responses []*crawler.Response, signatures []*Signature, targetHost string) []*Result {
+func AnalyzeAll(responses []*crawler.Response, signatures []*signature.Signature, targetHost string) []*Result {
 	results := []*Result{}
 	for _, signature := range signatures {
 		detected := false

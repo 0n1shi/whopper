@@ -3,7 +3,6 @@ package signature
 import (
 	"testing"
 
-	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -66,7 +65,8 @@ func TestAmazonCloudFrontSignatureCheck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			detected, version := analyzer.Analyze(tt.response, &AmazonCloudFrontSignature, "example.com")
+			detected := Detect(tt.response, &AmazonCloudFrontSignature, "example.com")
+			version := ExtractVersion(tt.response, &AmazonCloudFrontSignature)
 			if detected != tt.detected {
 				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}

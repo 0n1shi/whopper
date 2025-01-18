@@ -3,6 +3,7 @@ package signature
 import (
 	"testing"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -10,12 +11,12 @@ func TestBootstrapSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name:     "No headers",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL with version",
@@ -23,7 +24,7 @@ func TestBootstrapSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeStylesheet,
 			Url:          "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
 		},
-		expected: true,
+		detected: true,
 		version:  "3.3.7",
 	}, {
 		name: "Body with version",
@@ -31,18 +32,18 @@ func TestBootstrapSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeStylesheet,
 			Body:         "* Bootstrap v4.6.0",
 		},
-		expected: true,
+		detected: true,
 		version:  "4.6.0",
 	}}
 
 	for _, tt := range tests {
-		s := &BootstrapSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected, version := analyzer.Analyze(tt.response, &BootstrapSignature, "example.com")
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

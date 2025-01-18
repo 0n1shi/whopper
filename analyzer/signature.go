@@ -13,26 +13,3 @@ type SignatureIf interface {
 	CPE(version string) string
 	Tags() []string
 }
-
-type HeaderSignature struct {
-	Name        string
-	ValueRegexp string
-}
-
-type CookieSignature struct {
-	Name        string
-	ValueRegexp string
-}
-
-type Signature struct {
-	Name        string
-	Description string
-	Cpe         string
-
-	BodyRegexps      []string
-	UrlRegexps       []string
-	HeaderSignatures []HeaderSignature
-	CookieSignatures []CookieSignature
-
-	OnlySameHost bool
-}

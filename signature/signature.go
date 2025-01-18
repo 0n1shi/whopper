@@ -4,8 +4,6 @@ import "github.com/0n1shi/whopper/analyzer"
 
 // 2. Add the signatures here (sorted alphabetically)
 var SignatureIfs = []analyzer.SignatureIf{
-	&BootstrapSignature{},
-	&ChartJsSignature{},
 	&ClaritySignature{},
 	&CorejsSignature{},
 	&JquerySignature{},
@@ -28,12 +26,48 @@ var SignatureIfs = []analyzer.SignatureIf{
 	&WordpressPluginPageNaviSignature{},
 	&WordpressPluginYoastSEOSignature{},
 }
+type Header struct {
+	Name  string
+	Value string
+}
 
-var Signatures = []*analyzer.Signature{
+type Cookie struct {
+	Name  string
+	Value string
+}
+
+type DetectPattern struct {
+	Bodies  []string
+	Urls    []string
+	Headers []Header
+	Cookies []Cookie
+}
+
+type VersionPattern struct {
+	Bodies  []string
+	Urls    []string
+	Headers []Header
+	Cookies []Cookie
+}
+
+type Signature struct {
+	Name        string
+	Description string
+	Cpe         string
+
+	DetectPattern  DetectPattern
+	VersionPattern VersionPattern
+
+	OnlySameHost bool
+}
+
+var Signatures = []*Signature{
 	&AmazonCloudFrontSignature,
 	&AmazonS3Signature,
 	&AngularJsSignature,
 	&ApacheSignature,
 	&AwsAlbSignature,
 	&BackboneJsSignature,
+	&BootstrapSignature,
+	&ChartJsSignature,
 }
