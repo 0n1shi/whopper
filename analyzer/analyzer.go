@@ -44,7 +44,20 @@ func Analyze(response *crawler.Response, signature *Signature, targetHost string
 			}
 		}
 	}
-	return detected , ""
+	for _, sig := range signature.CookieSignatures {
+		for _, cookie := range response.Cookies {
+			if cookie.Name == sig.Name {
+				matches := regexp.MustCompile(sig.ValueRegexp).FindStringSubmatch(cookie.Value)
+				if len(matches) > 1 {
+					return true, matches[1]
+				}
+				if len(matches) > 0 {
+					detected = true
+				}
+			}
+		}
+	}
+	return detected, ""
 }
 
 func AnalyzeAll(responses []*crawler.Response, signatures []*Signature, targetHost string) []*Result {

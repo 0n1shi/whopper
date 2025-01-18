@@ -19,6 +19,11 @@ type HeaderSignature struct {
 	ValueRegexp string
 }
 
+type CookieSignature struct {
+	Name        string
+	ValueRegexp string
+}
+
 type Signature struct {
 	Name        string
 	Description string
@@ -27,6 +32,7 @@ type Signature struct {
 	BodyRegexps      []string
 	UrlRegexps       []string
 	HeaderSignatures []HeaderSignature
+	CookieSignatures []CookieSignature
 
 	OnlySameHost bool
 }
