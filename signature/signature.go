@@ -4,7 +4,6 @@ import "github.com/0n1shi/whopper/analyzer"
 
 // 2. Add the signatures here (sorted alphabetically)
 var SignatureIfs = []analyzer.SignatureIf{
-	&AmazonCloudFrontSignature{},
 	&AmazonS3Signature{},
 	&AngularJsSignature{},
 	&AwsAlbSignature{},
@@ -34,4 +33,4 @@ var SignatureIfs = []analyzer.SignatureIf{
 	&WordpressPluginYoastSEOSignature{},
 }
 
-var Signatures = []*analyzer.Signature{&ApacheSignature}
+var Signatures = []*analyzer.Signature{&AmazonCloudFrontSignature, &ApacheSignature}

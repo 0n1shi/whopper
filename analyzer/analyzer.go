@@ -7,7 +7,7 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func Analyze(response *crawler.Response, signature *Signature, targetHost string) (isDetected bool, version string) {
+func Analyze(response *crawler.Response, signature *Signature, targetHost string) (detected bool, version string) {
 	responseUrl, _ := url.Parse(response.Url)
 	responseHost := responseUrl.Hostname()
 	if signature.OnlySameHost && responseHost != targetHost {
@@ -19,7 +19,7 @@ func Analyze(response *crawler.Response, signature *Signature, targetHost string
 			return true, matches[1]
 		}
 		if len(matches) > 0 {
-			isDetected = true
+			detected = true
 		}
 	}
 	for _, re := range signature.UrlRegexps {
@@ -28,7 +28,7 @@ func Analyze(response *crawler.Response, signature *Signature, targetHost string
 			return true, matches[1]
 		}
 		if len(matches) > 0 {
-			isDetected = true
+			detected = true
 		}
 	}
 	for _, sig := range signature.HeaderSignatures {
@@ -39,33 +39,32 @@ func Analyze(response *crawler.Response, signature *Signature, targetHost string
 					return true, matches[1]
 				}
 				if len(matches) > 0 {
-					isDetected = true
+					detected = true
 				}
 			}
 		}
 	}
-	return isDetected, ""
+	return detected , ""
 }
 
 func AnalyzeAll(responses []*crawler.Response, signatures []*Signature, targetHost string) []*Result {
 	results := []*Result{}
 	for _, signature := range signatures {
-		isDetected := false
+		detected := false
 		versions := []string{}
 		for _, response := range responses {
 			found, ver := Analyze(response, signature, targetHost)
 			if found {
-				isDetected = true
+				detected = true
 				versions = append(versions, ver)
 			}
 		}
-		if isDetected {
+		if detected {
 			results = append(results, &Result{
 				Name:        signature.Name,
 				Description: signature.Description,
 				Versions:    unique(versions),
 				CPEs:        versToCPEs(unique(versions), signature.Cpe),
-				Tags:        signature.Tags,
 			})
 		}
 	}

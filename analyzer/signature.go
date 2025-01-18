@@ -23,7 +23,6 @@ type Signature struct {
 	Name        string
 	Description string
 	Cpe         string
-	Tags        []string
 
 	BodyRegexps      []string
 	UrlRegexps       []string

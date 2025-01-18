@@ -5,5 +5,4 @@ type Result struct {
 	Description string   `json:"description"`
 	Versions    []string `json:"versions"`
 	CPEs        []string `json:"cpes"`
-	Tags        []string `json:"tags"`
 }

@@ -88,9 +88,9 @@ func TestApacheSignatureCheck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			isDetected, version := analyzer.Analyze(tt.response, &ApacheSignature, "example.com")
-			if isDetected != tt.detected {
-				t.Errorf("isDetected = %v, want %v", isDetected, tt.detected)
+			detected, version := analyzer.Analyze(tt.response, &ApacheSignature, "example.com")
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
 			if version != tt.version {
 				t.Errorf("version = %q, want %q", version, tt.version)
