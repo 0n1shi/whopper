@@ -3,6 +3,7 @@ package signature
 import (
 	"testing"
 
+	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -10,41 +11,37 @@ func TestBackboneJsSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
-		name: "No body",
-		response: &crawler.Response{
-			ResourceType: crawler.ResourceTypeScript,
-		},
-		expected: false,
+		name:     "No body",
+		response: &crawler.Response{},
+		detected: false,
 		version:  "",
 	}, {
 		name: "Error message",
 		response: &crawler.Response{
-			ResourceType: crawler.ResourceTypeScript,
-			Body:         "throw new Error(\"Backbone.history has already been started\");",
+			Body: "throw new Error(\"Backbone.history has already been started\");",
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "Error message and has version",
 		response: &crawler.Response{
-			ResourceType: crawler.ResourceTypeScript,
-			Body:         "throw new Error(\"Backbone.history has already been started\");t.VERSION=\"1.4.1\"",
+			Body: "throw new Error(\"Backbone.history has already been started\");t.VERSION=\"1.4.1\"",
 		},
-		expected: true,
+		detected: true,
 		version:  "1.4.1",
 	}}
 
 	for _, tt := range tests {
-		s := &BackboneJsSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			deleted, version := analyzer.Analyze(tt.response, &BackboneJsSignature, "example.com")
+			if deleted != tt.detected {
+				t.Errorf("deleted = %v, want %v", deleted, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

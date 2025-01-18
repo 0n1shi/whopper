@@ -4,7 +4,6 @@ import "github.com/0n1shi/whopper/analyzer"
 
 // 2. Add the signatures here (sorted alphabetically)
 var SignatureIfs = []analyzer.SignatureIf{
-	&BackboneJsSignature{},
 	&BootstrapSignature{},
 	&ChartJsSignature{},
 	&ClaritySignature{},
@@ -36,4 +35,5 @@ var Signatures = []*analyzer.Signature{
 	&AngularJsSignature,
 	&ApacheSignature,
 	&AwsAlbSignature,
+	&BackboneJsSignature,
 }
