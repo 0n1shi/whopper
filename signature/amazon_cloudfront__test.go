@@ -6,58 +6,57 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestAmazonCloudFrontSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		expected bool
-		version  string
-	}{{
+func TestAmazonCloudFrontSignature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No headers",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Via header",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "via",
 				Value: "1.1 1234567890abcdef.cloudfront.net (CloudFront)",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "X-Cache header",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "x-cache",
 				Value: "Hit from cloudfront",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "x-cache header 2",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "x-cache",
 				Value: "Miss from cloudfront",
 			}},
 		},
-		expected: true,
+		detected: true,
+		version:  "",
+	}, {
+		name: "x-cache header 3 but different host",
+		response: &crawler.Response{
+			Url: OtherHostUrl,
+			Headers: []*crawler.Header{{
+				Name:  "x-cache",
+				Value: "Error from cloudfront",
+			}},
+		},
+		detected: false,
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		s := &AmazonCloudFrontSignature{}
-		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
-			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &AmazonCloudFrontSignature)
 }

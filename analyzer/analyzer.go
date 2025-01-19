@@ -2,51 +2,36 @@ package analyzer
 
 import (
 	"github.com/0n1shi/whopper/crawler"
+	"github.com/0n1shi/whopper/signature"
 )
 
-type analyzeItem struct {
-	signature Signature
-
-	isDetected    bool
-	foundVersions []string
-}
-
-type Analyzer struct {
-	items []analyzeItem
-}
-
-func NewAnalyzer(signatures []Signature) *Analyzer {
-	items := make([]analyzeItem, len(signatures))
-	for i, sig := range signatures {
-		items[i] = analyzeItem{
-			signature: sig,
-		}
+func Analyze(res *crawler.Response, sig *signature.Signature, targetHost string) (detected bool, version string) {
+	if signature.Detect(res, sig, targetHost) {
+		return true, signature.GetVersion(res, sig)
 	}
-	return &Analyzer{
-		items: items,
-	}
+	return false, ""
 }
 
-func (a *Analyzer) Analyze(responses []*crawler.Response) []*Result {
+func AnalyzeAll(responses []*crawler.Response, signatures []*signature.Signature, targetHost string) []*Result {
 	results := []*Result{}
-	for _, item := range a.items {
+	for _, signature := range signatures {
+		detected := false
+		versions := []string{}
 		for _, response := range responses {
-			if item.signature.Check(response) {
-				item.isDetected = true
-
-				version := item.signature.Version(response)
-				if version != "" {
-					item.foundVersions = append(item.foundVersions, version)
+			found, ver := Analyze(response, signature, targetHost)
+			if found {
+				detected = true
+				if ver != "" {
+					versions = append(versions, ver)
 				}
 			}
 		}
-		if item.isDetected {
+		if detected {
 			results = append(results, &Result{
-				Name:        item.signature.Name(),
-				Description: item.signature.Description(),
-				Versions:    unique(item.foundVersions),
-				CPEs:        unique(versToCPEs(item.foundVersions, item.signature.CPE)),
-				Tags:        item.signature.Tags(),
+				Name:        signature.Name,
+				Description: signature.Description,
+				Versions:    unique(versions),
+				CPEs:        versToCPEs(unique(versions), signature.Cpe),
 			})
 		}
 	}

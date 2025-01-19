@@ -7,23 +7,18 @@ import (
 )
 
 func TestJQueryBxSliderSignature(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		expected bool
-		version  string
-	}{{
+	cases := []TestCase{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url: "https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js",
+			Url:          "https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js",
 		},
-		expected: true,
+		detected: true,
 		version:  "4.2.12",
 	}, {
 		name: "Body",
@@ -38,19 +33,9 @@ func TestJQueryBxSliderSignature(t *testing.T) {
 !function(t){var e=
 `,
 		},
-		expected: true,
+		detected: true,
 		version:  "4.2.12",
 	}} // TODO: Add a test for script tag with src attribute
 
-	for _, tt := range tests {
-		s := &JqueryBxSliderSignature{}
-		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
-			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &JQueryBxSliderSignature)
 }

@@ -103,8 +103,8 @@ func main() {
 			}
 
 			c := crawler.NewRodCrawler()
-			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors)
-			return w.Run(mustBeURL)
+			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors, mustBeURL)
+			return w.Run()
 		},
 		CustomAppHelpTemplate: helpTextTemplate,
 	}

@@ -6,38 +6,35 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestAmazonS3SignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		expected bool
-		version  string
-	}{{
+func TestAmazonS3Signature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No headers",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "AmazonS3",
 			}},
 		},
-		expected: true,
+		detected: true,
+		version:  "",
+	}, {
+		name: "Server header but different host",
+		response: &crawler.Response{
+			Url: OtherHostUrl,
+			Headers: []*crawler.Header{{
+				Name:  "server",
+				Value: "AmazonS3",
+			}},
+		},
+		detected: false,
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		s := &AmazonS3Signature{}
-		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
-			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &AmazonS3Signature)
 }

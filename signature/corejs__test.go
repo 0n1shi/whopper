@@ -6,19 +6,14 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestCoreJsSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		expected bool
-		version  string
-	}{{
+func TestCoreJsSignature(t *testing.T) {
+	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url:          "",
 			ResourceType: crawler.ResourceTypeScript,
 		},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Body",
@@ -26,7 +21,7 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Body:         ",license:\"https://github.com/zloirock/core-js/blob/v3.33.2/LICENSE\"",
 		},
-		expected: true,
+		detected: true,
 		version:  "3.33.2",
 	}, {
 		name: "Body with no version",
@@ -34,19 +29,9 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Body:         ",license:\"https://github.com/zloirock/core-js/blob/",
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		s := &CorejsSignature{}
-		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
-			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &CoreJsSignature)
 }

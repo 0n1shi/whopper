@@ -6,16 +6,11 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestWordpressPluginPageNaviSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		expected bool
-		version  string
-	}{{
+func TestWordpressPluginPageNaviSignature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Body",
@@ -23,27 +18,17 @@ func TestWordpressPluginPageNaviSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeStylesheet,
 			Body:         "Default style for WP-PageNavi plugin",
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeStylesheet,
-			Url: "https://gmo-cybersecurity.com/wp-content/plugins/wp-pagenavi/pagenavi-css.css?ver=2.70",
+			Url:          "https://gmo-cybersecurity.com/wp-content/plugins/wp-pagenavi/pagenavi-css.css?ver=2.70",
 		},
-		expected: true,
+		detected: true,
 		version:  "2.70",
 	}}
 
-	for _, tt := range tests {
-		s := &WordpressPluginPageNaviSignature{}
-		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
-			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &WordpressPluginPageNaviSignature)
 }
