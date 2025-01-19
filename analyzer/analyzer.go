@@ -21,7 +21,9 @@ func AnalyzeAll(responses []*crawler.Response, signatures []*signature.Signature
 			found, ver := Analyze(response, signature, targetHost)
 			if found {
 				detected = true
-				versions = append(versions, ver)
+				if ver != "" {
+					versions = append(versions, ver)
+				}
 			}
 		}
 		if detected {
