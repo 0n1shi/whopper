@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestApacheSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestApacheSignature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No headers",
 		response: &crawler.Response{},
 		detected: false,
@@ -85,16 +80,5 @@ func TestApacheSignatureCheck(t *testing.T) {
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &ApacheSignature, "example.com")
-			version := GetVersion(tt.response, &ApacheSignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %q, want %q", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &ApacheSignature)
 }

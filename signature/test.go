@@ -1,0 +1,33 @@
+package signature
+
+import (
+	"testing"
+
+	"github.com/0n1shi/whopper/crawler"
+)
+
+type TestCase struct {
+	name     string
+	response *crawler.Response
+	detected bool
+	version  string
+}
+
+func runTests(test *testing.T, cases []TestCase, signature *Signature) {
+	for _, c := range cases {
+		test.Run(c.name, func(t *testing.T) {
+			detected := Detect(c.response, signature, "example.com")
+			version := ""
+			if detected {
+				version = GetVersion(c.response, signature)
+			}
+
+			if detected != c.detected {
+				t.Errorf("deleted = %v, want %v", detected, c.detected)
+			}
+			if version != c.version {
+				t.Errorf("version = %v, want %v", version, c.version)
+			}
+		})
+	}
+}

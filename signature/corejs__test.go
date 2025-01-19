@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestCoreJsSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestCoreJsSignature(t *testing.T) {
+	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url:          "",
@@ -38,16 +33,5 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &CoreJsSignature, "example.com")
-			version := GetVersion(tt.response, &CoreJsSignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &CoreJsSignature)
 }

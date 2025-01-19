@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestLodashSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestLodashSignature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
 		detected: false,
@@ -36,16 +31,5 @@ func TestLodashSignatureCheck(t *testing.T) {
 		version:  "4.16.6",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &LodashSignature, "example.com")
-			version := GetVersion(tt.response, &LodashSignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &LodashSignature)
 }

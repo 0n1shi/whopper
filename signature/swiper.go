@@ -10,7 +10,7 @@ var SwiperSignature = Signature{
 			"npm/swiper@",
 		},
 		Bodies: []string{
-			"* Swiper ",
+			`\* Swiper `,
 		},
 	},
 	VersionPattern: VersionPattern{
@@ -18,7 +18,7 @@ var SwiperSignature = Signature{
 			`npm/swiper@(\d+\.\d+\.\d+)/`,
 		},
 		Bodies: []string{
-			`* Swiper (\d+\.\d+\.\d+)`,
+			`\* Swiper (\d+\.\d+\.\d+)`,
 		},
 	},
 }

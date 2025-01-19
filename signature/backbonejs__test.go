@@ -7,12 +7,7 @@ import (
 )
 
 func TestBackboneJsSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+	cases := []TestCase{{
 		name:     "No body",
 		response: &crawler.Response{},
 		detected: false,
@@ -33,16 +28,5 @@ func TestBackboneJsSignatureCheck(t *testing.T) {
 		version:  "1.4.1",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &BackboneJsSignature, "example.com")
-			version := GetVersion(tt.response, &BackboneJsSignature)
-			if detected != tt.detected {
-				t.Errorf("deleted = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &BackboneJsSignature)
 }

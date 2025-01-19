@@ -6,16 +6,11 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestPerlSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		expected bool
-		version  string
-	}{{
+func TestPerlSignature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Server header",
@@ -25,7 +20,7 @@ func TestPerlSignatureCheck(t *testing.T) {
 				Value: "Apache/2.4.25 (Unix) OpenSSL/1.0.2j PHP/7.1.1 mod_perl/2.0.8-dev Perl/v5.16.3",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "5.16.3",
 	}, {
 		name: "Server header 2",
@@ -35,7 +30,7 @@ func TestPerlSignatureCheck(t *testing.T) {
 				Value: "Apache/2.2.14 (Unix) mod_ssl/2.2.14 OpenSSL/1.0.0o mod_perl/2.0.4 Perl/v5.10.0",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "5.10.0",
 	}, {
 		name: "Server header 3",
@@ -45,20 +40,9 @@ func TestPerlSignatureCheck(t *testing.T) {
 				Value: "Mojolicious (Perl)",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &PerlSignature, "example.com")
-			version := GetVersion(tt.response, &PerlSignature)
-			if detected != tt.expected {
-				t.Errorf("detected = %v, want %v", detected, tt.expected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &PerlSignature)
 }

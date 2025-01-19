@@ -1,18 +1,5 @@
 package signature
 
-import (
-	"regexp"
-	"strings"
-
-	"github.com/0n1shi/whopper/analyzer"
-	"github.com/0n1shi/whopper/crawler"
-)
-
-const (
-	microsoftClarityfileName = "clarity.js"
-	microsoftClarityBanner   = "/* clarity-js"
-)
-
 var ClaritySignature = Signature{
 	Name:        "Microsoft Clarity",
 	Description: "Clarity is a free product that captures how people use your site. Setup is easy and you'll start getting data in minutes.",

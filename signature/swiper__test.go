@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestSwiperSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestSwiperSignature(t *testing.T) {
+	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url: "",
@@ -35,16 +30,5 @@ func TestSwiperSignatureCheck(t *testing.T) {
 		version:  "8.4.7",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &SwiperSignature, "example.com")
-			version := GetVersion(tt.response, &SwiperSignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &SwiperSignature)
 }

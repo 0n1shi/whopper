@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestPhpSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestPhpSignature(t *testing.T) {
+	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url:          "",
@@ -70,16 +65,5 @@ func TestPhpSignatureCheck(t *testing.T) {
 		version:  "5.2.10",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &PhpSignature, "example.com")
-			version := GetVersion(tt.response, &PhpSignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &PhpSignature)
 }

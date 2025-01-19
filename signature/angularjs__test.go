@@ -3,17 +3,11 @@ package signature
 import (
 	"testing"
 
-	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestAngularJSSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestAngularJsSignature(t *testing.T) {
+	cases := []TestCase{{
 		name:     "No headers",
 		response: &crawler.Response{},
 		detected: false,
@@ -45,15 +39,5 @@ func TestAngularJSSignatureCheck(t *testing.T) {
 		version:  "1.3.0-rc.4",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected, version := analyzer.Analyze(tt.response, &AngularJsSignature, "example.com")
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &AngularJsSignature)
 }

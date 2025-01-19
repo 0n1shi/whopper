@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestClaritySignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestClaritySignature(t *testing.T) {
+	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url:          "",
@@ -39,16 +34,5 @@ func TestClaritySignatureCheck(t *testing.T) {
 		version:  "0.7.59",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &ClaritySignature, "example.com")
-			version := GetVersion(tt.response, &ClaritySignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &ClaritySignature)
 }

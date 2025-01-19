@@ -6,13 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func TestWordpressPluginYoastSEOSignatureCheck(t *testing.T) {
-	tests := []struct {
-		name     string
-		response *crawler.Response
-		detected bool
-		version  string
-	}{{
+func TestWordpressPluginYoastSEOSignature(t *testing.T) {
+	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url: "",
@@ -37,16 +32,5 @@ func TestWordpressPluginYoastSEOSignatureCheck(t *testing.T) {
 		version:  "",
 	}}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			detected := Detect(tt.response, &WordpressPluginYoastSEOSignature, "example.com")
-			version := GetVersion(tt.response, &WordpressPluginYoastSEOSignature)
-			if detected != tt.detected {
-				t.Errorf("detected = %v, want %v", detected, tt.detected)
-			}
-			if version != tt.version {
-				t.Errorf("version = %v, want %v", version, tt.version)
-			}
-		})
-	}
+	runTests(t, cases, &WordpressPluginYoastSEOSignature)
 }
