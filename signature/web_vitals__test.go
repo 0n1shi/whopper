@@ -10,12 +10,12 @@ func TestWebVitalsSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name:     "Empty response",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL without web-vitals",
@@ -25,25 +25,26 @@ func TestWebVitalsSignatureCheck(t *testing.T) {
 				Value: "nginx",
 			}},
 		},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL with web-vitals",
 		response: &crawler.Response{
 			Url: "https://unpkg.com/web-vitals@2.1.4/dist/web-vitals.iife.js",
 		},
-		expected: true,
+		detected: true,
 		version:  "2.1.4",
 	}}
 
 	for _, tt := range tests {
-		s := &WebVitalsSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &WebVitalsSignature, "example.com")
+			version := GetVersion(tt.response, &WebVitalsSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

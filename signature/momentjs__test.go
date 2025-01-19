@@ -10,44 +10,45 @@ func TestMomentJsSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url: "http://x.x.x.x/bower_components/moment/moment.js",
+			Url:          "http://x.x.x.x/bower_components/moment/moment.js",
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url: "http://x.x.x.x/bower_components/moment/moment.js",
+			Url:          "http://x.x.x.x/bower_components/moment/moment.js",
 			Body: `//! moment.js
 //! version : 2.9.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com`,
 		},
-		expected: true,
+		detected: true,
 		version:  "2.9.0",
 	}}
 
 	for _, tt := range tests {
-		s := &MomentJsSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &MomentJsSignature, "example.com")
+			version := GetVersion(tt.response, &MomentJsSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

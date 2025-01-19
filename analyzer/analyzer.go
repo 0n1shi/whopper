@@ -14,7 +14,7 @@ func Analyze(res *crawler.Response, sig *signature.Signature, targetHost string)
 		return false, ""
 	}
 	if signature.Detect(res, sig, targetHost) {
-		return true, signature.ExtractVersion(res, sig)
+		return true, signature.GetVersion(res, sig)
 	}
 	return false, ""
 }

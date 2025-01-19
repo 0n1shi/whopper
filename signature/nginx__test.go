@@ -10,14 +10,14 @@ func TestNginxSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name: "No headers",
 		response: &crawler.Response{
 			Headers: []*crawler.Header{},
 		},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Server header",
@@ -27,7 +27,7 @@ func TestNginxSignatureCheck(t *testing.T) {
 				Value: "nginx",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "Server header with version",
@@ -37,7 +37,7 @@ func TestNginxSignatureCheck(t *testing.T) {
 				Value: "nginx/1.18.0 (Ubuntu)",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "1.18.0",
 	}, {
 		name: "Server header with version and other info",
@@ -47,18 +47,19 @@ func TestNginxSignatureCheck(t *testing.T) {
 				Value: "nginx/1.20.1",
 			}},
 		},
-		expected: true,
+		detected: true,
 		version:  "1.20.1",
 	}}
 
 	for _, tt := range tests {
-		s := &NginxSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &NginxSignature, "example.com")
+			version := GetVersion(tt.response, &NginxSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

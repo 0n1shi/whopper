@@ -3,7 +3,6 @@ package signature
 import (
 	"testing"
 
-	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -88,7 +87,8 @@ func TestApacheSignatureCheck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			detected, version := analyzer.Analyze(tt.response, &ApacheSignature, "example.com")
+			detected := Detect(tt.response, &ApacheSignature, "example.com")
+			version := GetVersion(tt.response, &ApacheSignature)
 			if detected != tt.detected {
 				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}

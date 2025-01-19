@@ -10,39 +10,40 @@ func TestSwiperSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name: "No body and no url",
 		response: &crawler.Response{
 			Url: "",
 		},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Body",
 		response: &crawler.Response{
 			Url: "https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js?ver=0.1.12",
 		},
-		expected: true,
+		detected: true,
 		version:  "8.4.7",
 	}, {
 		name: "Body 2",
 		response: &crawler.Response{
 			Body: "* Swiper 8.4.7",
 		},
-		expected: true,
+		detected: true,
 		version:  "8.4.7",
 	}}
 
 	for _, tt := range tests {
-		s := &SwiperSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &SwiperSignature, "example.com")
+			version := GetVersion(tt.response, &SwiperSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

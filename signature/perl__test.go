@@ -50,13 +50,14 @@ func TestPerlSignatureCheck(t *testing.T) {
 	}}
 
 	for _, tt := range tests {
-		s := &PerlSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &PerlSignature, "example.com")
+			version := GetVersion(tt.response, &PerlSignature)
+			if detected != tt.expected {
+				t.Errorf("detected = %v, want %v", detected, tt.expected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

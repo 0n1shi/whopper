@@ -65,6 +65,9 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 	}
 	for _, sig := range pattern.Headers {
 		for _, header := range response.Headers {
+			if header.Value == "" && header.Name == sig.Name { // ignore header value if it's empty
+				return true
+			}
 			if header.Name == sig.Name && regexp.MustCompile(sig.Value).MatchString(header.Value) {
 				return true
 			}
@@ -72,6 +75,9 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 	}
 	for _, sig := range pattern.Cookies {
 		for _, cookie := range response.Cookies {
+			if cookie.Value == "" && cookie.Name == sig.Name { // ignore cookie value if it's empty
+				return true
+			}
 			if cookie.Name == sig.Name && regexp.MustCompile(sig.Value).MatchString(cookie.Value) {
 				return true
 			}
@@ -80,7 +86,7 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 	return false
 }
 
-func ExtractVersion(response *crawler.Response, signature *Signature) string {
+func GetVersion(response *crawler.Response, signature *Signature) string {
 	pattern := &signature.VersionPattern
 	for _, re := range pattern.Bodies {
 		matches := regexp.MustCompile(re).FindStringSubmatch(response.Body)

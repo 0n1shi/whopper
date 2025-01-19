@@ -10,44 +10,45 @@ func TestKongaSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url: "http://x.x.x.x/js/app/core/directives/konga-loader.js?r=0.14.9",
+			Url:          "http://x.x.x.x/js/app/core/directives/konga-loader.js?r=0.14.9",
 		},
-		expected: true,
+		detected: true,
 		version:  "0.14.9",
 	}, {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeDocument,
-			Body:         `<script>
+			Body: `<script>
   window.enableLogs = true;
   window.konga_version = "0.14.9";
   window.no_auth = false;
   window.initAngular = true;
 </script>`,
 		},
-		expected: true,
+		detected: true,
 		version:  "0.14.9",
 	}}
 
 	for _, tt := range tests {
-		s := &KongaSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &KongaSignature, "example.com")
+			version := GetVersion(tt.response, &KongaSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

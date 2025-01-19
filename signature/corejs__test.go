@@ -10,7 +10,7 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name: "No body and no url",
@@ -18,7 +18,7 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 			Url:          "",
 			ResourceType: crawler.ResourceTypeScript,
 		},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Body",
@@ -26,7 +26,7 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Body:         ",license:\"https://github.com/zloirock/core-js/blob/v3.33.2/LICENSE\"",
 		},
-		expected: true,
+		detected: true,
 		version:  "3.33.2",
 	}, {
 		name: "Body with no version",
@@ -34,18 +34,19 @@ func TestCoreJsSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Body:         ",license:\"https://github.com/zloirock/core-js/blob/",
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}}
 
 	for _, tt := range tests {
-		s := &CorejsSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &CoreJsSignature, "example.com")
+			version := GetVersion(tt.response, &CoreJsSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

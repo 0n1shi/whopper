@@ -10,7 +10,7 @@ func TestStyledComponentsSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name: "No body and no url",
@@ -18,58 +18,59 @@ func TestStyledComponentsSignatureCheck(t *testing.T) {
 			Url:          "",
 			ResourceType: crawler.ResourceTypeScript,
 		},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Body: "R=\"style[\"+w+'][data-styled-version=\"5.3.11\"]'",
+			Body:         "R=\"style[\"+w+'][data-styled-version=\"5.3.11\"]'",
 		},
-		expected: true,
+		detected: true,
 		version:  "5.3.11",
 	}, {
 		name: "Body 2",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Body: ",r.setAttribute(\"data-styled-version\",\"5.3.11\");",
+			Body:         ",r.setAttribute(\"data-styled-version\",\"5.3.11\");",
 		},
-		expected: true,
+		detected: true,
 		version:  "5.3.11",
 	}, {
 		name: "Body 3",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Body: "\"+[n&&'nonce=\"'+n+'\"',w+'=\"true\"','data-styled-version=\"5.3.11\"']",
+			Body:         "\"+[n&&'nonce=\"'+n+'\"',w+'=\"true\"','data-styled-version=\"5.3.11\"']",
 		},
-		expected: true,
+		detected: true,
 		version:  "5.3.11",
 	}, {
 		name: "Body 4",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Body: "var n=((t={})[w]=\"\",t[\"data-styled-version\"]=\"5.3.11\",",
+			Body:         "var n=((t={})[w]=\"\",t[\"data-styled-version\"]=\"5.3.11\",",
 		},
-		expected: true,
+		detected: true,
 		version:  "5.3.11",
 	}, {
 		name: "Body 5",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeDocument,
-			Body: "<style data-styled=\"true\" data-styled-version=\"5.3.11\">",
+			Body:         "<style data-styled=\"true\" data-styled-version=\"5.3.11\">",
 		},
-		expected: true,
+		detected: true,
 		version:  "5.3.11",
 	}}
 
 	for _, tt := range tests {
-		s := &StyledComponentsSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &StyledComponentsSignature, "example.com")
+			version := GetVersion(tt.response, &StyledComponentsSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

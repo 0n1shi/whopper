@@ -1,31 +1,5 @@
 package signature
 
-import "github.com/0n1shi/whopper/analyzer"
-
-// 2. Add the signatures here (sorted alphabetically)
-var SignatureIfs = []analyzer.SignatureIf{
-	&ClaritySignature{},
-	&CorejsSignature{},
-	&JquerySignature{},
-	&JqueryBxSliderSignature{},
-	&JqueryCookieSignature{},
-	&JqueryUiSignature{},
-	&KongaSignature{},
-	&LodashSignature{},
-	&ModPerlSignature{},
-	&MomentJsSignature{},
-	&NginxSignature{},
-	&OpenSSLSignature{},
-	&PerlSignature{},
-	&PhpSignature{},
-	&StyledComponentsSignature{},
-	&SwiperSignature{},
-	&UnderscoreSignature{},
-	&UnpkgSignature{},
-	&WebVitalsSignature{},
-	&WordpressPluginPageNaviSignature{},
-	&WordpressPluginYoastSEOSignature{},
-}
 type Header struct {
 	Name  string
 	Value string
@@ -70,4 +44,25 @@ var Signatures = []*Signature{
 	&BackboneJsSignature,
 	&BootstrapSignature,
 	&ChartJsSignature,
+	&ClaritySignature,
+	&CoreJsSignature,
+	&JQuerySignature,
+	&JQueryBxSliderSignature,
+	&JQueryCookieSignature,
+	&JQueryUiSignature,
+	&KongaSignature,
+	&LodashSignature,
+	&ModPerlSignature,
+	&MomentJsSignature,
+	&NginxSignature,
+	&OpenSSLSignature,
+	&PerlSignature,
+	&PhpSignature,
+	&StyledComponentsSignature,
+	&SwiperSignature,
+	&UnderscoreSignature,
+	&UnpkgSignature,
+	&WebVitalsSignature,
+	&WordpressPluginPageNaviSignature,
+	&WordpressPluginYoastSEOSignature,
 }

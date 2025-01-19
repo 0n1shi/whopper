@@ -1,66 +1,28 @@
 package signature
 
-import (
-	"regexp"
-	"strings"
+var JQuerySignature = Signature{
+	Name:        "jQuery",
+	Description: "A fast, small, and feature-rich JavaScript library.",
+	Cpe:         "cpe:/a:jquery:jquery",
 
-	"github.com/0n1shi/whopper/analyzer"
-	"github.com/0n1shi/whopper/crawler"
-)
-
-type JquerySignature struct{}
-
-var _ analyzer.SignatureIf = (*JquerySignature)(nil)
-
-func (n *JquerySignature) Name() string {
-	return "jQuery"
-}
-
-func (n *JquerySignature) Description() string {
-	return "A fast, small, and feature-rich JavaScript library."
-}
-
-func (s *JquerySignature) Check(response *crawler.Response) bool {
-	if response.ResourceType != crawler.ResourceTypeScript {
-		return false
-	}
-	if strings.Contains(response.Url, "jquery") {
-		return true
-	}
-	if strings.Contains(response.Body, "jquery") {
-		return true
-	}
-	return strings.Contains(response.Body, "jQuery")
-}
-
-func (s *JquerySignature) Version(response *crawler.Response) string {
-	matches := regexp.MustCompile(`jquery[@/-](\d+\.\d+\.\d+)`).FindStringSubmatch(response.Url)
-	if len(matches) > 1 {
-		return matches[1]
-	}
-	matches = regexp.MustCompile(`jQuery v(\d+\.\d+\.\d+)`).FindStringSubmatch(response.Body)
-	if len(matches) > 1 {
-		return matches[1]
-	}
-	matches = regexp.MustCompile(`jQuery JavaScript Library v(\d+\.\d+\.\d+)`).FindStringSubmatch(response.Body)
-	if len(matches) > 1 {
-		return matches[1]
-	}
-	matches = regexp.MustCompile(`var C="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
-	if len(matches) > 1 {
-		return matches[1]
-	}
-	matches = regexp.MustCompile(`d="(\d+\.\d+\.\d+)"`).FindStringSubmatch(response.Body)
-	if len(matches) > 1 {
-		return matches[1]
-	}
-	return ""
-}
-
-func (s *JquerySignature) CPE(version string) string {
-	return "cpe:/a:jquery:jquery:" + version // e.g. cpe:/a:jquery:jquery:3.6.0
-}
-
-func (s *JquerySignature) Tags() []string {
-	return []string{analyzer.TagLibrary}
+	DetectPattern: DetectPattern{
+		Urls: []string{
+			"jquery",
+		},
+		Bodies: []string{
+			"jquery",
+			"jQuery",
+		},
+	},
+	VersionPattern: VersionPattern{
+		Urls: []string{
+			`jquery[@/-](\d+\.\d+\.\d+)`,
+		},
+		Bodies: []string{
+			`jQuery v(\d+\.\d+\.\d+)`,
+			`jQuery JavaScript Library v(\d+\.\d+\.\d+)`,
+			`var C="(\d+\.\d+\.\d+)"`,
+			`d="(\d+\.\d+\.\d+)"`,
+		},
+	},
 }

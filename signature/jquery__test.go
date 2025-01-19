@@ -10,12 +10,12 @@ func TestJQuerySignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name:     "No body and no url",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL",
@@ -23,7 +23,7 @@ func TestJQuerySignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Url:          "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery",
 		},
-		expected: true,
+		detected: true,
 		version:  "3.6.0",
 	}, {
 		name: "Body",
@@ -31,18 +31,19 @@ func TestJQuerySignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Body:         "/*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */",
 		},
-		expected: true,
+		detected: true,
 		version:  "3.6.0",
 	}}
 
 	for _, tt := range tests {
-		s := &JquerySignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &JQuerySignature, "example.com")
+			version := GetVersion(tt.response, &JQuerySignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

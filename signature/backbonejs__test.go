@@ -3,7 +3,6 @@ package signature
 import (
 	"testing"
 
-	"github.com/0n1shi/whopper/analyzer"
 	"github.com/0n1shi/whopper/crawler"
 )
 
@@ -36,9 +35,10 @@ func TestBackboneJsSignatureCheck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			deleted, version := analyzer.Analyze(tt.response, &BackboneJsSignature, "example.com")
-			if deleted != tt.detected {
-				t.Errorf("deleted = %v, want %v", deleted, tt.detected)
+			detected := Detect(tt.response, &BackboneJsSignature, "example.com")
+			version := GetVersion(tt.response, &BackboneJsSignature)
+			if detected != tt.detected {
+				t.Errorf("deleted = %v, want %v", detected, tt.detected)
 			}
 			if version != tt.version {
 				t.Errorf("version = %v, want %v", version, tt.version)

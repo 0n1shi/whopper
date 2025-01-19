@@ -10,12 +10,12 @@ func TestUnderscoreSignatureCheck(t *testing.T) {
 	tests := []struct {
 		name     string
 		response *crawler.Response
-		expected bool
+		detected bool
 		version  string
 	}{{
 		name:     "No headers",
 		response: &crawler.Response{},
-		expected: false,
+		detected: false,
 		version:  "",
 	}, {
 		name: "URL",
@@ -23,7 +23,7 @@ func TestUnderscoreSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Url:          "https://example.com/js/underscore-min.js",
 		},
-		expected: true,
+		detected: true,
 		version:  "",
 	}, {
 		name: "Body",
@@ -31,18 +31,19 @@ func TestUnderscoreSignatureCheck(t *testing.T) {
 			ResourceType: crawler.ResourceTypeScript,
 			Body:         "Underscore.js 1.8.3",
 		},
-		expected: true,
+		detected: true,
 		version:  "1.8.3",
 	}}
 
 	for _, tt := range tests {
-		s := &UnderscoreSignature{}
 		t.Run(tt.name, func(t *testing.T) {
-			if got := s.Check(tt.response); got != tt.expected {
-				t.Errorf("Check() = %v, want %v", got, tt.expected)
+			detected := Detect(tt.response, &UnderscoreSignature, "example.com")
+			version := GetVersion(tt.response, &UnderscoreSignature)
+			if detected != tt.detected {
+				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
-			if got := s.Version(tt.response); got != tt.version {
-				t.Errorf("Version() = %v, want %v", got, tt.version)
+			if version != tt.version {
+				t.Errorf("version = %v, want %v", version, tt.version)
 			}
 		})
 	}

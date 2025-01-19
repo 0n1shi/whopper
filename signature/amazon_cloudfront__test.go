@@ -66,7 +66,7 @@ func TestAmazonCloudFrontSignatureCheck(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			detected := Detect(tt.response, &AmazonCloudFrontSignature, "example.com")
-			version := ExtractVersion(tt.response, &AmazonCloudFrontSignature)
+			version := GetVersion(tt.response, &AmazonCloudFrontSignature)
 			if detected != tt.detected {
 				t.Errorf("detected = %v, want %v", detected, tt.detected)
 			}
