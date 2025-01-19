@@ -1,18 +1,11 @@
 package analyzer
 
 import (
-	"net/url"
-
 	"github.com/0n1shi/whopper/crawler"
 	"github.com/0n1shi/whopper/signature"
 )
 
 func Analyze(res *crawler.Response, sig *signature.Signature, targetHost string) (detected bool, version string) {
-	resUrl, _ := url.Parse(res.Url)
-	resHost := resUrl.Hostname()
-	if sig.OnlySameHost && resHost != targetHost {
-		return false, ""
-	}
 	if signature.Detect(res, sig, targetHost) {
 		return true, signature.GetVersion(res, sig)
 	}
