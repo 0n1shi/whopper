@@ -16,6 +16,9 @@ var KongaSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
+		Urls: []string{
+			`konga-loader\.js\?r=(\d+\.\d+\.\d+)`,
+		},
 		Bodies: []string{
 			`konga_version = "(\d+\.\d+\.\d+)"`,
 			`\.js\?r=(\d+\.\d+\.\d+)`,

@@ -6,6 +6,11 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
+var SameHostUrl = "http://example.com"
+var OtherHostUrl = "http://other.com"
+
+var SameHost = "example.com"
+
 type TestCase struct {
 	name     string
 	response *crawler.Response
@@ -16,7 +21,7 @@ type TestCase struct {
 func runTests(test *testing.T, cases []TestCase, signature *Signature) {
 	for _, c := range cases {
 		test.Run(c.name, func(t *testing.T) {
-			detected := Detect(c.response, signature, "example.com")
+			detected := Detect(c.response, signature, SameHost)
 			version := ""
 			if detected {
 				version = GetVersion(c.response, signature)

@@ -15,16 +15,14 @@ func TestBootstrapSignature(t *testing.T) {
 	}, {
 		name: "URL with version",
 		response: &crawler.Response{
-			ResourceType: crawler.ResourceTypeStylesheet,
-			Url:          "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
+			Url: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
 		},
 		detected: true,
 		version:  "3.3.7",
 	}, {
 		name: "Body with version",
 		response: &crawler.Response{
-			ResourceType: crawler.ResourceTypeStylesheet,
-			Body:         "* Bootstrap v4.6.0",
+			Body: "* Bootstrap v4.6.0",
 		},
 		detected: true,
 		version:  "4.6.0",

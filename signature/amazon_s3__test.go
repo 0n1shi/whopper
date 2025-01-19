@@ -15,7 +15,7 @@ func TestAmazonS3Signature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
-			Url: "http://example.com",
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "AmazonS3",
@@ -26,7 +26,7 @@ func TestAmazonS3Signature(t *testing.T) {
 	}, {
 		name: "Server header but different host",
 		response: &crawler.Response{
-			Url: "http://other.com",
+			Url: OtherHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "AmazonS3",

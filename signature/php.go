@@ -18,6 +18,9 @@ var PhpSignature = Signature{
 		Headers: []Header{{
 			Name:  "server",
 			Value: `PHP/(\d+\.\d+\.\d+)`,
+		}, {
+			Name:  "x-powered-by",
+			Value: `PHP/(\d+\.\d+\.\d+)`,
 		}},
 	},
 

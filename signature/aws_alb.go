@@ -8,10 +8,18 @@ var AwsAlbSignature = Signature{
 	DetectPattern: DetectPattern{
 		Headers: []Header{{
 			Name:  "server",
-			Value: `awselb/(\d+\.\d+)`,
+			Value: `awselb`,
 		}},
 		Cookies: []Cookie{{
 			Name: "AWSALB",
 		}},
 	},
+	VersionPattern: VersionPattern{
+		Headers: []Header{{
+			Name:  "server",
+			Value: `awselb/(\d+\.\d+)`,
+		}},
+	},
+
+	OnlySameHost: true,
 }

@@ -11,6 +11,9 @@ var BootstrapSignature = Signature{
 			"/bootstrap.min.css",
 			"/bootstrap.min.js",
 		},
+		Bodies: []string{
+			`Bootstrap`,
+		},
 	},
 	VersionPattern: VersionPattern{
 		Urls: []string{

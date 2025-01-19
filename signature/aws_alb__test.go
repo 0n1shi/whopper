@@ -15,7 +15,7 @@ func TestAwsAlbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB cookie",
 		response: &crawler.Response{
-			Url: "http://example.com",
+			Url: SameHostUrl,
 			Cookies: []*crawler.Cookie{{
 				Name:  "AWSALB",
 				Value: "XyFb7cYWVbd39UCO3CbDi",
@@ -26,7 +26,7 @@ func TestAwsAlbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB HTTP header",
 		response: &crawler.Response{
-			Url: "http://example.com",
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "awselb/2.0",
