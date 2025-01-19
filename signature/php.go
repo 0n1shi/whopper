@@ -13,6 +13,10 @@ var PhpSignature = Signature{
 			Name:  "x-powered-by",
 			Value: "PHP",
 		}},
+		Bodies: []string{
+			`\.php`,
+			`<\?php`,
+		},
 	},
 	VersionPattern: VersionPattern{
 		Headers: []Header{{
