@@ -65,6 +65,7 @@ var Signatures = []*Signature{
 	&UnpkgSignature,
 	&WebVitalsSignature,
 	&WordpressSignature,
+	&WordpressPluginAllInOneSEOSignature,
 	&WordpressPluginContactForm7Signature,
 	&WordpressPluginPageNaviSignature,
 	&WordpressPluginYoastSEOSignature,
