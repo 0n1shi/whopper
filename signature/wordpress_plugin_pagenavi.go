@@ -1,7 +1,7 @@
 package signature
 
 var WordpressPluginPageNaviSignature = Signature{
-	Name:        "WP-PageNavi",
+	Name:        "WordPress Plugin - WP-PageNavi",
 	Description: "Want to replace the old ← Older posts | Newer posts → links with some page links? This plugin provides the wp_pagenavi() template tag which generates fancy pagination links.",
 
 	DetectPattern: DetectPattern{

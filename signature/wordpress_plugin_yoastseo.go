@@ -1,7 +1,7 @@
 package signature
 
 var WordpressPluginYoastSEOSignature = Signature{
-	Name:        "Yoast SEO",
+	Name:        "WordPress Plugin - Yoast SEO",
 	Description: "Improve your WordPress SEO: Write better content and have a fully optimized WordPress site using the Yoast SEO plugin.",
 	Cpe:         "cpe:/a:yoast:yoast_seo",
 
