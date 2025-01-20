@@ -49,6 +49,7 @@ var Signatures = []*Signature{
 	&JQuerySignature,
 	&JQueryBxSliderSignature,
 	&JQueryCookieSignature,
+	&JQueryMigrateSignature,
 	&JQueryUiSignature,
 	&KongaSignature,
 	&LodashSignature,
