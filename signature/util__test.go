@@ -1,6 +1,7 @@
 package signature
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/0n1shi/whopper/crawler"
@@ -183,6 +184,23 @@ func TestGetVersion(t *testing.T) {
 					Name:  "session",
 					Value: `version=(\d+\.\d+\.\d+)`,
 				}},
+			},
+		},
+		expected: "3.5.1",
+	}, {
+		name: "version function",
+		response: &crawler.Response{
+			Body: "major:3,minor:5,patch:1",
+		},
+		signature: &Signature{
+			VersionFuncs: []VersionFunc{
+				func(res *crawler.Response) string {
+					matches := regexp.MustCompile(`major:(\d+),minor:(\d+),patch:(\d+)`).FindStringSubmatch(res.Body)
+					if len(matches) > 3 {
+						return matches[1] + "." + matches[2] + "." + matches[3]
+					}
+					return ""
+				},
 			},
 		},
 		expected: "3.5.1",

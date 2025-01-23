@@ -1,5 +1,7 @@
 package signature
 
+import "github.com/0n1shi/whopper/crawler"
+
 type Header struct {
 	Name  string
 	Value string
@@ -24,6 +26,8 @@ type VersionPattern struct {
 	Cookies []Cookie
 }
 
+type VersionFunc func(res *crawler.Response) string
+
 type Signature struct {
 	Name        string
 	Description string
@@ -31,6 +35,8 @@ type Signature struct {
 
 	DetectPattern  DetectPattern
 	VersionPattern VersionPattern
+
+	VersionFuncs []VersionFunc
 
 	OnlySameHost bool
 }

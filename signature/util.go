@@ -84,5 +84,11 @@ func GetVersion(response *crawler.Response, signature *Signature) string {
 			}
 		}
 	}
+	for _, versionFunc := range signature.VersionFuncs {
+		version := versionFunc(response)
+		if version != "" {
+			return version
+		}
+	}
 	return ""
 }
