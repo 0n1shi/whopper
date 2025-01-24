@@ -52,6 +52,7 @@ var Signatures = []*Signature{
 	&ChartJsSignature,
 	&ClaritySignature,
 	&CoreJsSignature,
+	&DojoToolkitSignature,
 	&JQuerySignature,
 	&JQueryBxSliderSignature,
 	&JQueryCookieSignature,
