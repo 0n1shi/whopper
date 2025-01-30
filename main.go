@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/0n1shi/whopper/crawler"
 	"github.com/0n1shi/whopper/inspector"
@@ -16,7 +17,6 @@ import (
 const version = "v0.3.0"
 
 func main() {
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})))
 	app := &cli.App{
 		Name:      "whopper",
 		Usage:     "A CLI tool to detect the technology stack used on a website",
@@ -52,6 +52,12 @@ func main() {
 				Value:   false,
 				Aliases: []string{"j"},
 			},
+			&cli.UintFlag{
+				Name:    "timeout",
+				Usage:   "timeout in seconds",
+				Value:   10,
+				Aliases: []string{"t"},
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.Bool("version") {
@@ -82,12 +88,11 @@ func main() {
 			}
 
 			printLogo()
-			fmt.Println()
 
 			debugMode := ctx.Bool("debug")
 			if debugMode {
 				slog.SetLogLoggerLevel(slog.LevelDebug)
-				slog.Info("debug mode enabled (log level: debug)")
+				slog.Info("debug mode enabled", "log level", "debug")
 			}
 
 			inspectors := []inspector.Inspector{}
@@ -103,6 +108,9 @@ func main() {
 			}
 
 			c := crawler.NewRodCrawler()
+			crawlerTimeout := ctx.Uint("timeout")
+			c.SetTimeout(crawlerTimeout)
+			slog.Info("set timeout to crawler", "timeout", strconv.Itoa(int(crawlerTimeout))+"s")
 			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors, mustBeURL)
 			return w.Run()
 		},
@@ -124,6 +132,7 @@ func printLogo() {
                    |_|   |_|              `)
 	fmt.Printf("%42s\n", "version "+version)
 	fmt.Println("------------------------------------------")
+	fmt.Println()
 }
 
 const helpTextTemplate = `NAME:

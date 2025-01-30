@@ -1,8 +1,11 @@
 package crawler
 
 import (
+	"context"
+	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -11,12 +14,18 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-type RodCrawler struct{}
+type RodCrawler struct {
+	timeoutSeconds uint
+}
 
 var _ Crawler = (*RodCrawler)(nil)
 
 func NewRodCrawler() *RodCrawler {
 	return &RodCrawler{}
+}
+
+func (c *RodCrawler) SetTimeout(timeoutSeconds uint) {
+	c.timeoutSeconds = timeoutSeconds
 }
 
 func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
@@ -98,8 +107,18 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 	time.Sleep(3 * time.Second) // Wait for the event handler to be registered
 
 	slog.Info("navigating to the URL ...")
-	page.MustNavigate(url)
-	page.MustWaitLoad()
+	err := rod.Try(func() {
+		page.MustNavigate(url)
+		page.Timeout(time.Duration(c.timeoutSeconds) * time.Second).MustWaitLoad()
+	})
+	if err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			slog.Warn("timeout loading page", "timeout", strconv.Itoa(1)+"s")
+		} else {
+			slog.Warn("failed to navigate to the URL", "error", err)
+			return nil, err
+		}
+	}
 	slog.Info("page loaded")
 
 	time.Sleep(3 * time.Second) // Wait for all events to be processed
