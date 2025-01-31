@@ -1,7 +1,7 @@
 package signature
 
 var AwsAlbSignature = Signature{
-	Name:        "AWS ALB (Application Load Balancer)",
+	Name:        "AWS ALB",
 	Description: "Load balance HTTP and HTTPS traffic with advanced request routing targeted at the delivery of modern applications.",
 	Cpe:         "",
 

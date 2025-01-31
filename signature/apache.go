@@ -1,7 +1,7 @@
 package signature
 
 var ApacheSignature = Signature{
-	Name:        "Apache",
+	Name:        "Apache HTTP Server",
 	Description: "Apache is a free and open-source cross-platform web server software.",
 	Cpe:         "cpe:/a:apache:http_server",
 	DetectPattern: DetectPattern{
