@@ -19,7 +19,7 @@ type RodCrawler struct {
 	userAgent      string
 }
 
-var _ Crawler = (*RodCrawler)(nil)
+var _ Crawler = &RodCrawler{}
 
 func NewRodCrawler() *RodCrawler {
 	return &RodCrawler{}
@@ -127,8 +127,8 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 		if errors.Is(err, context.DeadlineExceeded) {
 			slog.Warn("timeout loading page", "timeout", strconv.Itoa(1)+"s")
 		} else {
-			slog.Warn("failed to navigate to the URL", "error", err)
-			return nil, err
+			slog.Error("failed to navigate to the URL", "error", err)
+			return nil, errors.New("failed to navigate to the URL")
 		}
 	}
 	slog.Info("page loaded")

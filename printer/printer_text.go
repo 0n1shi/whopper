@@ -9,11 +9,13 @@ import (
 
 type TextPrinter struct{}
 
+var _ Printer = &TextPrinter{}
+
 func NewTextPrinter() *TextPrinter {
 	return &TextPrinter{}
 }
 
-func (p *TextPrinter) Print(results []*analyzer.Result) {
+func (p *TextPrinter) Print(results []*analyzer.Result, err error) {
 	fmt.Println()
 	for _, result := range results {
 		fmt.Printf("[+] %s:", result.Name)

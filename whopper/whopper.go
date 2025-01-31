@@ -34,6 +34,7 @@ func (w *Whopper) Run() error {
 
 	responses, err := w.crawler.Crawl(w.targetUrl)
 	if err != nil {
+		w.printer.Print(nil, err)
 		return err
 	}
 
@@ -57,7 +58,7 @@ func (w *Whopper) Run() error {
 	targetHost := targetUrl.Hostname()
 	results := analyzer.AnalyzeAll(responses, signature.Signatures, targetHost)
 
-	w.printer.Print(results)
+	w.printer.Print(results, err)
 
 	return nil
 }
