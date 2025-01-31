@@ -17,6 +17,7 @@ import (
 const version = "v0.5.0"
 
 func main() {
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})))
 	app := &cli.App{
 		Name:      "whopper",
 		Usage:     "A CLI tool to detect the technology stack used on a website",
@@ -82,13 +83,13 @@ func main() {
 			logLevel := ctx.String("level")
 			switch logLevel {
 			case "debug":
-				slog.SetLogLoggerLevel(slog.LevelDebug)
+				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})))
 			case "info":
-				slog.SetLogLoggerLevel(slog.LevelInfo)
+				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo})))
 			case "warn":
-				slog.SetLogLoggerLevel(slog.LevelWarn)
+				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelWarn})))
 			case "error":
-				slog.SetLogLoggerLevel(slog.LevelError)
+				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelError})))
 			default:
 				return fmt.Errorf("invalid log level: %s", logLevel)
 			}
@@ -97,7 +98,7 @@ func main() {
 
 			debugMode := ctx.Bool("debug")
 			if debugMode {
-				slog.SetLogLoggerLevel(slog.LevelDebug)
+				slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})))
 				slog.Info("debug mode enabled", "log level", "debug")
 			}
 
