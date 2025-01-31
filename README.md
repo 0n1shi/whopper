@@ -15,12 +15,14 @@ USAGE:
    whopper [global options] <http(s)://...>
 
 GLOBAL OPTIONS:
-   --debug, -d              debug mode (default: false)
-   --level value, -l value  log level (debug | info | warn | error) (default: "info")
-   --word value, -w value   search for a specific word in the response (url, body, headers) *skips the analysis
-   --version, -v            print the version (default: false)
-   --json, -j               output the result in JSON format (default: false)
-   --help, -h               show help
+   --debug, -d                   debug mode (default: false)
+   --level value, -l value       log level (debug | info | warn | error) (default: "info")
+   --word value, -w value        search for a specific word in the response (url, body, headers) *skips the analysis
+   --version, -v                 print the version (default: false)
+   --json, -j                    output the result in JSON format (default: false)
+   --timeout value, -t value     timeout in seconds (default: 10)
+   --user-agent value, -u value  set the user agent
+   --help, -h                    show help
 ```
 
 ## Install
