@@ -58,6 +58,12 @@ func main() {
 				Value:   10,
 				Aliases: []string{"t"},
 			},
+			&cli.StringFlag{
+				Name:    "user-agent",
+				Usage:   "set the user agent",
+				Value:   "",
+				Aliases: []string{"u"},
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.Bool("version") {
@@ -111,6 +117,10 @@ func main() {
 			crawlerTimeout := ctx.Uint("timeout")
 			c.SetTimeout(crawlerTimeout)
 			slog.Info("set timeout to crawler", "timeout", strconv.Itoa(int(crawlerTimeout))+"s")
+			if ctx.String("user-agent") != "" {
+				c.SetUserAgent(ctx.String("user-agent"))
+				slog.Info("set user agent to crawler", "user agent", ctx.String("user-agent"))
+			}
 			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors, mustBeURL)
 			return w.Run()
 		},

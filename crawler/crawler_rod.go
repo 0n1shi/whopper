@@ -16,6 +16,7 @@ import (
 
 type RodCrawler struct {
 	timeoutSeconds uint
+	userAgent      string
 }
 
 var _ Crawler = (*RodCrawler)(nil)
@@ -26,6 +27,10 @@ func NewRodCrawler() *RodCrawler {
 
 func (c *RodCrawler) SetTimeout(timeoutSeconds uint) {
 	c.timeoutSeconds = timeoutSeconds
+}
+
+func (c *RodCrawler) SetUserAgent(userAgent string) {
+	c.userAgent = userAgent
 }
 
 func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
@@ -108,6 +113,13 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 
 	slog.Info("navigating to the URL ...")
 	err := rod.Try(func() {
+		if c.userAgent != "" {
+			if err := page.SetUserAgent(&proto.NetworkSetUserAgentOverride{
+				UserAgent: c.userAgent,
+			}); err != nil {
+				slog.Warn("failed to set user agent", "error", err)
+			}
+		}
 		page.MustNavigate(url)
 		page.Timeout(time.Duration(c.timeoutSeconds) * time.Second).MustWaitLoad()
 	})
