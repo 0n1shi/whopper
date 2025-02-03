@@ -17,6 +17,7 @@ func TestNginxSignature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "nginx",
@@ -27,6 +28,7 @@ func TestNginxSignature(t *testing.T) {
 	}, {
 		name: "Server header with version",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "nginx/1.18.0 (Ubuntu)",
@@ -37,6 +39,7 @@ func TestNginxSignature(t *testing.T) {
 	}, {
 		name: "Server header with version and other info",
 		response: &crawler.Response{
+			Url: SameHostUrl,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "nginx/1.20.1",
@@ -44,6 +47,17 @@ func TestNginxSignature(t *testing.T) {
 		},
 		detected: true,
 		version:  "1.20.1",
+	}, {
+		name: "Server header with version but different host",
+		response: &crawler.Response{
+			Url: OtherHostUrl,
+			Headers: []*crawler.Header{{
+				Name:  "server",
+				Value: "nginx/1.20.1",
+			}},
+		},
+		detected: false,
+		version:  "",
 	}}
 
 	runTests(t, cases, &NginxSignature)
