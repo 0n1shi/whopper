@@ -70,6 +70,7 @@ var Signatures = []*Signature{
 	&SwiperSignature,
 	&UnderscoreSignature,
 	&UnpkgSignature,
+	&VueJsSignature,
 	&WebVitalsSignature,
 	&WordpressSignature,
 	&WordpressPluginAllInOneSEOSignature,
