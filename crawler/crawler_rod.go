@@ -112,18 +112,18 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 	time.Sleep(3 * time.Second) // Wait for the event handler to be registered
 
 	slog.Info("navigating to the URL ...")
-	err := rod.Try(func() {
-		if c.userAgent != "" {
-			if err := page.SetUserAgent(&proto.NetworkSetUserAgentOverride{
-				UserAgent: c.userAgent,
-			}); err != nil {
-				slog.Warn("failed to set user agent", "error", err)
-			}
+	if c.userAgent != "" {
+		if err := page.SetUserAgent(&proto.NetworkSetUserAgentOverride{
+			UserAgent: c.userAgent,
+		}); err != nil {
+			slog.Warn("failed to set user agent", "error", err)
 		}
-		page.MustNavigate(url)
-		page.Timeout(time.Duration(c.timeoutSeconds) * time.Second).MustWaitLoad()
-	})
-	if err != nil {
+	}
+	if err := page.Navigate(url); err != nil {
+		slog.Error("failed to navigate to the URL", "error", err)
+		return nil, errors.New("failed to navigate to the URL")
+	}
+	if err := page.Timeout(time.Duration(c.timeoutSeconds) * time.Second).WaitLoad(); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			slog.Warn("timeout loading page", "timeout", strconv.Itoa(1)+"s")
 		} else {
