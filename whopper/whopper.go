@@ -45,15 +45,6 @@ func (w *Whopper) Run() error {
 		return nil // skip the analysis
 	}
 
-	if w.debugMode {
-		for i, response := range responses {
-			if i > 10 {
-				break
-			}
-			crawler.DumpResponse(response)
-		}
-	}
-
 	targetUrl, _ := url.Parse(w.targetUrl)
 	targetHost := targetUrl.Hostname()
 	results := analyzer.AnalyzeAll(responses, signature.Signatures, targetHost)
