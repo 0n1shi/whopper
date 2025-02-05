@@ -19,14 +19,15 @@ func NewJsonPrinter() *JsonPrinter {
 
 type JsonPrinterOutput struct {
 	Completed bool               `json:"completed"`
-	Error     string             `json:"error"`
+	Error     *string            `json:"error"`
 	Results   []*analyzer.Result `json:"results"`
 }
 
 func (p *JsonPrinter) Print(results []*analyzer.Result, err error) {
-	errMessage := ""
+	var errMessage *string
 	if err != nil {
-		errMessage = err.Error()
+		errMessage = new(string)
+		*errMessage = err.Error()
 	}
 	output := JsonPrinterOutput{
 		Completed: err == nil,

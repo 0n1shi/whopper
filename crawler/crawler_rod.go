@@ -3,8 +3,10 @@ package crawler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
 	"sync"
 	"time"
@@ -17,6 +19,7 @@ import (
 type RodCrawler struct {
 	timeoutSeconds uint
 	userAgent      string
+	onlySameHost   bool
 }
 
 var _ Crawler = &RodCrawler{}
@@ -33,7 +36,11 @@ func (c *RodCrawler) SetUserAgent(userAgent string) {
 	c.userAgent = userAgent
 }
 
-func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
+func (c *RodCrawler) SetOnlySameHost(onlySameHost bool) {
+	c.onlySameHost = onlySameHost
+}
+
+func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 	slog.Debug("launching browser ...")
 	launcher := launcher.New()
 	defer launcher.Cleanup() // remove user data such as cookies, cache, etc.
@@ -50,11 +57,16 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 	responseMap := map[string]*Response{}
 	notFoundRequestIDs := []string{}
 	mu := &sync.Mutex{}
+	var firstPageUrl *string
 	page := browser.MustPage()
 	defer page.MustClose()
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
 		url := omitURL(event.Response.URL)
 		slog.Debug("received response", "url", url, "status", event.Response.Status)
+
+		if firstPageUrl == nil {
+			firstPageUrl = &event.Response.URL
+		}
 
 		cookies := []*Cookie{}
 		cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Response.URL}}.Call(page)
@@ -119,7 +131,7 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 			slog.Warn("failed to set user agent", "error", err)
 		}
 	}
-	if err := page.Navigate(url); err != nil {
+	if err := page.Navigate(targetUrl); err != nil {
 		slog.Error("failed to navigate to the URL", "error", err)
 		return nil, errors.New("failed to navigate to the URL")
 	}
@@ -132,6 +144,22 @@ func (c *RodCrawler) Crawl(url string) ([]*Response, error) {
 		}
 	}
 	slog.Info("page loaded")
+
+	if c.onlySameHost {
+		if firstPageUrl == nil {
+			slog.Warn("no URL is loaded")
+			return nil, errors.New("no URL is loaded")
+		}
+
+		parsedFirstPageUrl, _ := url.Parse(*firstPageUrl)
+		firstPageHost := parsedFirstPageUrl.Hostname()
+		parsedTargetUrl, _ := url.Parse(targetUrl)
+		targetHost := parsedTargetUrl.Hostname()
+		if firstPageHost != targetHost {
+			slog.Warn("hostname is not the same as the first page", "target", targetHost, "first page", firstPageHost)
+			return nil, fmt.Errorf("hostname is not the same as the first page: %s", firstPageHost)
+		}
+	}
 
 	time.Sleep(3 * time.Second) // Wait for all events to be processed
 

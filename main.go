@@ -65,6 +65,12 @@ func main() {
 				Value:   "",
 				Aliases: []string{"u"},
 			},
+			&cli.BoolFlag{
+				Name:    "same-host",
+				Usage:   "analyze only the same host",
+				Value:   false,
+				Aliases: []string{"s"},
+			},
 		},
 		Action: func(ctx *cli.Context) error {
 			if ctx.Bool("version") {
@@ -122,6 +128,10 @@ func main() {
 				c.SetUserAgent(ctx.String("user-agent"))
 				slog.Info("set user agent to crawler", "user agent", ctx.String("user-agent"))
 			}
+			if ctx.Bool("same-host") {
+				c.SetOnlySameHost(true)
+				slog.Info("analyze only the same host")
+			}
 			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors, mustBeURL)
 			return w.Run()
 		},
@@ -143,7 +153,6 @@ func printLogo() {
                    |_|   |_|              `)
 	fmt.Printf("%42s\n", "version "+version)
 	fmt.Println("------------------------------------------")
-	fmt.Println()
 }
 
 const helpTextTemplate = `NAME:
