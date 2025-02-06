@@ -22,6 +22,7 @@ GLOBAL OPTIONS:
    --json, -j                    output the result in JSON format (default: false)
    --timeout value, -t value     timeout in seconds (default: 10)
    --user-agent value, -u value  set the user agent
+   --same-host, -s               analyze only the same host (default: false)
    --help, -h                    show help
 ```
 
