@@ -6,8 +6,10 @@ var UnpkgSignature = Signature{
 	Cpe:         "",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
-			"unpkg.com",
+		Bodies: []string{
+			"unpkg.com/",
 		},
 	},
+
+	OnlySameHost: true,
 }

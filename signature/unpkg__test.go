@@ -15,7 +15,15 @@ func TestUnpkgSignature(t *testing.T) {
 	}, {
 		name: "URL contains unpkg.com",
 		response: &crawler.Response{
-			Url: "https://unpkg.com/web-vitals@2.1.4/dist/web-vitals.iife.js",
+			Url: SameHostUrl,
+			Body: `<html>
+	<head>
+		<title>test</title>
+	</head>
+	<body>
+		<a href="https://unpkg.com/">test</a>
+	</body>
+</html>`,
 		},
 		detected: true,
 		version:  "",
