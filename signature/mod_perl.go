@@ -17,5 +17,6 @@ var ModPerlSignature = Signature{
 			Value: `mod_perl/(\d+\.\d+\.\d+)`,
 		}},
 	},
+
 	OnlySameHost: true,
 }

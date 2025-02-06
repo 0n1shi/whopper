@@ -14,5 +14,6 @@ var AmazonCloudFrontSignature = Signature{
 			Value: `from cloudfront`,
 		}},
 	},
+
 	OnlySameHost: true,
 }

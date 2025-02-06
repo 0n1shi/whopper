@@ -17,5 +17,6 @@ var NginxSignature = Signature{
 			Value: `nginx/(\d+\.\d+\.\d+)`,
 		}},
 	},
+
 	OnlySameHost: true,
 }

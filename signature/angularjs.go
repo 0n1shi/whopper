@@ -19,6 +19,4 @@ var AngularJsSignature = Signature{
 			`http:\/\/errors.angularjs.org\/(\d+\.\d+\.\d+(-rc\.\d+)?)`,
 		},
 	},
-
-	OnlySameHost: false,
 }

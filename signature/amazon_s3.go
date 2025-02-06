@@ -11,5 +11,6 @@ var AmazonS3Signature = Signature{
 			Value: `AmazonS3`,
 		}},
 	},
+
 	OnlySameHost: true,
 }

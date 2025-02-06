@@ -16,5 +16,6 @@ var ApacheSignature = Signature{
 			Value: `Apache/(\d+\.\d+\.\d+)`,
 		}},
 	},
+
 	OnlySameHost: true,
 }
