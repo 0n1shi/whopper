@@ -1,0 +1,5144 @@
+[
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:aol:aolserver:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "AOLserver/?([\\d.]+)?\\;version:\\1"
+    },
+    "icon": "AOLserver.png",
+    "website": "https://aolserver.com",
+    "name": "AOLserver"
+  },
+  {
+    "cats": [
+      10
+    ],
+    "cpe": "cpe:2.3:a:laurent_destailleur:awstats:*:*:*:*:*:*:*:*",
+    "icon": "AWStats.png",
+    "implies": "Perl",
+    "meta": {
+      "generator": "AWStats ([\\d.]+(?: \\(build [\\d.]+\\))?)\\;version:\\1"
+    },
+    "website": "https://awstats.sourceforge.net",
+    "name": "AWStats"
+  },
+  {
+    "cats": [
+      3
+    ],
+    "cpe": "cpe:2.3:a:adminer:adminer:*:*:*:*:*:*:*:*",
+    "html": [
+      "Adminer</a> <span class=\"version\">([\\d.]+)</span>\\;version:\\1",
+      "onclick=\"bodyClick\\(event\\);\" onload=\"verifyVersion\\('([\\d.]+)'\\);\">\\;version:\\1"
+    ],
+    "icon": "adminer.png",
+    "implies": "PHP",
+    "website": "https://www.adminer.org",
+    "name": "Adminer"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:adobe:coldfusion:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Cookie": "CFTOKEN="
+    },
+    "html": "<!-- START headerTags\\.cfm",
+    "icon": "Adobe ColdFusion.svg",
+    "implies": "CFML",
+    "js": {
+      "_cfEmails": ""
+    },
+    "scriptSrc": "/cfajax/",
+    "url": "\\.cfm(?:$|\\?)",
+    "website": "https://adobe.com/products/coldfusion-family.html",
+    "name": "Adobe ColdFusion"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:adobe:experience_manager:*:*:*:*:*:*:*:*",
+    "description": "Adobe Experience Manager (AEM) is a content management solution for building websites, mobile apps and forms.",
+    "html": [
+      "<div class=\"[^\"]*parbase",
+      "<div[^>]+data-component-path=\"[^\"+]jcr:",
+      "<div class=\"[^\"]*aem-Grid"
+    ],
+    "icon": "Adobe Experience Platform.svg",
+    "implies": "Java",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/etc/designs/",
+      "/etc/clientlibs/",
+      "/etc\\.clientlibs/"
+    ],
+    "scripts": "aem-(?:GridColumn|apps/)",
+    "website": "https://www.adobe.com/marketing/experience-manager.html",
+    "name": "Adobe Experience Manager"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:adobe:experience_manager:*:*:*:*:*:*:*:*",
+    "description": "Edge Delivery Services in Adobe Experience Manager Sites as a Cloud Service, also know as Helix, Franklin, Next-Generation Composability is a fast and lightweight content management system from Adobe.",
+    "excludes": [
+      "Adobe Experience Manager"
+    ],
+    "icon": "Adobe Experience Platform.svg",
+    "saas": true,
+    "scriptSrc": [
+      "^.+/scripts/lib-franklin\\.js$",
+      "^.+/scripts/aem\\.js$"
+    ],
+    "website": "https://www.aem.live",
+    "name": "Adobe Experience Manager Edge Delivery Services"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:adobe:flash:*:*:*:*:*:*:*:*",
+    "description": "Adobe Flash is a multimedia software platform used for production of animations, rich web applications and embedded web browser video players.",
+    "dom": [
+      "object[type='application/x-shockwave-flash']",
+      "param[value*='.swf']"
+    ],
+    "icon": "Adobe Flash.svg",
+    "website": "https://www.adobe.com/products/flashplayer",
+    "name": "Adobe Flash"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:adobe:golive:*:*:*:*:*:*:*:*",
+    "description": "Adobe GoLive is a WYSIWYG HTML editor and web site management application.",
+    "icon": "Adobe GoLive.png",
+    "meta": {
+      "generator": "Adobe GoLive(?:\\s([\\d.]+))?\\;version:\\1"
+    },
+    "website": "https://www.adobe.com/products/golive",
+    "name": "Adobe GoLive"
+  },
+  {
+    "cats": [
+      4
+    ],
+    "cpe": "cpe:2.3:a:adobe:robohelp:*:*:*:*:*:*:*:*",
+    "description": "Adobe RoboHelp is a Help Authoring Tool (HAT) that allows you to create help systems, e-learning content and knowledge bases.",
+    "icon": "Adobe RoboHelp.svg",
+    "js": {
+      "gbWhLang": "",
+      "gbWhMsg": "",
+      "gbWhProxy": "",
+      "gbWhUtil": "",
+      "gbWhVer": ""
+    },
+    "meta": {
+      "generator": "^Adobe RoboHelp(?: ([\\d]+))?\\;version:\\1"
+    },
+    "scriptSrc": "(?:wh(?:utils|ver|proxy|lang|topic|msg)|ehlpdhtm)\\.js",
+    "website": "https://adobe.com/products/robohelp.html",
+    "name": "Adobe RoboHelp"
+  },
+  {
+    "cats": [
+      41,
+      91
+    ],
+    "cpe": "cpe:2.3:a:afterpay:afterpay:*:*:*:*:*:*:*:*",
+    "description": "Afterpay is a 'buy now, pay later' platform that makes it possible to pay off purchased goods in fortnightly instalments.",
+    "dom": "#afterpay, .afterpay, .AfterpayMessage, [aria-label='Afterpay'], link[href*='/wp-content/plugins/afterpay-gateway-for-woocommerce/']",
+    "icon": "afterpay.png",
+    "js": {
+      "Afterpay": "",
+      "Afterpay.version": "([\\d\\.]+)\\;version:\\1",
+      "AfterpayAttractWidget": "",
+      "AfterpayGenericErrorHtml": "",
+      "AfterpayWidgetHtml": "",
+      "afterpay_product": "",
+      "checkout.enabledpayments.afterpay": "^true$"
+    },
+    "requiresCategory": 6,
+    "saas": true,
+    "scriptSrc": [
+      "portal\\.afterpay\\.com",
+      "static\\.afterpay\\.com",
+      "present-afterpay\\.js",
+      "afterpay-products\\.min\\.js",
+      "js\\.stripe\\.com/v3/fingerprinted/js/elements-afterpay-clearpay-message-.+\\.js"
+    ],
+    "website": "https://www.afterpay.com/",
+    "name": "Afterpay"
+  },
+  {
+    "cats": [
+      18,
+      22
+    ],
+    "cpe": "cpe:2.3:a:lightbend:akka_http:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "akka-http(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "akka-http.png",
+    "website": "https://akka.io",
+    "name": "Akka HTTP"
+  },
+  {
+    "cats": [
+      54,
+      87
+    ],
+    "cpe": "cpe:2.3:a:aioseo:all_in_one_seo:*:*:*:*:*:wordpress:*:*",
+    "description": "All in One SEO optimizes a WordPress website and its content for search engines.",
+    "dom": {
+      "script.aioseo-schema": {}
+    },
+    "html": [
+      "<!-- All in One SEO Pack ([\\d.]+) \\;version:\\1",
+      "<!-- All in One SEO ([\\d.]+) \\;version:\\1",
+      "<!-- All in One SEO Pro ([\\d.]+) \\;version:Pro \\1"
+    ],
+    "icon": "AIOSEO.svg",
+    "implies": "WordPress",
+    "meta": {
+      "generator": [
+        "^All in One SEO \\(AIOSEO\\) ([\\d\\.]+)\\;version:\\1",
+        "^All in One SEO Pro \\(AIOSEO\\) ([\\d\\.]+)\\;version:Pro \\1"
+      ]
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://aioseo.com",
+    "name": "All in One SEO"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:alpinelinux:alpine_linux:*:*:*:*:*:*:*:*",
+    "description": "Alpine Linux is a security-oriented, lightweight Linux distribution based on musl libc and busybox.",
+    "headers": {
+      "X-Powered-By": "Alpine"
+    },
+    "icon": "Alpine Linux.svg",
+    "oss": true,
+    "website": "https://www.alpinelinux.org",
+    "name": "Alpine Linux"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*",
+    "description": "Angular is a TypeScript-based open-source web application framework led by the Angular Team at Google.",
+    "dom": {
+      "[ng-version]": {
+        "attributes": {
+          "ng-version": "^([\\d\\.]+)\\;version:\\1"
+        }
+      }
+    },
+    "excludes": [
+      "AngularDart",
+      "AngularJS"
+    ],
+    "icon": "Angular.svg",
+    "implies": "TypeScript",
+    "js": {
+      "ng.coreTokens": "",
+      "ng.probe": ""
+    },
+    "oss": true,
+    "website": "https://angular.io",
+    "name": "Angular"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:angularjs:angular.js:*:*:*:*:*:*:*:*",
+    "description": "AngularJS is a JavaScript-based open-source web application framework led by the Angular Team at Google.",
+    "excludes": [
+      "Angular",
+      "AngularDart"
+    ],
+    "html": [
+      "<(?:div|html)[^>]+ng-app=",
+      "<ng-app"
+    ],
+    "icon": "AngularJS.svg",
+    "js": {
+      "angular": "",
+      "angular.version.full": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": [
+      "angular[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
+      "/([\\d.]+(?:-?rc[.\\d]*)*)/angular(?:\\.min)?\\.js\\;version:\\1",
+      "(?!angular\\.io)\\bangular.{0,32}\\.js"
+    ],
+    "website": "https://angularjs.org",
+    "name": "AngularJS"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:apache:apisix:*:*:*:*:*:*:*:*",
+    "description": "Apache APISIX is an open-source, cloud-native API gateway developed by the Apache Software Foundation. It provides a scalable and high-performance solution for managing and securing API traffic.",
+    "headers": {
+      "X-APISIX-Upstream-Status": "",
+      "server": "^APISIX(?:/([\\d\\.]+))?$\\;version:\\1"
+    },
+    "icon": "Apache APISIX.svg",
+    "oss": true,
+    "website": "https://apisix.apache.org",
+    "name": "Apache APISIX"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*",
+    "description": "Apache is a free and open-source cross-platform web server software.",
+    "headers": {
+      "Server": "(?:Apache(?:$|/([\\d.]+)|[^/-])|(?:^|\\b)HTTPD)\\;version:\\1"
+    },
+    "icon": "Apache.svg",
+    "oss": true,
+    "website": "https://httpd.apache.org/",
+    "name": "Apache HTTP Server"
+  },
+  {
+    "cats": [
+      8
+    ],
+    "cpe": "cpe:2.3:a:apache:jspwiki:*:*:*:*:*:*:*:*",
+    "description": "Apache JSPWiki is an open-source Wiki engine, built around standard JEE components (Java, servlets, JSP).",
+    "html": "<html[^>]* xmlns:jspwiki=",
+    "icon": "Apache.svg",
+    "implies": "Apache Tomcat",
+    "oss": true,
+    "scriptSrc": "jspwiki",
+    "url": "wiki\\.jsp",
+    "website": "https://jspwiki.org",
+    "name": "Apache JSPWiki"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:apache:tomcat:*:*:*:*:*:*:*:*",
+    "description": "Apache Tomcat is an open-source implementation of the Java Servlet, JavaServer Pages, Java Expression Language and WebSocket technologies.",
+    "headers": {
+      "Server": "^Apache-Coyote",
+      "X-Powered-By": "\\bTomcat\\b(?:-([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Apache Tomcat.svg",
+    "implies": "Java",
+    "oss": true,
+    "website": "https://tomcat.apache.org",
+    "name": "Apache Tomcat"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:apache:traffic_server:*:*:*:*:*:*:*:*",
+    "description": "Apache Traffic Server is an open-source caching and proxying server that serves as an HTTP/1.1 and HTTP/2 reverse proxy with caching capabilities, load balancing, request routing, SSL termination, and support for advanced HTTP features.",
+    "headers": {
+      "Server": "ATS/?([\\d.]+)?\\;version:\\1"
+    },
+    "icon": "Apache Traffic Server.svg",
+    "oss": true,
+    "website": "https://trafficserver.apache.org/",
+    "name": "Apache Traffic Server"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:apache:wicket:*:*:*:*:*:*:*:*",
+    "description": "Apache Wicket is an open-source Java web application framework for building scalable and maintainable web applications.",
+    "icon": "Apache Wicket.svg",
+    "implies": "Java",
+    "js": {
+      "Wicket": ""
+    },
+    "oss": true,
+    "website": "https://wicket.apache.org",
+    "name": "Apache Wicket"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:arastta:ecommerce:*:*:*:*:*:*:*:*",
+    "description": "Arastta is a free and open-source project with contributors from all over the world.",
+    "excludes": "OpenCart",
+    "headers": {
+      "Arastta": "^(.+)$\\;version:\\1",
+      "X-Arastta": "",
+      "x-arastta": ""
+    },
+    "icon": "Arastta.svg",
+    "implies": "PHP",
+    "oss": true,
+    "scriptSrc": "arastta\\.js",
+    "website": "https://arastta.org",
+    "name": "Arastta"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cpe": "cpe:2.3:a:jfrog:artifactory:*:*:*:*:*:*:*:*",
+    "html": [
+      "<span class=\"version\">Artifactory(?: Pro)?(?: Power Pack)?(?: ([\\d.]+))?\\;version:\\1"
+    ],
+    "icon": "Artifactory.svg",
+    "js": {
+      "ArtifactoryUpdates": ""
+    },
+    "scriptSrc": [
+      "wicket/resource/org\\.artifactory\\."
+    ],
+    "website": "https://jfrog.com/open-source/#os-arti",
+    "name": "Artifactory"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:jfrog:artifactory:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "Artifactory(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Artifactory.svg",
+    "implies": "Artifactory",
+    "website": "https://jfrog.com/open-source/#os-arti",
+    "name": "Artifactory Web Server"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cpe": "cpe:2.3:a:atlassian:bitbucket:*:*:*:*:*:*:*:*",
+    "description": "Bitbucket is a web-based version control repository hosting service for source code and development projects that use either Mercurial or Git revision control systems.",
+    "html": "<li>Atlassian Bitbucket <span title=\"[a-z0-9]+\" id=\"product-version\" data-commitid=\"[a-z0-9]+\" data-system-build-number=\"[a-z0-9]+\"> v([\\d.]+)<\\;version:\\1",
+    "icon": "Atlassian Bitbucket.svg",
+    "implies": "Python",
+    "js": {
+      "bitbucket": ""
+    },
+    "meta": {
+      "application-name": "Bitbucket"
+    },
+    "website": "https://www.atlassian.com/software/bitbucket/overview/",
+    "name": "Atlassian Bitbucket"
+  },
+  {
+    "cats": [
+      8
+    ],
+    "cpe": "cpe:2.3:a:atlassian:confluence:*:*:*:*:*:*:*:*",
+    "description": "Atlassian Confluence is a web-based collaboration wiki tool.",
+    "dom": {
+      "li.print-only": {
+        "text": "Atlassian Confluence ([\\d.]+)\\;version:\\1"
+      }
+    },
+    "headers": {
+      "X-Confluence-Request-Time": ""
+    },
+    "icon": "Atlassian Confluence.svg",
+    "implies": "Java",
+    "meta": {
+      "confluence-request-time": ""
+    },
+    "website": "https://www.atlassian.com/software/confluence/overview/team-collaboration-software",
+    "name": "Atlassian Confluence"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cookies": {
+      "FESESSIONID": ""
+    },
+    "cpe": "cpe:2.3:a:atlassian:fisheye:*:*:*:*:*:*:*:*",
+    "html": "<title>(?:Log in to )?FishEye (?:and Crucible )?([\\d.]+)?</title>\\;version:\\1",
+    "icon": "Atlassian FishEye.svg",
+    "website": "https://www.atlassian.com/software/fisheye/overview/",
+    "name": "Atlassian FishEye"
+  },
+  {
+    "cats": [
+      13
+    ],
+    "cpe": "cpe:2.3:a:atlassian:jira:*:*:*:*:*:*:*:*",
+    "dom": "#jira",
+    "icon": "Atlassian Jira.svg",
+    "implies": "Java",
+    "js": {
+      "jira.id": ""
+    },
+    "meta": {
+      "application-name": "JIRA",
+      "data-version": "([\\d.]+)\\;version:\\1\\;confidence:0"
+    },
+    "website": "https://www.atlassian.com/software/jira/overview/",
+    "name": "Atlassian Jira"
+  },
+  {
+    "cats": [
+      69
+    ],
+    "cpe": "cpe:2.3:a:auth0:auth0.js:*:*:*:*:*:node.js:*:*",
+    "description": "Auth0 provides authentication and authorisation as a service.",
+    "dom": "link[href*='cdn.auth0.com']",
+    "headers": {
+      "x-auth0-requestid": ""
+    },
+    "icon": "Auth0.svg",
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/auth0(?:-js)?/([\\d.]+)/auth0(?:.min)?\\.js\\;version:\\1",
+      "/auth0-js@([\\d.]+)/([a-z]+)/auth0\\.min\\.js\\;version:\\1"
+    ],
+    "website": "https://auth0.github.io/auth0.js/index.html",
+    "name": "Auth0"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:backbone_project:backbone:*:*:*:*:*:*:*:*",
+    "description": "BackboneJS is a JavaScript library that allows to develop and structure the client side applications that run in a web browser.",
+    "icon": "Backbone.js.png",
+    "implies": "Underscore.js",
+    "js": {
+      "Backbone": "",
+      "Backbone.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "backbone.*\\.js",
+    "website": "https://backbonejs.org",
+    "name": "Backbone.js"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:backdropcms:backdrop:*:*:*:*:*:*:*:*",
+    "description": "Backdrop is an open-source content management system (CMS) derived from Drupal 7, offering a user-friendly interface, customisable content types, taxonomies, views, theming capabilities, extensibility through modules, and regular security updates.",
+    "excludes": [
+      "Drupal",
+      "Drupal Multisite"
+    ],
+    "headers": {
+      "X-Backdrop-Cache": "",
+      "X-Generator": "^Backdrop CMS(?:\\s([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Backdrop.svg",
+    "implies": "PHP",
+    "js": {
+      "Backdrop": ""
+    },
+    "meta": {
+      "generator": "^Backdrop CMS(?:\\s([\\d.]+))?\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://backdropcms.org",
+    "name": "Backdrop"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:bigtreecms:bigtree_cms:*:*:*:*:*:*:*:*",
+    "description": "BigTree CMS is an extremely extensible open-source CMS built on PHP and MySQL.",
+    "icon": "BigTree CMS.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "BigTree.Growling": "",
+      "BigTreeMatrix": "",
+      "BigTreeTagAdder": ""
+    },
+    "oss": true,
+    "website": "https://www.bigtreecms.org",
+    "name": "BigTree CMS"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "bigWAdminID": "",
+      "bigwareCsid": ""
+    },
+    "cpe": "cpe:2.3:a:bigware:bigware_shop:*:*:*:*:*:*:*:*",
+    "html": "(?:Diese <a href=[^>]+bigware\\.de|<a href=[^>]+/main_bigware_\\d+\\.php)",
+    "icon": "Bigware.png",
+    "implies": "PHP",
+    "url": "(?:\\?|&)bigWAdminID=",
+    "website": "https://bigware.de",
+    "name": "Bigware"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:bolt:bolt:*:*:*:*:*:*:*:*",
+    "icon": "Bolt CMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Bolt"
+    },
+    "website": "https://bolt.cm",
+    "name": "Bolt CMS"
+  },
+  {
+    "cats": [
+      4
+    ],
+    "cookies": {
+      "bookstack_session": ""
+    },
+    "cpe": "cpe:2.3:a:bookstackapp:bookstack:*:*:*:*:*:*:*:*",
+    "description": "BookStack is a simple, open-source, self-hosted, easy-to-use platform for organising and storing information.",
+    "icon": "BookStack.svg",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Laravel"
+    ],
+    "oss": true,
+    "website": "https://www.bookstackapp.com",
+    "name": "BookStack"
+  },
+  {
+    "cats": [
+      66
+    ],
+    "cpe": "cpe:2.3:a:getbootstrap:bootstrap:*:*:*:*:*:*:*:*",
+    "description": "Bootstrap is a free and open-source CSS framework directed at responsive, mobile-first front-end web development. It contains CSS and JavaScript-based design templates for typography, forms, buttons, navigation, and other interface components.",
+    "html": [
+      "<style>\\s+/\\*!\\s+\\* Bootstrap v(\\d\\.\\d\\.\\d)\\;version:\\1",
+      "<link[^>]* href=[^>]*?bootstrap(?:[^>]*?([0-9a-fA-F]{7,40}|[\\d]+(?:.[\\d]+(?:.[\\d]+)?)?)|)[^>-]*?(?:\\.min)?\\.css\\;version:\\1"
+    ],
+    "icon": "Bootstrap.svg",
+    "js": {
+      "bootstrap.Alert.VERSION": "^(.+)$\\;version:\\1",
+      "jQuery.fn.tooltip.Constructor.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": [
+      "bootstrap(?:[^>]*?([0-9a-fA-F]{7,40}|[\\d]+(?:.[\\d]+(?:.[\\d]+)?)?)|)[^>]*?(?:\\.min)?\\.js\\;version:\\1"
+    ],
+    "website": "https://getbootstrap.com",
+    "name": "Bootstrap"
+  },
+  {
+    "cats": [
+      13
+    ],
+    "cookies": {
+      "Bugzilla_login_request_cookie": ""
+    },
+    "cpe": "cpe:2.3:a:mozilla:bugzilla:*:*:*:*:*:*:*:*",
+    "html": [
+      "href=\"enter_bug\\.cgi\">",
+      "<main id=\"bugzilla-body\"",
+      "<a href=\"https?://www\\.bugzilla\\.org/docs/([0-9.]+)/[^>]+>Help<\\;version:\\1",
+      "<span id=\"information\" class=\"header_addl_info\">version ([\\d.]+)<\\;version:\\1"
+    ],
+    "icon": "Bugzilla.png",
+    "implies": "Perl",
+    "js": {
+      "BUGZILLA": ""
+    },
+    "meta": {
+      "generator": "Bugzilla ?([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://www.bugzilla.org",
+    "name": "Bugzilla"
+  },
+  {
+    "cats": [
+      24
+    ],
+    "cpe": "cpe:2.3:a:ckeditor:ckeditor:*:*:*:*:*:*:*:*",
+    "description": "CKEditor is a WYSIWYG rich text editor which enables writing content directly inside of web pages or online applications. Its core code is written in JavaScript and it is developed by CKSource. CKEditor is available under open-source and commercial licenses.",
+    "icon": "CKEditor.png",
+    "js": {
+      "CKEDITOR": "",
+      "CKEDITOR.version": "^([\\d\\.])$\\;version:\\1",
+      "CKEDITOR_BASEPATH": "",
+      "CKEDITOR_VERSION": "^([\\d\\.])$\\;version:5-\\1",
+      "apex.libVersions.ckeditor5": "^([\\d\\.])$\\;version:5-\\1"
+    },
+    "website": "https://ckeditor.com",
+    "name": "CKEditor"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "CMSSESSID": ""
+    },
+    "cpe": "cpe:2.3:a:cmsmadesimple:cms_made_simple:*:*:*:*:*:*:*:*",
+    "icon": "CMS Made Simple.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "CMS Made Simple"
+    },
+    "website": "https://cmsmadesimple.org",
+    "name": "CMS Made Simple"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:cmsimple:cmsimple:*:*:*:*:*:*:*:*",
+    "implies": "PHP",
+    "meta": {
+      "generator": "CMSimple( [\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://www.cmsimple.org/en",
+    "name": "CMSimple"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:caddyserver:caddy:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "^Caddy$"
+    },
+    "icon": "caddy.svg",
+    "website": "https://caddyserver.com",
+    "name": "Caddy"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "cakephp": ""
+    },
+    "cpe": "cpe:2.3:a:cakephp:cakephp:*:*:*:*:*:*:*:*",
+    "description": "CakePHP is an open-source web framework. It follows the model\u2013view\u2013controller (MVC) approach and is written in PHP.",
+    "icon": "CakePHP.svg",
+    "implies": "PHP",
+    "meta": {
+      "application-name": "CakePHP"
+    },
+    "oss": true,
+    "website": "https://cakephp.org",
+    "name": "CakePHP"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:centos:centos:*:*:*:*:*:*:*:*",
+    "description": "CentOS is a Linux distribution that provides a free, community-supported computing platform functionally compatible with its upstream source, Red Hat Enterprise Linux (RHEL).",
+    "headers": {
+      "Server": "CentOS",
+      "X-Powered-By": "CentOS"
+    },
+    "icon": "CentOS.svg",
+    "website": "https://centos.org",
+    "name": "CentOS"
+  },
+  {
+    "cats": [
+      21
+    ],
+    "cpe": "cpe:2.3:a:chamilo:chamilo_lms:*:*:*:*:*:*:*:*",
+    "description": "Chamilo is an open-source learning management and collaboration system.",
+    "dom": "link[href*='chamilo.org/']",
+    "headers": {
+      "X-Powered-By": "Chamilo ([\\d.]+)\\;version:\\1"
+    },
+    "icon": "Chamilo.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Chamilo ([\\d.]+)\\;version:\\1"
+    },
+    "website": "https://www.chamilo.org",
+    "name": "Chamilo"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:cherokee-project:cherokee:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "^Cherokee(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Cherokee.png",
+    "website": "https://www.cherokee-project.com",
+    "name": "Cherokee"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:web-feet:coaster_cms:*:*:*:*:*:*:*:*",
+    "icon": "coaster-cms.png",
+    "implies": "Laravel",
+    "meta": {
+      "generator": "^Coaster CMS v([\\d.]+)$\\;version:\\1"
+    },
+    "website": "https://www.coastercms.org",
+    "name": "Coaster CMS"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "ci_csrf_token": "^(.+)$\\;version:\\1?2+:",
+      "ci_session": "",
+      "exp_last_activity": "",
+      "exp_tracker": ""
+    },
+    "cpe": "cpe:2.3:a:codeigniter:codeigniter:*:*:*:*:*:*:*:*",
+    "html": "<input[^>]+name=\"ci_csrf_token\"\\;version:2+",
+    "icon": "CodeIgniter.png",
+    "implies": "PHP",
+    "website": "https://codeigniter.com",
+    "name": "CodeIgniter"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:microsoft:commerce_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "COMMERCE-SERVER-SOFTWARE": ""
+    },
+    "icon": "Commerce Server.png",
+    "implies": "Microsoft ASP.NET",
+    "website": "https://commerceserver.net",
+    "name": "Commerce Server"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "CONCRETE5": ""
+    },
+    "cpe": "cpe:2.3:a:concrete5:concrete5:*:*:*:*:*:*:*:*",
+    "icon": "Concrete CMS.svg",
+    "implies": "PHP",
+    "js": {
+      "CCM_IMAGE_PATH": "",
+      "Concrete": ""
+    },
+    "meta": {
+      "generator": "^concrete5(?: - ([\\d.]+)$)?\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "/concrete/js/",
+    "website": "https://www.concretecms.com/",
+    "name": "Concrete CMS"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:contao:contao_cms:*:*:*:*:*:*:*:*",
+    "description": "Contao is an open source CMS that allows you to create websites and scalable web applications.",
+    "dom": "link[href*='/typolight.css'], link[href*='/contao.css']",
+    "icon": "Contao.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^Contao Open Source CMS$"
+    },
+    "oss": true,
+    "website": "https://contao.org",
+    "name": "Contao"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:contenido:contendio:*:*:*:*:*:*:*:*",
+    "icon": "Contenido.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Contenido ([\\d.]+)\\;version:\\1"
+    },
+    "website": "https://contenido.org/en",
+    "name": "Contenido"
+  },
+  {
+    "cats": [
+      7
+    ],
+    "cpe": "cpe:2.3:a:coppermine-gallery:coppermine_photo_gallery:*:*:*:*:*:*:*:*",
+    "description": "Coppermine is an open-source image gallery application.",
+    "html": "<!--Coppermine Photo Gallery ([\\d.]+)\\;version:\\1",
+    "icon": "Coppermine.png",
+    "implies": "PHP",
+    "website": "https://coppermine-gallery.net",
+    "name": "Coppermine"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:cosmoshop:cosmoshop:*:*:*:*:*:*:*:*",
+    "icon": "Cosmoshop.png",
+    "scriptSrc": "cosmoshop_functions\\.js",
+    "website": "https://cosmoshop.de",
+    "name": "Cosmoshop"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:cotonti:cotonti_siena:*:*:*:*:*:*:*:*",
+    "icon": "Cotonti.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Cotonti"
+    },
+    "website": "https://www.cotonti.com",
+    "name": "Cotonti"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:apache:couchdb:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "CouchDB/([\\d.]+)\\;version:\\1"
+    },
+    "icon": "CouchDB.png",
+    "website": "https://couchdb.apache.org",
+    "name": "CouchDB"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "CraftSessionId": ""
+    },
+    "cpe": "cpe:2.3:a:craftcms:craft_cms:*:*:*:*:*:*:*:*",
+    "description": "Craft CMS is a content management system for building bespoke websites.",
+    "headers": {
+      "X-Powered-By": "\\bCraft CMS\\b"
+    },
+    "icon": "Craft CMS.svg",
+    "implies": "Yii",
+    "oss": true,
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring",
+      "onetime"
+    ],
+    "website": "https://craftcms.com/",
+    "name": "Craft CMS"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:cubecart:cubecart:*:*:*:*:*:*:*:*",
+    "description": "CubeCart is a free ecommerce platform that businesses can use to build, manage, and market their online stores.",
+    "dom": "a[href*='.cubecart.com'][target='_blank']",
+    "icon": "CubeCart.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "cubecart"
+    },
+    "oss": true,
+    "website": "https://www.cubecart.com",
+    "name": "CubeCart"
+  },
+  {
+    "cats": [
+      9
+    ],
+    "cookies": {
+      "cprelogin": "",
+      "cpsession": ""
+    },
+    "cpe": "cpe:2.3:a:cpanel:cpanel:*:*:*:*:*:*:*:*",
+    "description": "cPanel is a web hosting control panel. The software provides a graphical interface and automation tools designed to simplify the process of hosting a website.",
+    "headers": {
+      "Server": "cpsrvd/([\\d.]+)\\;version:\\1"
+    },
+    "html": "<!-- cPanel",
+    "icon": "cPanel.png",
+    "website": "https://www.cpanel.net",
+    "name": "cPanel"
+  },
+  {
+    "cats": [
+      25
+    ],
+    "cpe": "cpe:2.3:a:d3.js_project:d3.js:*:*:*:*:*:*:*:*",
+    "description": "D3.js is a JavaScript library for producing dynamic, interactive data visualisations in web browsers.",
+    "icon": "D3.png",
+    "js": {
+      "d3.version": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "/d3(?:\\. v\\d+)?(?:\\.min)?\\.js",
+    "website": "https://d3js.org",
+    "name": "D3"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "DotNetNukeAnonymous": ""
+    },
+    "cpe": "cpe:2.3:a:dnnsoftware:dotnetnuke:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Cookie": "dnn_IsMobile=",
+      "DNNOutputCache": "",
+      "X-Compressed-By": "DotNetNuke"
+    },
+    "html": [
+      "<!-- by DotNetNuke Corporation",
+      "<!-- DNN Platform"
+    ],
+    "icon": "DNN.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "DotNetNuke": "",
+      "dnn.apiversion": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "meta": {
+      "generator": "DotNetNuke"
+    },
+    "oss": true,
+    "scriptSrc": [
+      "/js/dnncore\\.js",
+      "/js/dnn\\.js"
+    ],
+    "website": "https://www.dnnsoftware.com/",
+    "name": "DNN"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:dleviet:datalife_engine:*:*:*:*:*:*:*:*",
+    "icon": "DataLife Engine.svg",
+    "implies": [
+      "PHP",
+      "Apache HTTP Server"
+    ],
+    "js": {
+      "dle_root": ""
+    },
+    "meta": {
+      "generator": "DataLife Engine"
+    },
+    "website": "https://dle-news.ru",
+    "name": "DataLife Engine"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:datatables:datatables.net:*:*:*:*:*:*:*:*",
+    "description": "DataTables is a plug-in for the jQuery Javascript library adding advanced features like pagination, instant search, themes, and more to any HTML table.",
+    "icon": "DataTables.png",
+    "implies": "jQuery",
+    "js": {
+      "$.fn.dataTable.version": "^(.+)$\\;version:\\1",
+      "jQuery.fn.dataTable.version": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "dataTables.*\\.js",
+    "website": "https://datatables.net",
+    "name": "DataTables"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:debian:debian_linux:*:*:*:*:*:*:*:*",
+    "description": "Debian is a Linux software which is a free open-source software.",
+    "headers": {
+      "Server": "Debian",
+      "X-Powered-By": "(?:Debian|dotdeb|(potato|woody|sarge|etch|lenny|squeeze|wheezy|jessie|stretch|buster|sid))\\;version:\\1"
+    },
+    "icon": "Debian.png",
+    "website": "https://debian.org",
+    "name": "Debian"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:dedecms:dedecms:*:*:*:*:*:*:*:*",
+    "icon": "DedeCMS.png",
+    "implies": "PHP",
+    "js": {
+      "DedeContainer": ""
+    },
+    "scriptSrc": "dedeajax",
+    "website": "https://dedecms.com",
+    "name": "DedeCMS"
+  },
+  {
+    "cats": [
+      1,
+      53
+    ],
+    "cpe": "cpe:2.3:a:deskpro:deskpro:*:*:*:*:*:*:*:*",
+    "description": "DeskPro is multi channel helpdesk software for managing customer and citizen requests via email, forms, chat, social and voice.",
+    "icon": "DeskPro.svg",
+    "meta": {
+      "generator": "^DeskPRO.+$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.deskpro.com",
+    "name": "DeskPro"
+  },
+  {
+    "cats": [
+      9
+    ],
+    "cpe": "cpe:2.3:a:directadmin:directadmin:*:*:*:*:*:*:*:*",
+    "description": "DirectAdmin is a graphical web-based web hosting control panel designed to make administration of websites easier.",
+    "headers": {
+      "Server": "DirectAdmin Daemon v([\\d.]+)\\;version:\\1"
+    },
+    "html": "<a[^>]+>DirectAdmin</a> Web Control Panel",
+    "icon": "DirectAdmin.png",
+    "implies": [
+      "PHP",
+      "Apache HTTP Server"
+    ],
+    "website": "https://www.directadmin.com",
+    "name": "DirectAdmin"
+  },
+  {
+    "cats": [
+      15
+    ],
+    "cpe": "cpe:2.3:a:disqus:disqus_comment_system:*:*:*:*:*:*:*:*",
+    "description": "Disqus is a worldwide blog comment hosting service for web sites and online communities that use a networked platform.",
+    "dom": "div#disqus_thread",
+    "icon": "Disqus.svg",
+    "js": {
+      "DISQUS": "",
+      "disqus_shortname": "",
+      "disqus_url": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "disqus_url",
+    "website": "https://disqus.com",
+    "name": "Disqus"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "django_language": ""
+    },
+    "cpe": "cpe:2.3:a:djangoproject:django:*:*:*:*:*:*:*:*",
+    "description": "Django is a Python-based free and open-source web application framework.",
+    "html": "(?:powered by <a[^>]+>Django ?([\\d.]+)?<\\/a>|<input[^>]*name=[\"']csrfmiddlewaretoken[\"'][^>]*>)\\;version:\\1",
+    "icon": "Django.png",
+    "implies": "Python",
+    "js": {
+      "__admin_media_prefix__": "",
+      "django": ""
+    },
+    "oss": true,
+    "website": "https://djangoproject.com",
+    "name": "Django"
+  },
+  {
+    "cats": [
+      60
+    ],
+    "cpe": "cpe:2.3:a:docker:engine:*:*:*:*:*:*:*:*",
+    "description": "Docker is a tool designed to make it easier to create, deploy, and run applications by using containers.",
+    "html": "<!-- This comment is expected by the docker HEALTHCHECK  -->",
+    "icon": "Docker.svg",
+    "website": "https://www.docker.com/",
+    "name": "Docker"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:dojotoolkit:dojo:*:*:*:*:*:*:*:*",
+    "icon": "Dojo.png",
+    "js": {
+      "dojo": "",
+      "dojo.version.major": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "([\\d.]+)/dojo/dojo(?:\\.xd)?\\.js\\;version:\\1",
+    "website": "https://dojotoolkit.org",
+    "name": "Dojo"
+  },
+  {
+    "cats": [
+      8
+    ],
+    "cookies": {
+      "DokuWiki": ""
+    },
+    "cpe": "cpe:2.3:a:dokuwiki:dokuwiki:*:*:*:*:*:*:*:*",
+    "description": "DokuWiki is a free open-source wiki software.",
+    "icon": "DokuWiki.png",
+    "implies": "PHP",
+    "js": {
+      "DOKU_TPL": "\\;confidence:50",
+      "doku_edit_text_content": "\\;confidence:50"
+    },
+    "meta": {
+      "generator": "^DokuWiki( Release [\\d-]+)?\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://www.dokuwiki.org",
+    "name": "DokuWiki"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:dotclear:dotclear:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Dotclear-Static-Cache": ""
+    },
+    "icon": "Dotclear.png",
+    "implies": "PHP",
+    "website": "https://dotclear.org",
+    "name": "Dotclear"
+  },
+  {
+    "cats": [
+      4
+    ],
+    "cpe": "cpe:2.3:a:doxygen:doxygen:*:*:*:*:*:*:*:*",
+    "description": "Doxygen is a documentation generator, a tool for writing software reference documentation.",
+    "html": "(?:<!-- Generated by Doxygen ([\\d.]+)|<link[^>]+doxygen\\.css)\\;version:\\1",
+    "icon": "Doxygen.png",
+    "meta": {
+      "generator": "Doxygen ([\\d.]+)\\;version:\\1"
+    },
+    "website": "https://www.doxygen.nl/",
+    "name": "Doxygen"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:adobe:dreamweaver:*:*:*:*:*:*:*:*",
+    "description": "Dreamweaver is a development tool for creating, publishing, and managing websites and mobile content.",
+    "html": [
+      "<!--[^>]*(?:InstanceBeginEditable|Dreamweaver([^>]+)target|DWLayoutDefaultTable)\\;version:\\1",
+      "<!-- #BeginTemplate\\s\"[\\d_\\w/]+\\.dwt"
+    ],
+    "icon": "DreamWeaver.png",
+    "js": {
+      "MM_preloadImages": "",
+      "MM_showHideLayers": "",
+      "MM_showMenu": ""
+    },
+    "website": "https://www.adobe.com/products/dreamweaver.html",
+    "name": "DreamWeaver"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:drupal:drupal:*:*:*:*:*:*:*:*",
+    "description": "Drupal is a free and open-source web content management framework.",
+    "headers": {
+      "Expires": "19 Nov 1978",
+      "X-Drupal-Cache": "",
+      "X-Generator": "^Drupal(?:\\s([\\d.]+))?\\;version:\\1"
+    },
+    "html": "<(?:link|style)[^>]+\"/sites/(?:default|all)/(?:themes|modules)/",
+    "icon": "Drupal.svg",
+    "implies": "PHP",
+    "js": {
+      "Drupal": ""
+    },
+    "meta": {
+      "generator": "^Drupal(?:\\s([\\d.]+))?\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "drupal\\.js",
+    "scripts": "drupal_internal__nid",
+    "website": "https://www.drupal.org/",
+    "name": "Drupal"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:commerceguys:commerce:*:*:*:*:*:*:*:*",
+    "description": "Drupal Commerce is open-source ecommerce software that augments the content management system Drupal.",
+    "dom": "aside#cart-offcanvas, form.commerce-order-item-add-to-cart-form,form.commerce-add-to-cart",
+    "html": "<[^>]+(?:id=\"block[_-]commerce[_-]cart[_-]cart|class=\"commerce[_-]product[_-]field)",
+    "icon": "Drupal Commerce.png",
+    "implies": "Drupal",
+    "oss": true,
+    "scriptSrc": [
+      "/modules/(?:contrib/)?commerce/js/conditions\\.js\\;confidence:50",
+      "/profiles/commerce_kickstart/modules/contrib/commerce/modules/checkout/commerce_checkout\\.js\\;confidence:50",
+      "/sites/(?:all|default)/modules/(?:contrib/)?commerce/modules/checkout/commerce_checkout\\.js\\;confidence:50"
+    ],
+    "website": "https://drupalcommerce.org",
+    "name": "Drupal Commerce"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:lockon:ec-cube:*:*:*:*:*:*:*:*",
+    "description": "EC-CUBE is an open source package used to build ecommerce sites.",
+    "icon": "EC-CUBE.svg",
+    "implies": "PHP",
+    "oss": true,
+    "scriptSrc": [
+      "eccube\\.js",
+      "win_op\\.js"
+    ],
+    "website": "https://www.ec-cube.net",
+    "name": "EC-CUBE"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:frappe:erpnext:*:*:*:*:*:*:*:*",
+    "description": "ERPNext is a free and open-source integrated Enterprise Resource Planning (ERP) software developed by Frappe Technologies.",
+    "icon": "ERPNext.png",
+    "implies": "Frappe",
+    "js": {
+      "erpnext.shopping_cart": "",
+      "erpnext.subscribe_to_newsletter": ""
+    },
+    "oss": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://erpnext.com",
+    "name": "ERPNext"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:ektron:ektron_content_management_system:*:*:*:*:*:*:*:*",
+    "description": "Ektron CMS is developed on the Microsoft .NET framework and is 100% ASP.NET. In 2015 Ektron merged with EPiServer.",
+    "icon": "Optimizely.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "Ektron": ""
+    },
+    "scriptSrc": "/ektron\\.javascript\\.ashx",
+    "website": "https://www.optimizely.com/ektron-cms",
+    "name": "Ektron CMS"
+  },
+  {
+    "cats": [
+      29
+    ],
+    "cpe": "cpe:2.3:a:elastic:elasticsearch:*:*:*:*:*:*:*:*",
+    "description": "Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents.",
+    "dom": "div#topsearchelastic_widget",
+    "icon": "Elasticsearch.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.elastic.co",
+    "name": "Elasticsearch"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:eleanor-cms:eleanor_cms:*:*:*:*:*:*:*:*",
+    "icon": "Eleanor CMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Eleanor"
+    },
+    "website": "https://eleanor-cms.ru",
+    "name": "Eleanor CMS"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:embedthis:appweb:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "Mbedthis-Appweb(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Embedthis.png",
+    "website": "https://embedthis.com/appweb",
+    "name": "EmbedThis Appweb"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:emberjs:ember.js:*:*:*:*:*:*:*:*",
+    "icon": "Ember.js.png",
+    "js": {
+      "Ember": "",
+      "Ember.VERSION": "^(.+)$\\;version:\\1",
+      "EmberENV": ""
+    },
+    "scripts": "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1",
+    "website": "https://emberjs.com",
+    "name": "Ember.js"
+  },
+  {
+    "cats": [
+      64
+    ],
+    "cpe": "cpe:2.3:a:envoyproxy:envoy:*:*:*:*:*:*:*:*",
+    "description": "Envoy is an open-source edge and service proxy, designed for cloud-native applications.",
+    "headers": {
+      "Server": "^envoy$",
+      "x-envoy-upstream-service-time": ""
+    },
+    "icon": "Envoy.png",
+    "website": "https://www.envoyproxy.io/",
+    "name": "Envoy"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:erlang:erlang%2fotp:*:*:*:*:*:*:*:*",
+    "description": "Erlang is a general-purpose, concurrent, functional programming language, and a garbage-collected runtime system.",
+    "headers": {
+      "Server": "Erlang( OTP/(?:[\\d.ABR-]+))?\\;version:\\1"
+    },
+    "icon": "Erlang.png",
+    "website": "https://www.erlang.org",
+    "name": "Erlang"
+  },
+  {
+    "cats": [
+      24
+    ],
+    "cpe": "cpe:2.3:a:etherpad:etherpad:*:*:*:*:*:*:*:*",
+    "description": "Etherpad is an open-source, web-based collaborative real-time editor, allowing authors to simultaneously edit a text document, and see all of the participants' edits in real-time, with the ability to display each author's text in their own colour.",
+    "headers": {
+      "Server": "^Etherpad"
+    },
+    "icon": "etherpad.png",
+    "implies": "Node.js",
+    "js": {
+      "padeditbar": "",
+      "padimpexp": ""
+    },
+    "scriptSrc": [
+      "/ep_etherpad-lite/"
+    ],
+    "website": "https://etherpad.org",
+    "name": "Etherpad"
+  },
+  {
+    "cats": [
+      18,
+      22
+    ],
+    "cpe": "cpe:2.3:a:expressjs:express:*:*:*:*:*:*:*:*",
+    "description": "Express is a web application framework for Node.js, released as free and open-source software under the MIT License. It is designed for building web applications and APIs.",
+    "headers": {
+      "X-Powered-By": "^Express(?:$|,)"
+    },
+    "icon": "Express.svg",
+    "implies": "Node.js",
+    "website": "https://expressjs.com",
+    "name": "Express"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "exp_csrf_token": "",
+      "exp_last_activity": "",
+      "exp_tracker": ""
+    },
+    "cpe": "cpe:2.3:a:ellislab:expressionengine:*:*:*:*:*:*:*:*",
+    "description": "ExpressionEngine is a free and open-source CMS.",
+    "icon": "ExpressionEngine.svg",
+    "implies": "PHP",
+    "oss": true,
+    "website": "https://expressionengine.com/",
+    "name": "ExpressionEngine"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:sencha:ext_js:*:*:*:*:*:*:*:*",
+    "icon": "ExtJS.png",
+    "js": {
+      "Ext": "",
+      "Ext.version": "^(.+)$\\;version:\\1",
+      "Ext.versions.extjs.version": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "ext-base\\.js",
+    "website": "https://www.sencha.com",
+    "name": "ExtJS"
+  },
+  {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "eZSESSID": ""
+    },
+    "cpe": "cpe:2.3:a:ez:ez_publish:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Powered-By": "^eZ Publish"
+    },
+    "icon": "eZ.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "eZ Publish"
+    },
+    "website": "https://github.com/ezsystems/ezpublish-legacy",
+    "name": "eZ Publish"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:experiencedcms:experiencedcms:*:*:*:*:*:*:*:*",
+    "icon": "experiencedCMS_Logo.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^experiencedCMS$"
+    },
+    "website": "https://experiencedcms.berkearas.de",
+    "name": "experiencedCMS"
+  },
+  {
+    "cats": [
+      64
+    ],
+    "cookies": {
+      "F5_HT_shrinked": "",
+      "F5_ST": "",
+      "F5_fullWT": "",
+      "LastMRH_Session": "",
+      "MRHSHint": "",
+      "MRHSequence": "",
+      "MRHSession": "",
+      "TIN": ""
+    },
+    "cpe": "cpe:2.3:a:f5:big-ip:*:*:*:*:*:*:*:*",
+    "description": "F5's BIG-IP is a family of products covering software and hardware designed around application availability, access control, and security solutions.",
+    "headers": {
+      "server": "^big-?ip$"
+    },
+    "icon": "F5.png",
+    "website": "https://www.f5.com/products/big-ip-services",
+    "name": "F5 BigIP"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:fudforum:fudforum:*:*:*:*:*:*:*:*",
+    "description": "FUDforum is a discussion forum software with support for posts, topics, polls and attachments.",
+    "icon": "default.svg",
+    "implies": [
+      "Perl",
+      "PHP"
+    ],
+    "js": {
+      "fud_msg_focus": "",
+      "fud_tree_msg_focus": ""
+    },
+    "oss": true,
+    "website": "https://github.com/fudforum/FUDforum",
+    "name": "FUDforum"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:fedoraproject:fedora:*:*:*:*:*:*:*:*",
+    "description": "Fedora is a free open-source Linux-based operating system.",
+    "headers": {
+      "Server": "Fedora"
+    },
+    "icon": "Fedora.png",
+    "website": "https://fedoraproject.org",
+    "name": "Fedora"
+  },
+  {
+    "cats": [
+      34,
+      47
+    ],
+    "cpe": "cpe:2.3:a:google:firebase_cloud_messaging:*:*:*:*:*:*:*:*",
+    "description": "Firebase is a Google-backed application development software that enables developers to develop iOS, Android and Web apps.",
+    "dom": "iframe[src*='.firebaseapp.com/']",
+    "headers": {
+      "vary": "x-fh-requested-host"
+    },
+    "icon": "Firebase.svg",
+    "js": {
+      "firebase.SDK_VERSION": "([\\d.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "scriptSrc": [
+      "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
+      "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
+    ],
+    "scripts": [
+      "\\.gstatic\\.com/firebasejs/([\\d\\.]+)/\\;version:\\1",
+      "firebase(?:Config|io\\.com)"
+    ],
+    "website": "https://firebase.google.com",
+    "name": "Firebase"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:flarum:flarum:*:*:*:*:*:*:*:*",
+    "description": "Flarum is a discussion platform.",
+    "html": "<div id=\"flarum-loading\"",
+    "icon": "flarum.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "app.cache.discussionList": "",
+      "app.forum.freshness": ""
+    },
+    "website": "https://flarum.org/",
+    "name": "Flarum"
+  },
+  {
+    "cats": [
+      18,
+      22
+    ],
+    "cpe": "cpe:2.3:a:palletsprojects:flask:*:*:*:*:*:*:*:*",
+    "description": "Flask is a Python micro web framework ideal for rapidly constructing web applications, offering minimalism, flexibility, and modularity.",
+    "headers": {
+      "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
+    },
+    "icon": "Flask.svg",
+    "implies": "Python",
+    "oss": true,
+    "website": "https://github.com/pallets/flask/",
+    "name": "Flask"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:fluxbb:fluxbb:*:*:*:*:*:*:*:*",
+    "html": "<p id=\"poweredby\">[^<]+<a href=\"https?://fluxbb\\.org/\">",
+    "icon": "FluxBB.png",
+    "implies": "PHP",
+    "website": "https://fluxbb.org",
+    "name": "FluxBB"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
+    "description": "Fork CMS is an open-source content management system.",
+    "icon": "ForkCMS.png",
+    "implies": "Symfony",
+    "meta": {
+      "generator": "^Fork CMS$"
+    },
+    "oss": true,
+    "website": "https://www.fork-cms.com",
+    "name": "Fork CMS"
+  },
+  {
+    "cats": [
+      8
+    ],
+    "cookies": {
+      "FOSWIKISTRIKEONE": "",
+      "SFOSWIKISID": ""
+    },
+    "cpe": "cpe:2.3:a:foswiki:foswiki:*:*:*:*:*:*:*:*",
+    "description": "Foswiki is a free open-source collaboration platform.",
+    "headers": {
+      "X-Foswikiaction": "",
+      "X-Foswikiuri": ""
+    },
+    "html": [
+      "<div class=\"foswiki(?:Copyright|Page|Main)\">"
+    ],
+    "icon": "foswiki.png",
+    "implies": "Perl",
+    "js": {
+      "foswiki": ""
+    },
+    "meta": {
+      "foswiki.SERVERTIME": "",
+      "foswiki.WIKINAME": ""
+    },
+    "website": "https://foswiki.org",
+    "name": "Foswiki"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:freebsd:freebsd:*:*:*:*:*:*:*:*",
+    "description": "FreeBSD is a free and open-source Unix-like operating system.",
+    "headers": {
+      "Server": "FreeBSD(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "FreeBSD.png",
+    "website": "https://freebsd.org",
+    "name": "FreeBSD"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:microsoft:frontpage:*:*:*:*:*:*:*:*",
+    "description": "FrontPage is a program for developing and maintaining websites.",
+    "icon": "FrontPage.png",
+    "meta": {
+      "ProgId": "^FrontPage\\.",
+      "generator": "Microsoft FrontPage(?:\\s((?:Express )?[\\d.]+))?\\;version:\\1"
+    },
+    "website": "https://office.microsoft.com/frontpage",
+    "name": "FrontPage"
+  },
+  {
+    "cats": [
+      18,
+      53
+    ],
+    "cpe": "cpe:2.3:a:glpi-project:glpi:*:*:*:*:*:*:*:* ",
+    "description": "GLPI is an open-source IT Asset Management, issue tracking and service desk system.",
+    "dom": {
+      "div[id*='footer-login'] > a": {
+        "text": "GLPI\\s+version\\s+([\\d\\.]+)\\;version:\\1"
+      },
+      "input[name='_glpi_csrf_token']": {
+        "exists": ""
+      }
+    },
+    "icon": "GLPI.png",
+    "implies": "PHP",
+    "js": {
+      "glpiUnsavedFormChanges": ""
+    },
+    "meta": {
+      "glpi:csrf_token": ""
+    },
+    "oss": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": "//.*glpi.+common\\.min\\.js\\?v=(\\d+\\.\\d+\\.\\d+)\\;version:\\1",
+    "website": "https://glpi-project.org",
+    "name": "GLPI"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:gentoo:linux:*:*:*:*:*:*:*:*",
+    "description": "Gentoo is a free operating system based on Linux.",
+    "headers": {
+      "X-Powered-By": "gentoo"
+    },
+    "icon": "Gentoo.png",
+    "website": "https://www.gentoo.org",
+    "name": "Gentoo"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:get-simple:getsimple_cms:*:*:*:*:*:*:*:*",
+    "icon": "GetSimple CMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "GetSimple"
+    },
+    "website": "https://get-simple.info",
+    "name": "GetSimple CMS"
+  },
+  {
+    "cats": [
+      13,
+      47
+    ],
+    "cookies": {
+      "_gitlab_session": ""
+    },
+    "cpe": "cpe:2.3:a:gitlab:gitlab:*:*:*:*:*:*:*:*",
+    "description": "GitLab is a web-based DevOps lifecycle tool that provides a Git-repository manager providing wiki, issue-tracking and continuous integration and deployment pipeline features, using an open-source license.",
+    "html": [
+      "<meta content=\"https?://[^/]+/assets/gitlab_logo-",
+      "<header class=\"navbar navbar-fixed-top navbar-gitlab with-horizontal-nav\">"
+    ],
+    "icon": "GitLab.svg",
+    "implies": [
+      "Ruby on Rails",
+      "Vue.js"
+    ],
+    "js": {
+      "GitLab": "",
+      "gl.dashboardOptions": ""
+    },
+    "meta": {
+      "og:site_name": "^GitLab$"
+    },
+    "website": "https://about.gitlab.com",
+    "name": "GitLab"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cookies": {
+      "i_like_gitea": ""
+    },
+    "cpe": "cpe:2.3:a:gitea:gitea:*:*:*:*:*:*:*:*",
+    "description": "Gitea is an open-source forge software package for hosting software development version control using Git as well as other collaborative features like bug tracking, wikis and code review. It supports self-hosting but also provides a free public first-party instance hosted on DiDi's cloud.",
+    "html": [
+      "<div class=\"ui left\">\\n\\s+\u00a9 Gitea Version: ([\\d.]+)\\;version:\\1"
+    ],
+    "icon": "gitea.svg",
+    "implies": "Go",
+    "meta": {
+      "keywords": "^go,git,self-hosted,gitea$"
+    },
+    "website": "https://gitea.io",
+    "name": "Gitea"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:oracle:glassfish_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "GlassFish(?: Server)?(?: Open Source Edition)?(?: ?/?([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "GlassFish.png",
+    "implies": "Java",
+    "website": "https://glassfish.java.net",
+    "name": "GlassFish"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:golang:go:*:*:*:*:*:*:*:*",
+    "icon": "Go.svg",
+    "website": "https://golang.org",
+    "name": "Go"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:embedthis:goahead:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "GoAhead"
+    },
+    "icon": "GoAhead.png",
+    "website": "https://embedthis.com/products/goahead/index.html",
+    "name": "GoAhead"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cookies": {
+      "i_like_gogits": ""
+    },
+    "cpe": "cpe:2.3:a:gogs:gogs:*:*:*:*:*:*:*:*",
+    "description": "Gogs is a self-hosted Git service written in Go.",
+    "html": [
+      "<div class=\"ui left\">\\n\\s+\u00a9 \\d{4} Gogs Version: ([\\d.]+) Page:\\;version:\\1",
+      "<button class=\"ui basic clone button\" id=\"repo-clone-ssh\" data-link=\"gogs@"
+    ],
+    "icon": "gogs.png",
+    "implies": [
+      "Go",
+      "Macaron"
+    ],
+    "meta": {
+      "keywords": "go, git, self-hosted, gogs"
+    },
+    "oss": true,
+    "scriptSrc": "js/gogs\\.js",
+    "website": "https://gogs.io",
+    "name": "Gogs"
+  },
+  {
+    "cats": [
+      63
+    ],
+    "cpe": "cpe:2.3:a:google:cloud_platform:*:*:*:*:*:*:*:*",
+    "description": "Google Cloud is a suite of cloud computing services.",
+    "icon": "Google Cloud.svg",
+    "website": "https://cloud.google.com",
+    "name": "Google Cloud"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:google:web_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "gws"
+    },
+    "icon": "Google.svg",
+    "website": "https://en.wikipedia.org/wiki/Google_Web_Server",
+    "name": "Google Web Server"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:google:web_toolkit:*:*:*:*:*:*:*:*",
+    "description": "Google Web Toolkit (GWT) is an open-source Java software development framework that makes writing AJAX applications.",
+    "icon": "Google Web Toolkit.png",
+    "implies": "Java",
+    "js": {
+      "__gwt_": "",
+      "__gwt_activeModules": "",
+      "__gwt_getMetaProperty": "",
+      "__gwt_isKnownPropertyValue": "",
+      "__gwt_stylesLoaded": "",
+      "__gwtlistener": ""
+    },
+    "meta": {
+      "gwt:property": ""
+    },
+    "website": "https://developers.google.com/web-toolkit",
+    "name": "Google Web Toolkit"
+  },
+  {
+    "cats": [
+      51,
+      18
+    ],
+    "cpe": "cpe:2.3:a:grapesjs:grapesjs:*:*:*:*:*:node.js:*:*",
+    "description": "GrapesJS is an open-source, multi-purpose page builder which combines different plugins and intuitive drag and drop interface.",
+    "icon": "GrapesJS.png",
+    "js": {
+      "grapesjs.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://grapesjs.com",
+    "name": "GrapesJS"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cpe": "cpe:2.3:a:git-scm:git:*:*:*:*:*:*:*:*",
+    "icon": "git.svg",
+    "meta": {
+      "generator": "\\bgit/([\\d.]+\\d)\\;version:\\1"
+    },
+    "website": "https://git-scm.com",
+    "name": "git"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cpe": "cpe:2.3:a:gitlist:gitlist:*:*:*:*:*:*:*:*",
+    "html": "<p>Powered by <a[^>]+>GitList ([\\d.]+)\\;version:\\1",
+    "implies": [
+      "PHP",
+      "git"
+    ],
+    "website": "https://gitlist.org",
+    "name": "gitlist"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:ibm:websphere_portal:*:*:*:*:*:*:*:*",
+    "description": "HCL Digital Experience software empowers you to create, manage and deliver engaging omni-channel digital experiences to virtually all audiences.",
+    "headers": {
+      "IBM-Web2-Location": "",
+      "Itx-Generated-Timestamp": ""
+    },
+    "icon": "hcl-dx.png",
+    "implies": "Java",
+    "js": {
+      "ibmCfg.themeConfig.modulesWebAppBaseURI": "/wps/themeModules"
+    },
+    "pricing": [
+      "high",
+      "poa"
+    ],
+    "url": "/wps/wcm/",
+    "website": "https://www.hcltechsw.com/dx",
+    "name": "HCL Digital Experience"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:ibm:lotus_domino:*:*:*:*:*:*:*:*",
+    "description": "HCL Domino, formerly called IBM Domino (1995) and Lotus Domino (1989), is an enterprise server application development platform.",
+    "headers": {
+      "Server": "^Lotus-Domino$"
+    },
+    "icon": "HCL Domino.svg",
+    "implies": "Java",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.hcltechsw.com/domino",
+    "name": "HCL Domino"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:facebook:hhvm:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Powered-By": "HHVM/?([\\d.]+)?\\;version:\\1"
+    },
+    "icon": "HHVM.png",
+    "implies": "PHP\\;confidence:75",
+    "website": "https://hhvm.com",
+    "name": "HHVM"
+  },
+  {
+    "cats": [
+      22,
+      46
+    ],
+    "cpe": "cpe:2.3:h:hp:integrated_lights-out:*:*:*:*:*:*:*:*",
+    "description": "HP iLO is a tool that provides multiple ways to configure, update, monitor, and run servers remotely.",
+    "headers": {
+      "Server": "HP-iLO-Server(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "HP.svg",
+    "website": "https://hp.com",
+    "name": "HP iLO"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
+    "description": "Handlebars is a JavaScript library used to create reusable webpage templates.",
+    "dom": "script[type='text/x-handlebars-template']",
+    "icon": "Handlebars.svg",
+    "js": {
+      "Handlebars": "",
+      "Handlebars.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://handlebarsjs.com",
+    "name": "Handlebars"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:belden:hirschmann_hios:*:*:*:*:*:*:*:*",
+    "description": "Hirschmann HiOS is an operating system for industrial network equipment.",
+    "dom": {
+      "div": {
+        "text": "(HiSecOS-|HiOS-.+-)(\\d+\\.\\d+\\.\\d+)\\;version:\\2"
+      },
+      "h2": {
+        "text": "(HiSecOS-|HiOS-.+-)(\\d+\\.\\d+\\.\\d+)\\;version:\\2"
+      }
+    },
+    "icon": "hirschmann_OS.png",
+    "requires": [
+      "Java",
+      "Google Web Toolkit"
+    ],
+    "website": "https://hirschmann.com/",
+    "name": "Hirschmann HiOS"
+  },
+  {
+    "cats": [
+      64
+    ],
+    "cpe": "cpe:2.3:a:ibm:datapower_gateway:*:*:*:*:*:*:*:*",
+    "description": "IBM DataPower Gateway is a single multi-channel gateway designed to help provide security, control, integration and optimized access to a full range of mobile, web, application programming interface (API), service-oriented architecture (SOA), B2B and cloud workloads.",
+    "headers": {
+      "X-Backside-Transport": "",
+      "X-Global-Transaction-ID": ""
+    },
+    "icon": "DataPower.png",
+    "website": "https://www.ibm.com/products/datapower-gateway",
+    "name": "IBM DataPower"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:ibm:http_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "IBM_HTTP_Server(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "IBM.svg",
+    "website": "https://ibm.com/software/webservers/httpservers",
+    "name": "IBM HTTP Server"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:microsoft:internet_information_server:*:*:*:*:*:*:*:*",
+    "description": "Internet Information Services (IIS) is an extensible web server software created by Microsoft for use with the Windows NT family.",
+    "headers": {
+      "Server": "^(?:Microsoft-)?IIS(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Microsoft.svg",
+    "implies": "Windows Server",
+    "website": "https://www.iis.net",
+    "name": "IIS"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "ICMSSession": "",
+      "ImpressCMS": ""
+    },
+    "cpe": "cpe:2.3:a:impresscms:impresscms:*:*:*:*:*:*:*:*",
+    "icon": "ImpressCMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "ImpressCMS"
+    },
+    "scriptSrc": "include/linkexternal\\.js",
+    "website": "https://www.impresscms.org",
+    "name": "ImpressCMS"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:impresspages:impresspages_cms:*:*:*:*:*:*:*:*",
+    "icon": "ImpressPages.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "ImpressPages(?: CMS)?( [\\d.]*)?\\;version:\\1"
+    },
+    "website": "https://impresspages.org",
+    "name": "ImpressPages"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:indexhibit:indexhibit:*:*:*:*:*:*:*:*",
+    "html": "<(?:link|a href) [^>]+ndxz-studio",
+    "implies": [
+      "PHP",
+      "Apache HTTP Server",
+      "Exhibit"
+    ],
+    "meta": {
+      "generator": "Indexhibit"
+    },
+    "website": "https://www.indexhibit.org",
+    "name": "Indexhibit"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "InstantCMS[logdate]": ""
+    },
+    "cpe": "cpe:2.3:a:instantcms:instantcms:*:*:*:*:*:*:*:*",
+    "icon": "InstantCMS.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "InstantCMS"
+    },
+    "website": "https://www.instantcms.ru",
+    "name": "InstantCMS"
+  },
+  {
+    "cats": [
+      22,
+      46
+    ],
+    "cpe": "cpe:2.3:a:intel:active_management_technology:*:*:*:*:*:*:*:*",
+    "description": "Intel Active Management Technology (AMT) is a proprietary remote management and control system for personal computers with Intel CPUs.",
+    "headers": {
+      "Server": "Intel\\(R\\) Active Management Technology(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Intel Active Management Technology.png",
+    "website": "https://intel.com",
+    "name": "Intel Active Management Technology"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:j2store:j2store:*:*:*:*:*:joomla\\!:*:*",
+    "description": "J2Store is a Joomla shopping cart and ecommerce extension.",
+    "icon": "j2store.png",
+    "implies": "Joomla",
+    "js": {
+      "j2storeURL": ""
+    },
+    "pricing": [
+      "onetime",
+      "freemium",
+      "low"
+    ],
+    "website": "https://www.j2store.org",
+    "name": "J2Store"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:redhat:jboss_application_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Powered-By": "JBoss(?:-([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "JBoss Application Server.png",
+    "website": "https://jboss.org/jbossas.html",
+    "name": "JBoss Application Server"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:redhat:jbossweb:*:*:*:*:*:*:*:*",
+    "excludes": "Apache Tomcat",
+    "headers": {
+      "X-Powered-By": "JBossWeb(?:-([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "JBoss Web.png",
+    "implies": "JBoss Application Server",
+    "website": "https://jboss.org/jbossweb",
+    "name": "JBoss Web"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cookies": {
+      "JSESSIONID": ""
+    },
+    "cpe": "cpe:2.3:a:oracle:jre:*:*:*:*:*:*:*:*",
+    "description": "Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.",
+    "icon": "Java.svg",
+    "website": "https://java.com",
+    "name": "Java"
+  },
+  {
+    "cats": [
+      57
+    ],
+    "cpe": "cpe:2.3:a:jekyllrb:jekyll:*:*:*:*:*:*:*:*",
+    "description": "Jekyll is a blog-aware, static site generator for personal, project, or organisation sites.",
+    "html": [
+      "Powered by <a href=\"https?://jekyllrb\\.com\"[^>]*>Jekyll</",
+      "<!-- Created with Jekyll Now -",
+      "<!-- Begin Jekyll SEO tag"
+    ],
+    "icon": "Jekyll.svg",
+    "implies": "Ruby",
+    "js": {
+      "SimpleJekyllSearch": ""
+    },
+    "meta": {
+      "generator": "Jekyll\\sv([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://jekyllrb.com",
+    "name": "Jekyll"
+  },
+  {
+    "cats": [
+      44
+    ],
+    "cpe": "cpe:2.3:a:jenkins:jenkins:*:*:*:*:*:*:*:*",
+    "description": "Jenkins is an open-source automation tool written in Java with plugins built for Continuous Integration (CI) purposes.",
+    "headers": {
+      "X-Jenkins": "([\\d.]+)\\;version:\\1"
+    },
+    "html": "<span class=\"jenkins_ver\"><a href=\"https://jenkins\\.io/\">Jenkins ver\\. ([\\d.]+)\\;version:\\1",
+    "icon": "Jenkins.png",
+    "implies": "Java",
+    "js": {
+      "jenkinsCIGlobal": "",
+      "jenkinsRules": ""
+    },
+    "website": "https://jenkins.io/",
+    "name": "Jenkins"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:joomla:joomla:*:*:*:*:*:*:*:*",
+    "description": "Joomla is a free and open-source content management system for publishing web content.",
+    "headers": {
+      "X-Content-Encoded-By": "Joomla! ([\\d.]+)\\;version:\\1"
+    },
+    "html": "(?:<div[^>]+id=\"wrapper_r\"|<(?:link|script)[^>]+(?:feed|components)/com_|<table[^>]+class=\"pill)\\;confidence:50",
+    "icon": "Joomla.svg",
+    "implies": "PHP",
+    "js": {
+      "Joomla": "",
+      "jcomments": ""
+    },
+    "meta": {
+      "generator": "Joomla!(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "oss": true,
+    "url": "option=com_",
+    "website": "https://www.joomla.org/",
+    "name": "Joomla"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:jquery:jquery:*:*:*:*:*:*:*:*",
+    "description": "jQuery is a JavaScript library which is a free, open-source software designed to simplify HTML DOM tree traversal and manipulation, as well as event handling, CSS animation, and Ajax.",
+    "icon": "jQuery.svg",
+    "js": {
+      "$.fn.jquery": "([\\d.]+)\\;version:\\1",
+      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1"
+    },
+    "scriptSrc": [
+      "jquery",
+      "/jquery(?:-(\\d+\\.\\d+\\.\\d+))[/.-]\\;version:\\1",
+      "/(\\d+\\.\\d+\\.\\d+)/jquery[/.-][^u]\\;version:\\1"
+    ],
+    "website": "https://jquery.com",
+    "name": "jQuery"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:jquery:jquery_ui:*:*:*:*:*:*:*:*",
+    "description": "jQuery UI is a collection of GUI widgets, animated visual effects, and themes implemented with jQuery, Cascading Style Sheets, and HTML.",
+    "icon": "jQuery UI.svg",
+    "implies": "jQuery",
+    "js": {
+      "jQuery.ui.version": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": [
+      "jquery-ui[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
+      "([\\d.]+)/jquery-ui(?:\\.min)?\\.js\\;version:\\1",
+      "jquery-ui.*\\.js"
+    ],
+    "website": "https://jqueryui.com",
+    "name": "jQuery UI"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "CMSCookieLevel": "",
+      "CMSPreferredCulture": ""
+    },
+    "cpe": "cpe:2.3:a:kentico:kentico_cms:*:*:*:*:*:*:*:*",
+    "description": "Kentico CMS is a web content management system for building websites, online stores, intranets, and Web 2.0 community sites.",
+    "icon": "Kentico CMS.png",
+    "js": {
+      "CMS.Application": ""
+    },
+    "meta": {
+      "generator": "Kentico CMS ([\\d.R]+ \\(build [\\d.]+\\))\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/CMSPages/GetResource\\.ashx",
+      "/kentico\\.resource"
+    ],
+    "website": "https://www.kentico.com",
+    "name": "Kentico CMS"
+  },
+  {
+    "cats": [
+      29,
+      25
+    ],
+    "cpe": "cpe:2.3:a:elasticsearch:kibana:*:*:*:*:*:*:*:*",
+    "description": "Kibana is an open-source data visualisation dashboard for Elasticsearch. It provides visualisation capabilities on top of the content indexed on an Elasticsearch cluster. Users can create bar, line and scatter plots, or pie charts and maps on top of large volumes of data.",
+    "headers": {
+      "kbn-name": "kibana",
+      "kbn-version": "^([\\d.]+)$\\;version:\\1"
+    },
+    "html": "<title>Kibana</title>",
+    "icon": "kibana.svg",
+    "implies": [
+      "Node.js",
+      "Elasticsearch"
+    ],
+    "url": "kibana#/dashboard/",
+    "website": "https://www.elastic.co/products/kibana",
+    "name": "Kibana"
+  },
+  {
+    "cats": [
+      50
+    ],
+    "cpe": "cpe:2.3:a:koha:koha:*:*:*:*:*:*:*:*",
+    "description": "Koha is an open-source Integrated Library System (ILS).",
+    "html": [
+      "<input name=\"koha_login_context\" value=\"intranet\" type=\"hidden\">",
+      "<a href=\"/cgi-bin/koha/"
+    ],
+    "icon": "koha.png",
+    "implies": "Perl",
+    "js": {
+      "KOHA": ""
+    },
+    "meta": {
+      "generator": "^Koha ([\\d.]+)$\\;version:\\1"
+    },
+    "website": "https://koha-community.org/",
+    "name": "Koha"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "kohanasession": ""
+    },
+    "cpe": "cpe:2.3:a:kohanaframework:kohana:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Powered-By": "Kohana Framework ([\\d.]+)\\;version:\\1"
+    },
+    "icon": "Kohana.png",
+    "implies": "PHP",
+    "website": "https://kohanaframework.org",
+    "name": "Kohana"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:jetbrains:kotlin:*:*:*:*:*:*:*:*",
+    "description": "Kotlin is a general purpose, free, open-source, statically typed \u201cpragmatic\u201d programming language initially designed for the JVM (Java Virtual Machine) and Android that combines object-oriented and functional programming features.",
+    "icon": "Kotlin.svg",
+    "oss": true,
+    "website": "https://kotlinlang.org",
+    "name": "Kotlin"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:jetbrains:ktor:*:*:*:*:*:*:*:*",
+    "description": "Ktor is a Kotlin framework that allow developers to write asynchronous clients and servers applications, in Kotlin.",
+    "headers": {
+      "server": "^Ktor/debug$",
+      "x-engine": "^Ktor$"
+    },
+    "icon": "Ktor.svg",
+    "implies": "Kotlin",
+    "oss": true,
+    "website": "https://ktor.io",
+    "name": "Ktor"
+  },
+  {
+    "cats": [
+      47
+    ],
+    "cpe": "cpe:2.3:a:kubernetes:kubernetes:*:*:*:*:*:*:*:*",
+    "dom": "[ng-app='kubernetesDashboard']",
+    "icon": "Kubernetes.svg",
+    "website": "https://kubernetes.io/",
+    "name": "Kubernetes Dashboard"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:lepton-cms:lepton:*:*:*:*:*:*:*:*",
+    "icon": "LEPTON.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "LEPTON"
+    },
+    "website": "https://www.lepton-cms.org",
+    "name": "LEPTON"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "laravel_session": ""
+    },
+    "cpe": "cpe:2.3:a:laravel:laravel:*:*:*:*:*:*:*:*",
+    "description": "Laravel is a free, open-source PHP web framework.",
+    "icon": "Laravel.svg",
+    "implies": "PHP",
+    "js": {
+      "Laravel": ""
+    },
+    "oss": true,
+    "website": "https://laravel.com",
+    "name": "Laravel"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:liferay:liferay_portal:*:*:*:*:*:*:*:*",
+    "description": "Liferay is an open-source company that provides free documentation and paid professional service to users of its software.",
+    "headers": {
+      "Liferay-Portal": "[a-z\\s]+([\\d.]+)\\;version:\\1"
+    },
+    "icon": "Liferay.svg",
+    "implies": "Java",
+    "js": {
+      "Liferay": ""
+    },
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.liferay.com/",
+    "name": "Liferay"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:liftweb:lift:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Lift-Version": "(.+)\\;version:\\1"
+    },
+    "icon": "Lift.png",
+    "implies": "Scala",
+    "website": "https://liftweb.net",
+    "name": "Lift"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:lightbox_photo_gallery_project:lightbox_photo_gallery:*:*:*:*:*:*:*:*",
+    "description": "Lightbox is small javascript library used to overlay images on top of the current page.",
+    "dom": {
+      "link[href*='lightbox']": {
+        "attributes": {
+          "href": "/lightbox(?:\\.min)?\\.css"
+        }
+      }
+    },
+    "icon": "Lightbox.png",
+    "js": {
+      "Lightbox.activeImage": "",
+      "lightbox.$lightbox": ""
+    },
+    "oss": true,
+    "scriptSrc": "lightbox(?:-plus-jquery)?.{0,32}\\.js",
+    "website": "https://lokeshdhakar.com/projects/lightbox2/",
+    "name": "Lightbox"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:litespeedtech:litespeed_web_server:*:*:*:*:*:*:*:*",
+    "description": "LiteSpeed is a high-scalability web server.",
+    "headers": {
+      "Server": "^LiteSpeed$"
+    },
+    "icon": "LiteSpeed.svg",
+    "website": "https://litespeedtech.com",
+    "name": "LiteSpeed"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:lodash:lodash:*:*:*:*:*:*:*:*",
+    "description": "Lodash is a JavaScript library which provides utility functions for common programming tasks using the functional programming paradigm.",
+    "excludes": "Underscore.js",
+    "icon": "Lodash.svg",
+    "js": {
+      "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
+      "_.differenceBy": "",
+      "_.templateSettings.imports._.templateSettings.imports._.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "lodash.*\\.js",
+    "website": "https://www.lodash.com",
+    "name": "Lodash"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:lua:lua:*:*:*:*:*:*:*:*",
+    "description": "Lua is a multi-paradigm programming language designed primarily for embedded use in applications.",
+    "headers": {
+      "X-Powered-By": "\\bLua(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Lua.png",
+    "website": "https://www.lua.org",
+    "name": "Lua"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:apache:lucene:*:*:*:*:*:*:*:*",
+    "description": "Lucene is a free and open-source search engine software library.",
+    "icon": "Lucene.png",
+    "implies": "Java",
+    "website": "https://lucene.apache.org/core/",
+    "name": "Lucene"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:modx:modx_revolution:*:*:*:*:*:*:*:*",
+    "description": "MODX (originally MODx) is an open source content management system and web application framework for publishing content on the World Wide Web and intranets.",
+    "headers": {
+      "X-Powered-By": "^MODX"
+    },
+    "html": [
+      "<a[^>]+>Powered by MODX</a>",
+      "<!-- Modx process time debug info -->",
+      "<(?:link|script)[^>]+assets/snippets/\\;confidence:20",
+      "<form[^>]+id=\"ajaxSearch_form\\;confidence:20",
+      "<input[^>]+id=\"ajaxSearch_input\\;confidence:20"
+    ],
+    "icon": "MODX.svg",
+    "implies": "PHP",
+    "js": {
+      "MODX": "",
+      "MODX_MEDIA_PATH": ""
+    },
+    "meta": {
+      "generator": "MODX[^\\d.]*([\\d.]+)?\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "/assets/components/templates/\\;confidence:50",
+    "website": "https://modx.com/content-management-framework",
+    "name": "MODX"
+  },
+  {
+    "cats": [
+      6,
+      1
+    ],
+    "cookies": {
+      "X-Magento-Vary": "",
+      "frontend": "\\;confidence:50",
+      "mage-cache-storage": "",
+      "mage-cache-storage-section-invalidation": "",
+      "mage-translation-file-version": "",
+      "mage-translation-storage": ""
+    },
+    "cpe": "cpe:2.3:a:magento:magento:*:*:*:*:*:*:*:*",
+    "description": "Magento is an open-source ecommerce platform written in PHP.",
+    "dom": {
+      "script[data-requiremodule*='mage/'], script[data-requiremodule*='Magento_'], html[data-image-optimizing-origin]": {
+        "exists": "\\;version:2"
+      },
+      "script[type='text/x-magento-init']": {
+        "exists": ""
+      }
+    },
+    "icon": "Magento.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "Mage": "",
+      "VarienForm": ""
+    },
+    "oss": true,
+    "probe": {
+      "/magento_version": "magento"
+    },
+    "scriptSrc": [
+      "js/mage",
+      "skin/frontend/(?:default|(enterprise))\\;version:\\1?1 (Enterprise):1 (Community)",
+      "skin/frontend/\\;confidence:50\\;version:\\1",
+      "static/_requirejs\\;confidence:50\\;version:2"
+    ],
+    "website": "https://magento.com",
+    "name": "Magento"
+  },
+  {
+    "cats": [
+      32,
+      75
+    ],
+    "cpe": "cpe:2.3:a:thinkshout:mailchimp:*:*:*:*:*:*:*:*",
+    "description": "Mailchimp is a marketing automation platform and email marketing service.",
+    "dns": {
+      "TXT": [
+        "spf\\.mandrillapp\\.com"
+      ]
+    },
+    "dom": "form#mc-embedded-subscribe-form, form[name*='mc-embedded-subscribe-form']",
+    "html": [
+      "<input [^>]*id=\"mc-email\"\\;confidence:20",
+      "<!-- Begin MailChimp Signup Form -->"
+    ],
+    "icon": "mailchimp.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "s3\\.amazonaws\\.com/downloads\\.mailchimp\\.com/js/mc-validate\\.js",
+      "cdn-images\\.mailchimp\\.com/[^>]*\\.css",
+      "chimpstatic\\.com/mcjs-connected"
+    ],
+    "url": "^https?://(?:www\\.)?mailchi\\.mp",
+    "website": "https://mailchimp.com",
+    "name": "MailChimp"
+  },
+  {
+    "cats": [
+      75
+    ],
+    "cpe": "cpe:2.3:a:gnu:mailman:*:*:*:*:*:*:*:*",
+    "description": "Mailman is free software for managing electronic mail discussion and e-newsletter lists. Mailman is integrated with the web, making it easy for users to manage their accounts and for list owners to administer their lists. Mailman supports built-in archiving, automatic bounce processing, content filtering, digest delivery, spam filters, and more.",
+    "icon": "Mailman.svg",
+    "implies": [
+      "Python"
+    ],
+    "oss": true,
+    "scriptSrc": [
+      "/mailman\\d+/static/.+\\.js",
+      "/static/(?:hyperkitty|django-mailman3)/.+\\.js"
+    ],
+    "website": "https://list.org",
+    "name": "Mailman"
+  },
+  {
+    "cats": [
+      13
+    ],
+    "cpe": "cpe:2.3:a:mantisbt:mantisbt:*:*:*:*:*:*:*:*",
+    "description": "MantisBT is an open-source, web-based issue tracking system written in PHP with a MySQL database backend, designed to facilitate bug tracking and project management for software development teams.",
+    "dom": "link[rel='stylesheet'][href*='/css/ace-mantis.css']",
+    "icon": "MantisBT.png",
+    "implies": "MySQL",
+    "oss": true,
+    "requires": "PHP",
+    "website": "https://www.mantisbt.org",
+    "name": "MantisBT"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:mariadb_project:mariadb:*:*:*:*:*:*:*:*",
+    "description": "MariaDB is an open-source relational database management system compatible with MySQL.",
+    "icon": "mariadb.svg",
+    "website": "https://mariadb.org",
+    "name": "MariaDB"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:marked_project:marked:*:*:*:*:*:*:*:*",
+    "icon": "Marked.svg",
+    "js": {
+      "marked": ""
+    },
+    "scriptSrc": "/marked(?:\\.min)?\\.js",
+    "website": "https://marked.js.org",
+    "name": "Marked"
+  },
+  {
+    "cats": [
+      10
+    ],
+    "cookies": {
+      "PIWIK_SESSID": ""
+    },
+    "cpe": "cpe:2.3:a:matomo:matomo:*:*:*:*:*:*:*:*",
+    "description": "Matomo Analytics is a free and open-source web analytics application, that runs on a PHP/MySQL web-server.",
+    "icon": "Matomo.svg",
+    "js": {
+      "Matomo": "",
+      "Piwik": "",
+      "_paq": ""
+    },
+    "meta": {
+      "apple-itunes-app": "app-id=737216887",
+      "generator": "(?:Matomo|Piwik) - Open Source Web Analytics",
+      "google-play-app": "app-id=org\\.piwik\\.mobile2"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "scriptSrc": "piwik\\.js|piwik\\.php",
+    "website": "https://matomo.org",
+    "name": "Matomo Analytics"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:jenkins:mattermost:*:*:*:*:*:*:*:*",
+    "html": "<noscript> To use Mattermost, please enable JavaScript\\. </noscript>",
+    "icon": "mattermost.png",
+    "implies": [
+      "Go",
+      "React"
+    ],
+    "js": {
+      "mm_config": "",
+      "mm_current_user_id": "",
+      "mm_license": "",
+      "mm_user": ""
+    },
+    "website": "https://about.mattermost.com",
+    "name": "Mattermost"
+  },
+  {
+    "cats": [
+      32
+    ],
+    "cpe": "cpe:2.3:a:mautic:mautic:*:*:*:*:*:*:*:*",
+    "description": "Mautic is a free and open-source marketing automation tool for Content Management, Social Media, Email Marketing, and can be used for the integration of social networks, campaign management, forms, questionnaires, reports, etc.",
+    "icon": "mautic.svg",
+    "js": {
+      "MauticFormValidations": "",
+      "MauticSDK": "",
+      "MauticTrackingObject": ""
+    },
+    "scriptSrc": "[^a-z]mtc.*\\.js",
+    "website": "https://www.mautic.org/",
+    "name": "Mautic"
+  },
+  {
+    "cats": [
+      8
+    ],
+    "cpe": "cpe:2.3:a:mediawiki:mediawiki:*:*:*:*:*:*:*:*",
+    "description": "MediaWiki is a free and open-source wiki engine.",
+    "html": [
+      "<body[^>]+class=\"mediawiki\"",
+      "<(?:a|img)[^>]+>Powered by MediaWiki</a>",
+      "<a[^>]+/Special:WhatLinksHere/"
+    ],
+    "icon": "MediaWiki.svg",
+    "implies": "PHP",
+    "js": {
+      "mw.util.toggleToc": "",
+      "wgTitle": "",
+      "wgVersion": "^(.+)$\\;version:\\1"
+    },
+    "meta": {
+      "generator": "^MediaWiki ?(.+)$\\;version:\\1"
+    },
+    "website": "https://www.mediawiki.org",
+    "name": "MediaWiki"
+  },
+  {
+    "cats": [
+      1,
+      6,
+      11,
+      32
+    ],
+    "cpe": "cpe:2.3:a:melisplatform:melisplatform:*:*:*:*:*:*:*:*",
+    "html": [
+      "<!-- Rendered with Melis CMS V2",
+      "<!-- Rendered with Melis Platform"
+    ],
+    "icon": "melis-platform.svg",
+    "implies": [
+      "Apache HTTP Server",
+      "PHP",
+      "MySQL",
+      "Symfony",
+      "Laravel",
+      "Zend"
+    ],
+    "meta": {
+      "generator": "^Melis Platform\\.",
+      "powered-by": "^Melis CMS\\."
+    },
+    "website": "https://www.melistechnology.com/",
+    "name": "Melis Platform"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "ASP.NET_SessionId": "",
+      "ASPSESSION": ""
+    },
+    "cpe": "cpe:2.3:a:microsoft:asp.net:*:*:*:*:*:*:*:*",
+    "description": "ASP.NET is an open-source, server-side web-application framework designed for web development to produce dynamic web pages.",
+    "headers": {
+      "X-AspNet-Version": "(.+)\\;version:\\1",
+      "X-Powered-By": "^ASP\\.NET",
+      "set-cookie": "\\.AspNetCore"
+    },
+    "html": "<input[^>]+name=\"__VIEWSTATE",
+    "icon": "Microsoft ASP.NET.svg",
+    "url": "\\.aspx?(?:$|\\?)",
+    "website": "https://www.asp.net",
+    "name": "Microsoft ASP.NET"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:microsoft:excel:*:*:*:*:*:*:*:*",
+    "description": "Microsoft Excel is an electronic spreadsheet program used for storing, organizing, and manipulating data.",
+    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:excel\"|<!--\\s*(?:START|END) OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD\\s*-->|<div [^>]*x:publishsource=\"?Excel\"?)",
+    "icon": "Microsoft Excel.svg",
+    "meta": {
+      "ProgId": "^Excel\\.",
+      "generator": "Microsoft Excel( [\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://office.microsoft.com/excel",
+    "name": "Microsoft Excel"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:microsoft:powerpoint:*:*:*:*:*:*:*:*",
+    "description": "Microsoft PowerPoint is a tool to create presentations using simple drag and drop tools.",
+    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:powerpoint\"|<link rel=\"?Presentation-XML\"? href=\"?[^\"]+\\.xml\"?>|<o:PresentationFormat>[^<]+</o:PresentationFormat>[^!]+<o:Slides>\\d+</o:Slides>(?:[^!]+<o:Version>([\\d.]+)</o:Version>)?)\\;version:\\1",
+    "icon": "Microsoft PowerPoint.svg",
+    "meta": {
+      "ProgId": "^PowerPoint\\.",
+      "generator": "Microsoft PowerPoint ( [\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://office.microsoft.com/powerpoint",
+    "name": "Microsoft PowerPoint"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:microsoft:publisher:*:*:*:*:*:*:*:*",
+    "description": "Microsoft Publisher is an application that allows you to create professional documents such as newsletters, postcards, flyers, invitations, brochures.",
+    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:publisher\"|<!--[if pub]><xml>)",
+    "icon": "Microsoft Publisher.svg",
+    "meta": {
+      "ProgId": "^Publisher\\.",
+      "generator": "Microsoft Publisher( [\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://office.microsoft.com/publisher",
+    "name": "Microsoft Publisher"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:microsoft:sharepoint_server:*:*:*:*:*:*:*:*",
+    "description": "SharePoint is a cloud-based collaborative platform to manage and share content.",
+    "headers": {
+      "MicrosoftSharePointTeamServices": "^(.+)$\\;version:\\1",
+      "SPRequestGuid": "",
+      "SharePointHealthScore": "",
+      "X-SharePointHealthScore": ""
+    },
+    "icon": "Microsoft SharePoint.png",
+    "js": {
+      "SPDesignerProgID": "",
+      "_spBodyOnLoadCalled": ""
+    },
+    "meta": {
+      "generator": "Microsoft SharePoint"
+    },
+    "pricing": [
+      "low"
+    ],
+    "saas": true,
+    "website": "https://sharepoint.microsoft.com",
+    "name": "Microsoft SharePoint"
+  },
+  {
+    "cats": [
+      20
+    ],
+    "cpe": "cpe:2.3:a:microsoft:word:*:*:*:*:*:*:*:*",
+    "description": "MS Word is a word-processing program used primarily for creating documents.",
+    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:word\"|<w:WordDocument>|<div [^>]*class=\"?WordSection1[\" >]|<style[^>]*>[^>]*@page WordSection1)",
+    "icon": "Microsoft Word.svg",
+    "meta": {
+      "ProgId": "^Word\\.",
+      "generator": "Microsoft Word( [\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://office.microsoft.com/word",
+    "name": "Microsoft Word"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:mochiweb_project:mochiweb:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "MochiWeb(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "website": "https://github.com/mochi/mochiweb",
+    "name": "MochiWeb"
+  },
+  {
+    "cats": [
+      8
+    ],
+    "cookies": {
+      "MOIN_SESSION": ""
+    },
+    "cpe": "cpe:2.3:a:moinmo:moinmoin:*:*:*:*:*:*:*:*",
+    "description": "MoinMoin is a wiki engine implemented in Python.",
+    "icon": "MoinMoin.png",
+    "implies": "Python",
+    "js": {
+      "show_switch2gui": ""
+    },
+    "scriptSrc": "moin(?:_static(\\d)(\\d)(\\d)|.+)/common/js/common\\.js\\;version:\\1.\\2.\\3",
+    "website": "https://moinmo.in",
+    "name": "MoinMoin"
+  },
+  {
+    "cats": [
+      16
+    ],
+    "cpe": "cpe:2.3:a:acquia:mollom:*:*:*:*:*:*:*:*",
+    "html": "<img[^>]+\\.mollom\\.com",
+    "icon": "Mollom.png",
+    "scriptSrc": "mollom(?:\\.min)?\\.js",
+    "website": "https://mollom.com",
+    "name": "Mollom"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:momentjs:moment:*:*:*:*:*:*:*:*",
+    "description": "Moment.js is a free and open-source JavaScript library that removes the need to use the native JavaScript Date object directly.",
+    "icon": "Moment.js.svg",
+    "js": {
+      "moment": "",
+      "moment.version": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "moment(?:\\.min)?\\.js",
+    "website": "https://momentjs.com",
+    "name": "Moment.js"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:mongodb:mongodb:*:*:*:*:*:*:*:*",
+    "description": "MongoDB is a document-oriented NoSQL database used for high volume data storage.",
+    "icon": "MongoDB.png",
+    "website": "https://www.mongodb.org",
+    "name": "MongoDB"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:zed_shaw:mongrel:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "Mongrel"
+    },
+    "icon": "Mongrel.png",
+    "implies": "Ruby",
+    "website": "https://mongrel2.org",
+    "name": "Mongrel"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:mono:mono:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Powered-By": "Mono"
+    },
+    "icon": "Mono.png",
+    "website": "https://mono-project.com",
+    "name": "Mono"
+  },
+  {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "MOODLEID_": "",
+      "MoodleSession": ""
+    },
+    "cpe": "cpe:2.3:a:moodle:moodle:*:*:*:*:*:*:*:*",
+    "description": "Moodle is a free and open-source Learning Management System (LMS) written in PHP and distributed under the GNU General Public License.",
+    "html": "<img[^>]+moodlelogo",
+    "icon": "Moodle.png",
+    "implies": "PHP",
+    "js": {
+      "M.core": "",
+      "Y.Moodle": ""
+    },
+    "meta": {
+      "keywords": "^moodle"
+    },
+    "website": "https://moodle.org",
+    "name": "Moodle"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:sixapart:movable_type:*:*:*:*:*:*:*:*",
+    "icon": "Movable Type.svg",
+    "meta": {
+      "generator": "Movable Type"
+    },
+    "website": "https://movabletype.org",
+    "name": "Movable Type"
+  },
+  {
+    "cats": [
+      1,
+      11
+    ],
+    "cpe": "cpe:2.3:a:blueriver:muracms:*:*:*:*:*:*:*:*",
+    "description": "Mura CMS is the cloud-based, API driven, content management platform.",
+    "icon": "Mura CMS.svg",
+    "implies": "Adobe ColdFusion",
+    "meta": {
+      "generator": "Mura\\sCMS\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.getmura.com",
+    "name": "Mura CMS"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cookies": {
+      "mybb[lastactive]": "",
+      "mybb[lastvisit]": ""
+    },
+    "cpe": "cpe:2.3:a:mybb:mybb:*:*:*:*:*:*:*:*",
+    "description": "MyBB is a free and open-source forum software written in PHP.",
+    "icon": "MyBB.png",
+    "implies": "PHP",
+    "js": {
+      "MyBB": "",
+      "MyBBEditor": ""
+    },
+    "oss": true,
+    "website": "https://mybb.com",
+    "name": "MyBB"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:mysql:mysql:*:*:*:*:*:*:*:*",
+    "description": "MySQL is an open-source relational database management system.",
+    "icon": "MySQL.svg",
+    "website": "https://mysql.com",
+    "name": "MySQL"
+  },
+  {
+    "cats": [
+      33
+    ],
+    "cpe": "cpe:2.3:a:apache:mod_perl:*:*:*:*:*:*:*:*",
+    "description": "Mod_perl is an optional module for the Apache HTTP server. It embeds a Perl interpreter into the Apache server. In addition to allowing Apache modules to be written in the Perl programming language, it allows the Apache web server to be dynamically configured by Perl programs.",
+    "headers": {
+      "Server": "mod_perl(?:/([\\d\\.]+))?\\;version:\\1"
+    },
+    "icon": "mod_perl.png",
+    "implies": [
+      "Perl",
+      "Apache HTTP Server"
+    ],
+    "website": "https://perl.apache.org",
+    "name": "mod_perl"
+  },
+  {
+    "cats": [
+      33
+    ],
+    "cpe": "cpe:2.3:a:apache:mod_python:*:*:*:*:*:*:*:*",
+    "description": "Mod_python is an Apache HTTP Server module that integrates the Python programming language with the server. It is intended to provide a Python language binding for the Apache HTTP Server. ",
+    "headers": {
+      "Server": "mod_python(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "mod_python.png",
+    "implies": [
+      "Python",
+      "Apache HTTP Server"
+    ],
+    "website": "https://www.modpython.org",
+    "name": "mod_python"
+  },
+  {
+    "cats": [
+      33
+    ],
+    "cpe": "cpe:2.3:a:modssl:mod_ssl:*:*:*:*:*:*:*:*",
+    "description": "mod_ssl is an optional module for the Apache HTTP Server. It provides strong cryptography for the Apache web server via the Secure Sockets Layer (SSL) and Transport Layer Security (TLS) cryptographic protocols by the help of the open-source SSL/TLS toolkit OpenSSL.",
+    "headers": {
+      "Server": "mod_ssl(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "mod_ssl.png",
+    "implies": "Apache HTTP Server",
+    "website": "https://modssl.org",
+    "name": "mod_ssl"
+  },
+  {
+    "cats": [
+      33
+    ],
+    "cpe": "cpe:2.3:a:modwsgi:mod_wsgi:*:*:*:*:*:*:*:*",
+    "description": "mod_wsgi is an Apache HTTP Server module that provides a WSGI compliant interface for hosting Python based web applications under Apache.",
+    "headers": {
+      "Server": "mod_wsgi(?:/([\\d.]+))?\\;version:\\1",
+      "X-Powered-By": "mod_wsgi(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "mod_wsgi.png",
+    "implies": [
+      "Python\\;confidence:50",
+      "Apache HTTP Server"
+    ],
+    "website": "https://code.google.com/p/modwsgi",
+    "name": "mod_wsgi"
+  },
+  {
+    "cats": [
+      12,
+      18
+    ],
+    "cpe": "cpe:2.3:a:zeit:next.js:*:*:*:*:*:*:*:*",
+    "description": "Next.js is a React framework for developing single page Javascript applications.",
+    "headers": {
+      "x-powered-by": "^Next\\.js ?([0-9.]+)?\\;version:\\1"
+    },
+    "icon": "Next.js.svg",
+    "implies": [
+      "React",
+      "Webpack",
+      "Node.js"
+    ],
+    "js": {
+      "__NEXT_DATA__": "",
+      "next.version": "^(.+)$\\;version:\\1"
+    },
+    "website": "https://nextjs.org",
+    "name": "Next.js"
+  },
+  {
+    "cats": [
+      7,
+      87
+    ],
+    "cpe": "cpe:2.3:a:imagely:nextgen_gallery:*:*:*:*:*:*:*:*",
+    "description": "NextGEN Gallery is a free open-source image management plugin for the WordPress content management system.",
+    "html": [
+      "<!-- <meta name=\"NextGEN\" version=\"([\\d.]+)\" /> -->\\;version:\\1"
+    ],
+    "icon": "NextGEN Gallery.png",
+    "js": {
+      "nextgen_lightbox_settings.static_path": "/wp-content/plugins/nextgen-gallery/"
+    },
+    "requires": "WordPress",
+    "scriptSrc": "/nextgen-gallery/js/",
+    "website": "https://www.imagely.com/wordpress-gallery-plugin",
+    "name": "NextGEN Gallery"
+  },
+  {
+    "cats": [
+      95,
+      19
+    ],
+    "cookies": {
+      " __Host-nc_sameSiteCookielax": "",
+      "__Host-nc_sameSiteCookiestrict": ""
+    },
+    "cpe": "cpe:2.3:a:nextcloud:nextcloud:*:*:*:*:*:*:*:*",
+    "description": "Nextcloud is a suite of client-server software for creating and using file hosting services.",
+    "icon": "Nextcloud.svg",
+    "implies": "PHP",
+    "js": {
+      "oc_config.version": "^([\\.\\d]+)$\\;version:\\1\\;confidence:0"
+    },
+    "oss": true,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://nextcloud.com",
+    "name": "Nextcloud"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:nexusphp:nexusphp:*:*:*:*:*:*:*:*",
+    "description": "NexusPHP is an open-sourced private tracker script written in PHP.",
+    "icon": "NexusPHP.png",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Redis"
+    ],
+    "meta": {
+      "generator": "^NexusPHP$"
+    },
+    "oss": true,
+    "website": "https://nexusphp.org",
+    "name": "NexusPHP"
+  },
+  {
+    "cats": [
+      22,
+      64
+    ],
+    "cpe": "cpe:2.3:a:f5:nginx:*:*:*:*:*:*:*:*",
+    "description": "Nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache.",
+    "headers": {
+      "Server": "nginx(?:/([\\d.]+))?\\;version:\\1",
+      "X-Fastcgi-Cache": ""
+    },
+    "icon": "Nginx.svg",
+    "website": "https://nginx.org/en",
+    "name": "Nginx"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*",
+    "description": "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser.",
+    "icon": "Node.js.svg",
+    "website": "https://nodejs.org",
+    "name": "Node.js"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:nodebb:nodebb:*:*:*:*:*:*:*:*",
+    "description": "NodeBB forum software is powered by Node.js and built on either a Redis or MongoDB database.",
+    "headers": {
+      "X-Powered-By": "^NodeBB$"
+    },
+    "icon": "NodeBB.svg",
+    "implies": "Node.js",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/nodebb\\.min\\.js\\?",
+    "website": "https://nodebb.org",
+    "name": "NodeBB"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:odoo:odoo:*:*:*:*:*:*:*:*",
+    "description": "Odoo is business management software which includes CRM, ecommerce, billing, accounting, manufacturing, warehouse, project management, and inventory management.",
+    "html": "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+    "icon": "Odoo.svg",
+    "implies": [
+      "Python",
+      "PostgreSQL",
+      "Less"
+    ],
+    "js": {
+      "odoo.session_info": ""
+    },
+    "meta": {
+      "generator": "Odoo"
+    },
+    "oss": true,
+    "scriptSrc": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+    "website": "https://odoo.com",
+    "name": "Odoo"
+  },
+  {
+    "cats": [
+      69
+    ],
+    "cpe": "cpe:2.3:a:okta:*:*:*:*:*:*:*:*:*",
+    "description": "Okta is a platform in the Identity-as-a-Service (IDaaS) category. Okta features include Provisioning, Single Sign-On (SSO), Active Directory (AD) and LDAP integration, the centralized de-provisioning of users, multi-factor authentication (MFA), mobile identity management.",
+    "icon": "Okta.svg",
+    "js": {
+      "OktaAuth": "",
+      "isOktaEnabled": "",
+      "okta.cdnUrlHostname": "",
+      "okta.locale": "",
+      "oktaCurrentSessionUrl": ""
+    },
+    "pricing": [
+      "poa",
+      "freemium",
+      "recurring"
+    ],
+    "scriptSrc": "oktacdn\\.com/.+/([\\d.]+)/\\;version:\\1",
+    "website": "https://developer.okta.com",
+    "name": "Okta"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*",
+    "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
+    "dom": "link[rel*='stylesheet'][href*='css/myomeka.css'], link[rel*='stylesheet'][href*='/omeka/plugins/'], footer > p > a[href*='//omeka.org']",
+    "icon": "Omeka.png",
+    "js": {
+      "Omeka": ""
+    },
+    "oss": true,
+    "website": "https://omeka.org",
+    "name": "Omeka"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:open-classifieds:open_classifieds:*:*:*:*:*:*:*:*",
+    "icon": "Open Classifieds.png",
+    "meta": {
+      "author": "open-classifieds\\.com",
+      "copyright": "Open Classifieds ?([0-9.]+)?\\;version:\\1"
+    },
+    "website": "https://open-classifieds.com",
+    "name": "Open Classifieds"
+  },
+  {
+    "cats": [
+      50
+    ],
+    "cookies": {
+      "OJSSID": ""
+    },
+    "cpe": "cpe:2.3:a:public_knowledge_project:open_journal_systems:*:*:*:*:*:*:*:*",
+    "description": "Open Journal Systems (OJS) is an open-source software application for managing and publishing scholarly journals.",
+    "icon": "Open Journal Systems.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Open Journal Systems(?: ([\\d.]+))?\\;version:\\1"
+    },
+    "website": "https://pkp.sfu.ca/ojs",
+    "name": "Open Journal Systems"
+  },
+  {
+    "cats": [
+      10
+    ],
+    "cpe": "cpe:2.3:a:openwebanalytics:open_web_analytics:*:*:*:*:*:*:*:*",
+    "html": "<!-- (?:Start|End) Open Web Analytics Tracker -->",
+    "icon": "Open Web Analytics.png",
+    "js": {
+      "OWA.config.baseUrl": "",
+      "owa_baseUrl": "",
+      "owa_cmds": ""
+    },
+    "website": "https://www.openwebanalytics.com",
+    "name": "Open Web Analytics"
+  },
+  {
+    "cats": [
+      30,
+      75
+    ],
+    "cpe": "cpe:2.3:a:open-xchange:app_suite:*:*:*:*:*:*:*:*",
+    "description": "Open-Xchange is a web-based communication, collaboration and office productivity software suite.",
+    "dom": "#io-ox-core, form > input[value='open-xchange-appsuite']",
+    "icon": "openxchange.svg",
+    "implies": "Java",
+    "js": {
+      "ox.version": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.open-xchange.com/",
+    "name": "Open-Xchange App Suite"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:openbsd:openbsd:*:*:*:*:*:*:*:*",
+    "excludes": "Apache HTTP Server",
+    "headers": {
+      "Server": "^OpenBSD httpd"
+    },
+    "icon": "OpenBSD httpd.svg",
+    "oss": true,
+    "website": "https://man.openbsd.org/httpd.8",
+    "name": "OpenBSD httpd"
+  },
+  {
+    "cats": [
+      6,
+      1
+    ],
+    "cookies": {
+      "OCSESSID": ""
+    },
+    "cpe": "cpe:2.3:a:opencart:opencart:*:*:*:*:*:*:*:*",
+    "description": "OpenCart is a free and open-source ecommerce platform used for creating and managing online stores. It is written in PHP and uses a MySQL database to store information.",
+    "dom": "link[href*='catalog/view/theme/rgen-opencart/']",
+    "icon": "OpenCart.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "oss": true,
+    "website": "https://www.opencart.com",
+    "name": "OpenCart"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:alkacon:opencms:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "OpenCms"
+    },
+    "html": "<link href=\"/opencms/",
+    "icon": "OpenCms.png",
+    "implies": "Java",
+    "oss": true,
+    "scriptSrc": "opencms",
+    "website": "https://www.opencms.org",
+    "name": "OpenCms"
+  },
+  {
+    "cats": [
+      33
+    ],
+    "cpe": "cpe:2.3:a:openssl:openssl:*:*:*:*:*:*:*:*",
+    "description": "OpenSSL is a software library for applications that secure communications over computer networks against eavesdropping or need to identify the party at the other end.",
+    "headers": {
+      "Server": "OpenSSL(?:/([\\d.]+[a-z]?))?\\;version:\\1"
+    },
+    "icon": "OpenSSL.png",
+    "website": "https://openssl.org",
+    "name": "OpenSSL"
+  },
+  {
+    "cats": [
+      36
+    ],
+    "cpe": "cpe:2.3:a:openx:openx:*:*:*:*:*:*:*:*",
+    "description": "OpenX is a programmatic advertising technology company.",
+    "dom": "iframe[src*='.openx.net'], img[src*='.openx.net'], link[href*='.openx.net']",
+    "icon": "OpenX.png",
+    "js": {
+      "openx.name": "openx"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "https?://[^/]*\\.openx\\.net",
+      "https?://[^/]*\\.servedbyopenx\\.com"
+    ],
+    "website": "https://openx.com",
+    "name": "OpenX"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "EPi:StateMarker": "",
+      "EPiServer": "",
+      "EPiSessionId": "",
+      "EPiTrace": ""
+    },
+    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
+    "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
+    "dom": "link[href*='/EPiServer.Forms/']",
+    "headers": {
+      "content-security-policy": "\\.episerver\\.net"
+    },
+    "icon": "Optimizely.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "epi.EPiServer": ""
+    },
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "\\.episerver.net/",
+    "website": "https://www.optimizely.com/products/content/",
+    "name": "Optimizely Content Management"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:oracle:application_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "Oracle[- ]Application[- ]Server(?: Containers for J2EE)?(?:[- ](\\d[\\da-z./]+))?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "website": "https://www.oracle.com/technetwork/middleware/ias/overview/index.html",
+    "name": "Oracle Application Server"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:oracle:commerce_platform:*:*:*:*:*:*:*:*",
+    "description": "Oracle Commerce is a unified B2B and B2C ecommerce platform.",
+    "dom": "input[name*='/atg/commerce/'], .atgShoppingBagContent",
+    "headers": {
+      "X-ATG-Version": "(?:ATGPlatform/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "saas": true,
+    "website": "https://www.oracle.com/applications/customer-experience/commerce/products/commerce-platform/index.html",
+    "name": "Oracle Commerce"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:oracle:http_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "Oracle-HTTP-Server(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "website": "https://oracle.com",
+    "name": "Oracle HTTP Server"
+  },
+  {
+    "cats": [
+      23
+    ],
+    "cpe": "cpe:2.3:a:oracle:web_cache:*:*:*:*:*:*:*:*",
+    "description": "Oracle Web Cache is a browser and content management server, which improves the performance of web sites.",
+    "headers": {
+      "Server": "Oracle(?:AS)?[- ]Web[- ]Cache(?:[- /]([\\da-z./]+))?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "website": "https://oracle.com",
+    "name": "Oracle Web Cache"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:bea:weblogic_server:*:*:*:*:*:*:*:*",
+    "description": "Oracle WebLogic Server is a Java-based application server that provides a platform for developing, deploying, and running enterprise-level Java applications.",
+    "icon": "Oracle.svg",
+    "implies": "Java",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.oracle.com/java/weblogic/",
+    "name": "Oracle WebLogic Server"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:orchardcore:orchard_core:*:*:*:*:*:*:*:*",
+    "description": "Orchard Core is an open-source modular and multi-tenant application framework built with ASP.NET Core, and a content management system (CMS).",
+    "headers": {
+      "x-generator": "^Orchard$",
+      "x-powered-by": "OrchardCore"
+    },
+    "icon": "Orchard Core.png",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "Orchard"
+    },
+    "oss": true,
+    "scriptSrc": "/OrchardCore\\.",
+    "website": "https://orchardcore.net",
+    "name": "Orchard Core"
+  },
+  {
+    "cats": [
+      30
+    ],
+    "cpe": "cpe:2.3:a:microsoft:outlook_web_access:*:*:*:*:*:*:*:*",
+    "description": "Outlook on the web is an information manager web app. It includes a web-based email client, a calendar tool, a contact manager, and a task manager.",
+    "headers": {
+      "X-OWA-Version": "([\\d\\.]+)?\\;version:\\1"
+    },
+    "html": "<link[^>]+/owa/auth/([\\d\\.]+)/themes/resources\\;version:\\1",
+    "icon": "Outlook.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "IsOwaPremiumBrowser": ""
+    },
+    "url": "/owa/auth/log(?:on|off)\\.aspx",
+    "website": "https://help.outlook.com",
+    "name": "Outlook Web App"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cookies": {
+      "PHPSESSID": ""
+    },
+    "cpe": "cpe:2.3:a:php:php:*:*:*:*:*:*:*:*",
+    "description": "PHP is a general-purpose scripting language used for web development.",
+    "headers": {
+      "Server": "php/?([\\d.]+)?\\;version:\\1",
+      "X-Powered-By": "^php/?([\\d.]+)?\\;version:\\1"
+    },
+    "icon": "PHP.svg",
+    "url": "\\.php(?:$|\\?)",
+    "website": "https://php.net",
+    "name": "PHP"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:phpnuke:php-nuke:*:*:*:*:*:*:*:*",
+    "html": "<[^>]+Powered by PHP-Nuke",
+    "icon": "PHP-Nuke.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "PHP-Nuke"
+    },
+    "website": "https://phpnuke.org",
+    "name": "PHP-Nuke"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:phpfusion:phpfusion:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-PHPFusion": "(.+)$\\;version:\\1",
+      "X-Powered-By": "PHPFusion (.+)$\\;version:\\1"
+    },
+    "html": [
+      "Powered by <a href=\"[^>]+phpfusion",
+      "Powered by <a href=\"[^>]+php-fusion"
+    ],
+    "icon": "PHPFusion.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "website": "https://phpfusion.com",
+    "name": "PHPFusion"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:pagekit:pagekit:*:*:*:*:*:*:*:*",
+    "icon": "Pagekit.png",
+    "meta": {
+      "generator": "Pagekit"
+    },
+    "website": "https://pagekit.com",
+    "name": "Pagekit"
+  },
+  {
+    "cats": [
+      41
+    ],
+    "cpe": "cpe:2.3:a:paypal:paypal:*:*:*:*:*:*:*:*",
+    "description": "PayPal is an online payments system that supports online money transfers and serves as an electronic alternative to traditional paper methods like checks and money orders.",
+    "dom": {
+      "button": {
+        "text": "PayPal"
+      },
+      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true'], img[alt*='PayPal' i]": {
+        "exists": ""
+      }
+    },
+    "headers": {
+      "content-security-policy": "\\.paypal\\.com"
+    },
+    "icon": "PayPal.svg",
+    "js": {
+      "PAYPAL": "",
+      "__paypal_global__": "",
+      "checkout.enabledpayments.paypal": "^true$",
+      "enablePaypal": "",
+      "paypal": "",
+      "paypalClientId": "",
+      "paypalJs": "",
+      "wc_ga_pro.available_gateways.paypal": ""
+    },
+    "meta": {
+      "id": "in-context-paypal-metadata"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "paypalobjects\\.com",
+    "website": "https://paypal.com",
+    "xhr": "\\.paypal\\.com",
+    "name": "PayPal"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:perl:perl:*:*:*:*:*:*:*:*",
+    "description": "Perl is a family of two high-level, general-purpose, interpreted, dynamic programming languages.",
+    "headers": {
+      "Server": "\\bPerl\\b(?: ?/?v?([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Perl.png",
+    "website": "https://perl.org",
+    "name": "Perl"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:phusionpassenger:phusion_passenger:*:*:*:*:*:*:*:*",
+    "description": "Phusion Passenger is a free web server and application server with support for Ruby, Python and Node.js.",
+    "headers": {
+      "Server": "Phusion Passenger ([\\d.]+)\\;version:\\1",
+      "X-Powered-By": "Phusion Passenger(?:\\(R\\))? ?([\\d.]+)?\\;version:\\1"
+    },
+    "icon": "Phusion Passenger.png",
+    "website": "https://phusionpassenger.com",
+    "name": "Phusion Passenger"
+  },
+  {
+    "cats": [
+      1,
+      6
+    ],
+    "cpe": "cpe:2.3:a:pimcore:pimcore:*:*:*:*:*:*:*:*",
+    "description": "Pimcore is an open-source digital platform that aggregates, enriches, and manages enterprise data and provides up-to-date, consistent, and personalised experiences to customers.",
+    "dom": ".pimcore_area_content",
+    "headers": {
+      "X-Powered-By": "^pimcore$"
+    },
+    "icon": "pimcore.svg",
+    "implies": "PHP",
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "/pimcorecore/js/targeting\\.js",
+    "website": "https://pimcore.com/en/digital-experience-platform",
+    "name": "Pimcore"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "PLAY_SESSION": ""
+    },
+    "cpe": "cpe:2.3:a:playframework:play_framework:*:*:*:*:*:*:*:*",
+    "icon": "Play.svg",
+    "implies": "Scala",
+    "website": "https://www.playframework.com",
+    "name": "Play"
+  },
+  {
+    "cats": [
+      9
+    ],
+    "cpe": "cpe:2.3:a:parallels:parallels_plesk_panel:*:*:*:*:*:*:*:*",
+    "description": "Plesk is a web hosting and server data centre automation software with a control panel developed for Linux and Windows-based retail hosting service providers.",
+    "headers": {
+      "X-Powered-By": "^Plesk(?:L|W)in",
+      "X-Powered-By-Plesk": "^Plesk"
+    },
+    "icon": "Plesk.svg",
+    "js": {
+      "Plesk.Form": ""
+    },
+    "meta": {
+      "plesk-build": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "common\\.js\\?plesk",
+    "website": "https://www.plesk.com",
+    "name": "Plesk"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:pligg:pligg_cms:*:*:*:*:*:*:*:*",
+    "html": "<span[^>]+id=\"xvotes-0",
+    "icon": "Pligg.svg",
+    "js": {
+      "pligg_": ""
+    },
+    "meta": {
+      "generator": "Pligg"
+    },
+    "website": "https://pligg.com",
+    "name": "Pligg"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:plone:plone:*:*:*:*:*:*:*:*",
+    "description": "Plone is a free and open source content management system (CMS) built on top of the Zope application server.",
+    "dom": "link[href^='/++resource++']",
+    "icon": "Plone.svg",
+    "implies": "Python",
+    "meta": {
+      "generator": "Plone"
+    },
+    "oss": true,
+    "scriptSrc": "^/\\+\\+resource\\+\\+",
+    "website": "https://plone.org/",
+    "name": "Plone"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:postgresql:postgresql:*:*:*:*:*:*:*:*",
+    "description": "PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.",
+    "icon": "PostgreSQL.png",
+    "website": "https://www.postgresql.org/",
+    "name": "PostgreSQL"
+  },
+  {
+    "cats": [
+      6,
+      1
+    ],
+    "cookies": {
+      "PrestaShop": ""
+    },
+    "cpe": "cpe:2.3:a:prestashop:prestashop:*:*:*:*:*:*:*:*",
+    "description": "PrestaShop is a freemium, open-source ecommerce solution, written in the PHP programming language with support for the MySQL database management system.",
+    "dom": "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']",
+    "headers": {
+      "Powered-By": "^Prestashop$"
+    },
+    "html": [
+      "Powered by <a\\s+[^>]+>PrestaShop",
+      "<!-- /Block [a-z ]+ module (?:HEADER|TOP)?\\s?-->",
+      "<!-- /Module Block [a-z ]+ -->"
+    ],
+    "icon": "PrestaShop.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "freeProductTranslation": "\\;confidence:40",
+      "prestashop": "",
+      "priceDisplayMethod": "\\;confidence:40",
+      "priceDisplayPrecision": "\\;confidence:40",
+      "rcAnalyticsEvents.eventPrestashopCheckout": ""
+    },
+    "meta": {
+      "generator": "PrestaShop"
+    },
+    "oss": true,
+    "website": "https://www.prestashop.com",
+    "name": "PrestaShop"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:progress:sitefinity:*:*:*:*:*:*:*:*",
+    "description": "Progress Sitefinity is a content management system (CMS) that you use to create, store, manage, and present content on your website.",
+    "icon": "Sitefinity.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "sfDataIntell": ""
+    },
+    "meta": {
+      "generator": "^Sitefinity\\s([\\S]{3,9})\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.sitefinity.com",
+    "name": "Progress Sitefinity"
+  },
+  {
+    "cats": [
+      19
+    ],
+    "cpe": "cpe:2.3:a:progress:ws_ftp_server:*:*:*:*:*:*:*:*",
+    "description": "Progress WS_FTP is a file transfer client software developed by Progress Software Corporation, supporting FTP, FTPS, SFTP, and HTTPS protocols with features like drag-and-drop support, file synchronization, and encrypted data transmission.",
+    "dom": "form[name='formLogin'][action='login.aspx' i][id='formLogin']\\;confidence:40",
+    "icon": "Progress.svg",
+    "requires": "Microsoft ASP.NET",
+    "scriptSrc": "/ThinClient/(?:WTM|WebResource)(?:\\.axd|/public)\\;confidence:60",
+    "website": "https://www.progress.com/ws_ftp",
+    "name": "Progress WS_FTP"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:prototypejs:prototype:*:*:*:*:*:*:*:*",
+    "description": "Prototype is a JavaScript Framework that aims to ease development of web applications.",
+    "icon": "Prototype.png",
+    "js": {
+      "Prototype.Version": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": "(?:prototype|protoaculous)(?:-([\\d.]*[\\d]))?.*\\.js\\;version:\\1",
+    "website": "https://www.prototypejs.org",
+    "name": "Prototype"
+  },
+  {
+    "cats": [
+      46
+    ],
+    "cookies": {
+      "DSSIGNIN": ""
+    },
+    "cpe": "cpe:2.3:a:pulsesecure:pulse_connect_secure:*:*:*:*:*:*:*:*",
+    "description": "Pulse Secure allows to deploy VPNs to securely to your internal resources.",
+    "icon": "PulseSecure.png",
+    "url": "/dana-na/auth/",
+    "website": "https://www.pulsesecure.net/products/remote-access-overview/",
+    "name": "Pulse Secure"
+  },
+  {
+    "cats": [
+      19
+    ],
+    "cpe": "cpe:2.3:a:pygments:pygments:*:*:*:*:*:*:*:*",
+    "html": "<link[^>]+pygments\\.css[\"']",
+    "icon": "pygments.png",
+    "website": "https://pygments.org",
+    "name": "Pygments"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:python:python:*:*:*:*:*:*:*:*",
+    "description": "Python is an interpreted and general-purpose programming language.",
+    "headers": {
+      "Server": "(?:^|\\s)Python(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Python.png",
+    "website": "https://python.org",
+    "name": "Python"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cookies": {
+      "phpbb": ""
+    },
+    "cpe": "cpe:2.3:a:phpbb:phpbb:*:*:*:*:*:*:*:*",
+    "description": "phpBB is a free open-source Internet forum package in the PHP scripting language.",
+    "html": [
+      "Powered by <a[^>]+phpBB",
+      "<div class=phpbb_copyright>",
+      "<[^>]+styles/(?:sub|pro)silver/theme",
+      "<img[^>]+i_icon_mini",
+      "<table class=\"[^\"]*forumline"
+    ],
+    "icon": "phpBB.png",
+    "implies": "PHP",
+    "js": {
+      "phpbb": "",
+      "style_cookie_settings": ""
+    },
+    "meta": {
+      "copyright": "phpBB Group"
+    },
+    "website": "https://phpbb.com",
+    "name": "phpBB"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:phpcms:phpcms:*:*:*:*:*:*:*:*",
+    "icon": "PHP.svg",
+    "implies": "PHP",
+    "js": {
+      "phpcms": ""
+    },
+    "website": "https://phpcms.de",
+    "name": "phpCMS"
+  },
+  {
+    "cats": [
+      3
+    ],
+    "cpe": "cpe:2.3:a:phpmyadmin:phpmyadmin:*:*:*:*:*:*:*:*",
+    "description": "PhpMyAdmin is a free and open-source administration tool for MySQL and MariaDB.",
+    "headers": {
+      "Set-Cookie": "phpMyAdmin_https"
+    },
+    "html": [
+      "!\\[CDATA\\[[^<]*PMA_VERSION:\\\"([\\d.]+)\\;version:\\1",
+      "(?: \\| phpMyAdmin ([\\d.]+)<\\/title>|PMA_sendHeaderLocation\\(|<link [^>]*href=\"[^\"]*phpmyadmin\\.css\\.php)\\;version:\\1"
+    ],
+    "icon": "phpMyAdmin.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "pma_absolute_uri": ""
+    },
+    "website": "https://www.phpmyadmin.net",
+    "name": "phpMyAdmin"
+  },
+  {
+    "cats": [
+      3
+    ],
+    "cpe": "cpe:2.3:a:phppgadmin_project:phppgadmin:*:*:*:*:*:*:*:*",
+    "html": "(?:<title>phpPgAdmin</title>|<span class=\"appname\">phpPgAdmin)",
+    "icon": "phpPgAdmin.png",
+    "implies": "PHP",
+    "website": "https://phppgadmin.sourceforge.net",
+    "name": "phpPgAdmin"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:opensolution:quick.cms:*:*:*:*:*:*:*:*",
+    "html": "<a href=\"[^>]+opensolution\\.org/\">CMS by",
+    "icon": "Quick.CMS.png",
+    "meta": {
+      "generator": "Quick\\.CMS(?: v([\\d.]+))?\\;version:\\1"
+    },
+    "website": "https://opensolution.org",
+    "name": "Quick.CMS"
+  },
+  {
+    "cats": [
+      4
+    ],
+    "cpe": "cpe:2.3:a:dave_thomas:rdoc:*:*:*:*:*:*:*:*",
+    "description": "RDoc produces HTML and command-line documentation for Ruby projects.",
+    "html": [
+      "<link[^>]+href=\"[^\"]*rdoc-style\\.css",
+      "Generated by <a[^>]+href=\"https?://rdoc\\.rubyforge\\.org[^>]+>RDoc</a> ([\\d.]*\\d)\\;version:\\1",
+      "Generated by <a href=\"https:\\/\\/ruby\\.github\\.io\\/rdoc\\/\">RDoc<\\/a> ([\\d.]*\\d)\\;version:\\1"
+    ],
+    "icon": "RDoc.png",
+    "implies": "Ruby",
+    "js": {
+      "rdoc_rel_prefix": ""
+    },
+    "website": "https://github.com/ruby/rdoc",
+    "name": "RDoc"
+  },
+  {
+    "cats": [
+      12
+    ],
+    "cpe": "cpe:2.3:a:facebook:react:*:*:*:*:*:*:*:*",
+    "description": "React is an open-source JavaScript library for building user interfaces or UI components.",
+    "dom": {
+      "body > div": {
+        "properties": {
+          "_reactRootContainer": ""
+        }
+      },
+      "div[id*='react-root'], span[id*='react-']": {
+        "exists": ""
+      }
+    },
+    "html": "<[^>]+data-react",
+    "icon": "React.svg",
+    "js": {
+      "React.version": "^([\\d\\.]+)$\\;version:\\1",
+      "ReactOnRails": "",
+      "__REACT_ON_RAILS_EVENT_HANDLERS_RAN_ONCE__": ""
+    },
+    "meta": {
+      "description": "^Web site created using create-react-app$"
+    },
+    "scriptSrc": [
+      "react(?:-with-addons)?[.-](\\d+(?:\\.\\d+)+)[^/]*\\.js\\;version:\\1",
+      "/([\\d\\.]+)/react(?:\\.min)?\\.js\\;version:\\1",
+      "^react\\b.*\\.js"
+    ],
+    "website": "https://reactjs.org",
+    "name": "React"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:redhat:linux:*:*:*:*:*:*:*:*",
+    "description": "Red Hat is an open-source Linux operating system.",
+    "headers": {
+      "Server": "Red Hat",
+      "X-Powered-By": "Red Hat"
+    },
+    "icon": "Red Hat.svg",
+    "website": "https://www.redhat.com",
+    "name": "Red Hat"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:redislabs:redis:*:*:*:*:*:*:*:*",
+    "description": "Redis is an in-memory data structure project implementing a distributed, in-memory key\u2013value database with optional durability. Redis supports different kinds of abstract data structures, such as strings, lists, maps, sets, sorted sets, HyperLogLogs, bitmaps, streams, and spatial indexes.",
+    "icon": "Redis.svg",
+    "website": "https://redis.io",
+    "name": "Redis"
+  },
+  {
+    "cats": [
+      13
+    ],
+    "cookies": {
+      "_redmine_session": ""
+    },
+    "cpe": "cpe:2.3:a:redmine:redmine:*:*:*:*:*:*:*:*",
+    "description": "Redmine is a free and open-source, web-based project management and issue tracking tool.",
+    "html": "Powered by <a href=\"[^>]+Redmine",
+    "icon": "Redmine.png",
+    "implies": "Ruby on Rails",
+    "meta": {
+      "description": "Redmine"
+    },
+    "website": "https://www.redmine.org",
+    "name": "Redmine"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:caucho:resin:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "^Resin(?:/(\\S*))?\\;version:\\1"
+    },
+    "icon": "Resin.png",
+    "implies": "Java",
+    "website": "https://caucho.com",
+    "name": "Resin"
+  },
+  {
+    "cats": [
+      30
+    ],
+    "cpe": "cpe:2.3:a:roundcube:webmail:*:*:*:*:*:*:*:*",
+    "description": "RoundCube is free and open-source web-based IMAP email client.",
+    "html": "<title>RoundCube",
+    "icon": "RoundCube.png",
+    "implies": "PHP",
+    "js": {
+      "rcmail": "",
+      "roundcube": ""
+    },
+    "website": "https://roundcube.net",
+    "name": "RoundCube"
+  },
+  {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:ruby-lang:ruby:*:*:*:*:*:*:*:*",
+    "description": "Ruby is an open-source object-oriented programming language.",
+    "headers": {
+      "Server": "(?:Mongrel|Ruby(?:/([\\d\\.]+))?)\\;version:\\1"
+    },
+    "icon": "Ruby.png",
+    "website": "https://ruby-lang.org",
+    "name": "Ruby"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "_session_id": "\\;confidence:75"
+    },
+    "cpe": "cpe:2.3:a:rubyonrails:rails:*:*:*:*:*:*:*:*",
+    "description": "Ruby on Rails is a server-side web application framework written in Ruby under the MIT License.",
+    "headers": {
+      "Server": "mod_(?:rails|rack)",
+      "X-Powered-By": "mod_(?:rails|rack)"
+    },
+    "icon": "Ruby on Rails.svg",
+    "implies": "Ruby",
+    "js": {
+      "ReactOnRails": "",
+      "__REACT_ON_RAILS_EVENT_HANDLERS_RAN_ONCE__": "",
+      "_rails_loaded": ""
+    },
+    "meta": {
+      "csrf-param": "^authenticity_token$\\;confidence:50"
+    },
+    "scriptSrc": "/assets/application-[a-z\\d]{32}/\\.js\\;confidence:50",
+    "website": "https://rubyonrails.org",
+    "name": "Ruby on Rails"
+  },
+  {
+    "cats": [
+      53
+    ],
+    "cpe": "cpe:2.3:a:sap:netweaver_application_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "SAP NetWeaver Application Server"
+    },
+    "icon": "SAP.svg",
+    "website": "https://sap.com",
+    "name": "SAP"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "_hybris": ""
+    },
+    "cpe": "cpe:2.3:a:sap:commerce_cloud:*:*:*:*:*:*:*:*",
+    "description": "SAP Commerce Cloud is a cloud-native omnichannel commerce solution for B2B, B2C, and B2B2C companies.",
+    "html": [
+      "<[^>]+/(?:sys_master|hybr|_ui/(?:.*responsive/)?(?:desktop|common(?:/images|/img|/css|ico)?))/",
+      "<script[^>].*hybris.*.js"
+    ],
+    "icon": "SAP.svg",
+    "implies": "Java",
+    "js": {
+      "ACC.config.commonResourcePath": "/_ui/responsive/common\\;confidence:25",
+      "ACC.config.rootPath": "/_ui/responsive\\;confidence:25",
+      "ACC.config.themeResourcePath": "/_ui/responsive/theme-\\;confidence:50",
+      "getProductAttrFromHybris": "",
+      "getProductAvailabilityHybris": "",
+      "hybrisId": "",
+      "passLgDataToHybris": "",
+      "smartedit": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.sap.com/products/commerce-cloud.html",
+    "name": "SAP Commerce Cloud"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:spip:spip:*:*:*:*:*:*:*:*",
+    "description": "SPIP is a content management system written in PHP that uses one or more databases like SQL, SQLite or PostgreSQL.",
+    "dom": "div.formulaire_spip",
+    "headers": {
+      "Composed-By": "SPIP ([\\d.]+) @\\;version:\\1",
+      "X-Spip-Cache": ""
+    },
+    "icon": "spip.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "(?:^|\\s)SPIP(?:\\s([\\d.]+(?:\\s\\[\\d+\\])?))?\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://www.spip.net",
+    "name": "SPIP"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:sqlite:sqlite:*:*:*:*:*:*:*:*",
+    "icon": "SQLite.png",
+    "website": "https://www.sqlite.org",
+    "name": "SQLite"
+  },
+  {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "SAKAIID": ""
+    },
+    "cpe": "cpe:2.3:a:sakailms:sakai:*:*:*:*:*:*:*:*",
+    "description": "Sakai is a robust open-source learning management system created by higher ed for higher ed.",
+    "icon": "Sakai.png",
+    "js": {
+      "sakai": "",
+      "sakaiPortalWindow": "",
+      "sakaiTutorialSkin": ""
+    },
+    "oss": true,
+    "website": "https://www.sakailms.org",
+    "name": "Sakai"
+  },
+  {
+    "cats": [
+      53
+    ],
+    "cookies": {
+      "com.salesforce": ""
+    },
+    "cpe": "cpe:2.3:a:salesforce:*:*:*:*:*:*:*:*:*",
+    "description": "Salesforce is a cloud computing service software (SaaS) that specializes in customer relationship management (CRM).",
+    "dns": {
+      "TXT": [
+        "salesforce\\.com"
+      ]
+    },
+    "html": "<[^>]+=\"brandQuaternaryFgrs\"",
+    "icon": "Salesforce.svg",
+    "js": {
+      "SFDCApp": "",
+      "SFDCCmp": "",
+      "SFDCPage": "",
+      "SFDCSessionVars": ""
+    },
+    "pricing": [
+      "low"
+    ],
+    "saas": true,
+    "website": "https://www.salesforce.com",
+    "name": "Salesforce"
+  },
+  {
+    "cats": [
+      108
+    ],
+    "cpe": "cpe:2.3:a:scandipwa:magento-scripts:*:*:*:*:*:node.js:*:*",
+    "description": "ScandiPWA is the next generation Magento 2 PWA theme developed in React.",
+    "dom": "link[href^='/static/frontend/scandipwa/']",
+    "icon": "ScandiPWA.png",
+    "implies": [
+      "Magento\\;version:2",
+      "React",
+      "PWA"
+    ],
+    "oss": true,
+    "website": "https://scandipwa.com",
+    "name": "ScandiPWA"
+  },
+  {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:shopware:shopware:*:*:*:*:*:*:*:*",
+    "description": "Shopware is an enterprise-level ecommerce platform.",
+    "headers": {
+      "sw-context-token": "^[\\w]{32}$\\;version:6",
+      "sw-invalidation-states": "\\;version:6",
+      "sw-language-id": "^[a-fA-F0-9]{32}$\\;version:6",
+      "sw-version-id": "\\;version:6"
+    },
+    "html": "<title>Shopware ([\\d\\.]+) [^<]+\\;version:\\1",
+    "icon": "Shopware.svg",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "jQuery",
+      "Symfony"
+    ],
+    "js": {
+      "shopStudioGoogleTagManagerCloudGtagCallback": "\\;confidence:50"
+    },
+    "meta": {
+      "application-name": "Shopware"
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "(?:(shopware)|/web/cache/[0-9]{10}_.+)\\.js\\;version:\\1?4:5",
+      "/jquery\\.shopware\\.min\\.js",
+      "/engine/Shopware/"
+    ],
+    "website": "https://www.shopware.com",
+    "name": "Shopware"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:simplemachines:simple_machine_forum:*:*:*:*:*:*:*:*",
+    "description": "Simple Machines Forum is a free open-source software, used for community forums and is written in PHP.",
+    "dom": {
+      "li > span > a[title='Simple Machines Forum']": {
+        "text": "^SMF\\s([\\d\\.]+)\\;version:\\1"
+      }
+    },
+    "icon": "Simple Machines Forum.png",
+    "implies": "PHP",
+    "js": {
+      "smf_avatarResize": "",
+      "smf_default_theme_url": "",
+      "smf_theme_url": ""
+    },
+    "oss": true,
+    "website": "https://www.simplemachines.org",
+    "name": "Simple Machines Forum"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "SC_ANALYTICS_GLOBAL_COOKIE": "",
+      "SC_OS_SessionId": "",
+      "sc_expview": "",
+      "sxa_site": ""
+    },
+    "cpe": "cpe:2.3:a:sitecore:*:*:*:*:*:*:*:*:*",
+    "description": "Sitecore provides web content management, and multichannel marketing automation software.",
+    "dom": [
+      "link[href*='/_sitecore/']",
+      "img[src^='/-/media/']",
+      "img[src*='/~/media/.+\\.ashx']"
+    ],
+    "icon": "Sitecore.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "SitecoreUtilities": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring",
+      "high"
+    ],
+    "probe": {
+      "/layouts/System/VisitorIdentification.aspx": "sc_Contact"
+    },
+    "saas": true,
+    "website": "https://www.sitecore.com/",
+    "name": "Sitecore"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:sitepark:information_enterprise_server:*:*:*:*:*:*:*:*",
+    "description": "Sitepark IES is a content management system written in PHP and paired with a MySQL database.",
+    "icon": "Sitepark.png",
+    "implies": [
+      "MySQL",
+      "Lucene"
+    ],
+    "meta": {
+      "generator": "^Sitepark\\sInformation\\sEnterprise\\sServer\\s-\\sIES\\sGenerator\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.sitepark.com/oeffentlicher-sektor/produkte/cms-technologie.php",
+    "name": "Sitepark IES"
+  },
+  {
+    "cats": [
+      34
+    ],
+    "cpe": "cpe:2.3:a:apache:solr:*:*:*:*:*:*:*:*",
+    "description": "Solr is an open-source enterprise-search platform, written in Java.",
+    "icon": "Solr.png",
+    "implies": "Lucene",
+    "website": "https://lucene.apache.org/solr/",
+    "name": "Solr"
+  },
+  {
+    "cats": [
+      30
+    ],
+    "cpe": "cpe:2.3:a:squirrelmail:squirrelmail:*:*:*:*:*:*:*:*",
+    "description": "SquirrelMail is an open-source web-mail package that is based on PHP language. It provides a web-based-email client and a proxy server for IMAP protocol.",
+    "html": "<small>SquirrelMail version ([.\\d]+)[^<]*<br \\;version:\\1",
+    "icon": "SquirrelMail.png",
+    "implies": "PHP",
+    "js": {
+      "squirrelmail_loginpage_onload": ""
+    },
+    "url": "/src/webmail\\.php(?:$|\\?)",
+    "website": "https://squirrelmail.org",
+    "name": "SquirrelMail"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:squiz:matrix:*:*:*:*:*:*:*:*",
+    "description": "A flexible, low-code enterprise content management system designed to manage multiple sites with many editors.",
+    "dom": "link[href*='/__data/assets/css_file/']",
+    "headers": {
+      "X-Powered-By": "Squiz Matrix"
+    },
+    "html": "<!--\\s+Running (?:MySource|Squiz) Matrix",
+    "icon": "Squiz Matrix.png",
+    "implies": "PHP",
+    "meta": {
+      "generator": "Squiz Matrix"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": [
+      "/__data/assets/(js_file_folder|git_bridge|js_file)/"
+    ],
+    "website": "https://www.squiz.net/matrix",
+    "name": "Squiz Matrix"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:statamic:statamic:*:*:*:*:*:laravel:*:*",
+    "description": "Statamic is an open-source and self-hosted content management system based on the PHP programming language.",
+    "headers": {
+      "x-powered-by": "^Statamic$"
+    },
+    "icon": "Statamic.svg",
+    "implies": [
+      "PHP",
+      "Laravel"
+    ],
+    "js": {
+      "Statamic": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "mid",
+      "payg"
+    ],
+    "saas": false,
+    "website": "https://statamic.com",
+    "name": "Statamic"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:oracle:sunos:*:*:*:*:*:*:*:*",
+    "description": "SunOS is a Unix-branded operating system developed by Sun Microsystems for their workstation and server computer systems.",
+    "headers": {
+      "Server": "SunOS( [\\d\\.]+)?\\;version:\\1",
+      "Servlet-engine": "SunOS( [\\d\\.]+)?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "website": "https://oracle.com/solaris",
+    "name": "SunOS"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "sf_redirect": ""
+    },
+    "cpe": "cpe:2.3:a:sensiolabs:symfony:*:*:*:*:*:*:*:*",
+    "description": "Symfony is a PHP web application framework and a set of reusable PHP components/libraries.",
+    "dom": "div.sf-toolbar-block, div.sf-toolbar",
+    "icon": "Symfony.svg",
+    "implies": "PHP",
+    "js": {
+      "Sfjs": ""
+    },
+    "oss": true,
+    "website": "https://symfony.com",
+    "name": "Symfony"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:typo3:typo3:*:*:*:*:*:*:*:*",
+    "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
+    "dom": "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']",
+    "icon": "TYPO3.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "TYPO3\\s+(?:CMS\\s+)?(?:[\\d.]+)?(?:\\s+CMS)?"
+    },
+    "oss": true,
+    "probe": {
+      "/typo3/sysext/core/Resources/Public/Images/typo3_orange.svg": ""
+    },
+    "scriptSrc": "^/?typo3(?:conf|temp)/",
+    "url": "/typo3/",
+    "website": "https://typo3.org/",
+    "name": "TYPO3 CMS"
+  },
+  {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "thinkphp_show_page_trace": ""
+    },
+    "cpe": "cpe:2.3:a:thinkphp:thinkphp:*:*:*:*:*:*:*:*",
+    "description": "ThinkPHP is an open-source PHP framework with MVC structure developed and maintained by Shanghai Topthink Company.",
+    "headers": {
+      "X-Powered-By": "ThinkPHP"
+    },
+    "icon": "ThinkPHP.png",
+    "implies": "PHP",
+    "oss": true,
+    "website": "https://www.thinkphp.cn",
+    "name": "ThinkPHP"
+  },
+  {
+    "cats": [
+      24
+    ],
+    "cpe": "cpe:2.3:a:tiny:tinymce:*:*:*:*:*:*:*:*",
+    "description": "TinyMCE is an online rich-text editor released as open-source software. TinyMCE is designed to integrate with JavaScript libraries, Vue.js, and AngularJS as well as content management systems such as Joomla!, and WordPress.",
+    "icon": "TinyMCE.svg",
+    "js": {
+      "tinyMCE.majorVersion": "([\\d.]+)\\;version:\\1",
+      "tinymce": ""
+    },
+    "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
+    "website": "https://www.tiny.cloud/tinymce/",
+    "name": "TinyMCE"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:acme:thttpd:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "\\bthttpd(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "thttpd.png",
+    "website": "https://acme.com/software/thttpd",
+    "name": "thttpd"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:canonical:ubuntu_linux:*:*:*:*:*:*:*:*",
+    "description": "Ubuntu is a free and open-source operating system on Linux for the enterprise server, desktop, cloud, and IoT.",
+    "headers": {
+      "Server": "Ubuntu",
+      "X-Powered-By": "Ubuntu"
+    },
+    "icon": "Ubuntu.svg",
+    "website": "https://www.ubuntu.com/server",
+    "name": "Ubuntu"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:vardot:varbase:*:*:*:*:*:*:*:*",
+    "dom": "meta[content='Varbase'],div[class*='varbase_'],div[class*='_varbase'],div[class*='varbase-'],div[class*='block-varbase'],div[class*='blockvarbase']",
+    "icon": "varbase.png",
+    "implies": "Drupal",
+    "js": {
+      "drupalSettings.ajaxPageState.libraries": ".+varbase_.+"
+    },
+    "oss": true,
+    "website": "https://www.vardot.com/solutions/varbase",
+    "name": "Varbase"
+  },
+  {
+    "cats": [
+      23
+    ],
+    "cpe": "cpe:2.3:a:varnish-software:varnish_cache:*:*:*:*:*:*:*:*",
+    "description": "Varnish is a reverse caching proxy.",
+    "headers": {
+      "Via": "varnish(?: \\(Varnish/([\\d.]+)\\))?\\;version:\\1",
+      "X-Varnish": "",
+      "X-Varnish-Action": "",
+      "X-Varnish-Age": "",
+      "X-Varnish-Cache": "",
+      "X-Varnish-Hostname": ""
+    },
+    "icon": "Varnish.svg",
+    "website": "https://www.varnish-cache.org",
+    "name": "Varnish"
+  },
+  {
+    "cats": [
+      53
+    ],
+    "cpe": "cpe:2.3:a:vtiger:vtiger_crm:*:*:*:*:*:*:*:*",
+    "description": "Vtiger is a cloud-based suite of marketing, sales and help desk offerings, which can be deployed separately or as an integrated, all-in-one ecosystem.",
+    "icon": "Vtiger.svg",
+    "js": {
+      "Vtiger": "",
+      "Vtiger_Base_Js": "",
+      "Vtiger_Helper_Js": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.vtiger.com",
+    "name": "Vtiger"
+  },
+  {
+    "cats": [
+      2
+    ],
+    "cookies": {
+      "bblastactivity": "",
+      "bblastvisit": "",
+      "bbsessionhash": ""
+    },
+    "cpe": "cpe:2.3:a:vbulletin:vbulletin:*:*:*:*:*:*:*:*",
+    "description": "vBulletin is tool that is used to create and manage online forums or discussion boards. It is written in PHP and uses a MySQL database server.",
+    "html": "<div id=\"copyright\">Powered by vBulletin",
+    "icon": "vBulletin.png",
+    "implies": "PHP",
+    "js": {
+      "vBulletin": ""
+    },
+    "meta": {
+      "generator": "vBulletin ?([\\d.]+)?\\;version:\\1"
+    },
+    "website": "https://www.vbulletin.com",
+    "name": "vBulletin"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:ruby-lang:webrick:*:*:*:*:*:*:*:*",
+    "description": "WEBrick is a lightweight HTTP server library in Ruby, included in the standard library, primarily used for local development and testing of Ruby web applications.",
+    "headers": {
+      "Server": "^WEBrick/([\\d\\.]+)\\;version:\\1"
+    },
+    "icon": "Ruby.png",
+    "oss": true,
+    "website": "https://docs.ruby-lang.org/en/2.4.0/WEBrick.html",
+    "name": "WEBrick"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:torchbox:wagtail:*:*:*:*:*:*:*:*",
+    "description": "Wagtail is a Django content management system (CMS) focused on flexibility and user experience.",
+    "dom": {
+      "[data-block-key]": {
+        "attributes": {
+          "data-block-key": "^[a-z0-9]{5}$"
+        }
+      },
+      "[style*='images/']": {
+        "attributes": {
+          "style": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "img[src*='images/']": {
+        "attributes": {
+          "src": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "img[srcset*='images/'], source[srcset*='images/']": {
+        "attributes": {
+          "srcset": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "meta[content*='images/']": {
+        "attributes": {
+          "content": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      },
+      "style, script": {
+        "text": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+      },
+      "video[poster*='images/']": {
+        "attributes": {
+          "poster": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        }
+      }
+    },
+    "icon": "Wagtail.svg",
+    "implies": [
+      "Django",
+      "Python"
+    ],
+    "oss": true,
+    "website": "https://wagtail.org",
+    "name": "Wagtail"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:weblication:cms_core_&_grid:*:*:*:*:*:*:*:*",
+    "description": "Weblication is an enterprise-class website content management system developed by Scholl Communications AG in Germany.",
+    "icon": "Weblication.svg",
+    "implies": [
+      "PHP",
+      "XSLT"
+    ],
+    "meta": {
+      "generator": "^Weblication\u00ae CMS$"
+    },
+    "pricing": [
+      "recurring",
+      "onetime",
+      "payg"
+    ],
+    "website": "https://weblication.de",
+    "name": "Weblication"
+  },
+  {
+    "cats": [
+      6,
+      87
+    ],
+    "cookies": {
+      "usces_cookie": ""
+    },
+    "cpe": "cpe:2.3:a:welcart:welcart:*:*:*:*:*:*:*:*",
+    "description": "Welcart is a free ecommerce plugin for WordPress with top market share in Japan.",
+    "html": [
+      "<link[^>]+?href=\"[^\"]+usces_default(?:\\.min)?\\.css",
+      "<!-- Welcart version : v([\\d.]+)\\;version:\\1"
+    ],
+    "icon": "Welcart.svg",
+    "requires": "WordPress",
+    "scriptSrc": "uscesL10n",
+    "website": "https://www.welcart.com",
+    "name": "Welcart"
+  },
+  {
+    "cats": [
+      1,
+      11
+    ],
+    "cpe": "cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*",
+    "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
+    "headers": {
+      "X-Pingback": "/xmlrpc\\.php$",
+      "link": "rel=\"https://api\\.w\\.org/\""
+    },
+    "html": [
+      "<link rel=[\"']stylesheet[\"'] [^>]+/wp-(?:content|includes)/",
+      "<link[^>]+s\\d+\\.wp\\.com"
+    ],
+    "icon": "WordPress.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "wp_username": ""
+    },
+    "meta": {
+      "generator": "^WordPress(?: ([\\d.]+))?\\;version:\\1",
+      "shareaholic:wp_version": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-(?:content|includes)/",
+      "wp-embed\\.min\\.js"
+    ],
+    "website": "https://wordpress.org",
+    "name": "WordPress"
+  },
+  {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:webedition:webedition_cms:*:*:*:*:*:*:*:*",
+    "icon": "webEdition.png",
+    "meta": {
+      "DC.title": "webEdition",
+      "generator": "webEdition"
+    },
+    "website": "https://webedition.de/en",
+    "name": "webEdition"
+  },
+  {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:yahoo:yui:*:*:*:*:*:*:*:*",
+    "description": "YUI is a JavaScript and CSS library with more than 30 unique components including low-level DOM utilities and high-level user-interface widgets.",
+    "icon": "YUI.png",
+    "js": {
+      "YAHOO.VERSION": "^(.+)$\\;version:\\1",
+      "YUI.version": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "(?:/yui/|yui\\.yahooapis\\.com)",
+    "website": "https://clarle.github.io/yui3",
+    "name": "YUI"
+  },
+  {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:yunohost:yunohost:*:*:*:*:*:*:*:*",
+    "description": "YunoHost is a server operating system that is free and open-source, allowing users to host their own web applications, email services, and other online tools. It is based on Debian GNU/Linux.",
+    "icon": "YunoHost.svg",
+    "implies": "Debian",
+    "oss": true,
+    "scriptSrc": "/ynh_portal\\.js",
+    "website": "https://yunohost.org",
+    "name": "YunoHost"
+  },
+  {
+    "cats": [
+      19
+    ],
+    "cpe": "cpe:2.3:a:zabbix:zabbix:*:*:*:*:*:*:*:*",
+    "html": "<body[^>]+zbxCallPostScripts",
+    "icon": "Zabbix.png",
+    "implies": "PHP",
+    "js": {
+      "zbxCallPostScripts": ""
+    },
+    "meta": {
+      "Author": "ZABBIX SIA\\;confidence:70"
+    },
+    "url": "\\/zabbix\\/\\;confidence:30",
+    "website": "https://zabbix.com",
+    "name": "Zabbix"
+  },
+  {
+    "cats": [
+      22
+    ],
+    "cookies": {
+      "ZENDSERVERSESSID": ""
+    },
+    "cpe": "cpe:2.3:a:zend:zend_server:*:*:*:*:*:*:*:*",
+    "headers": {
+      "X-Powered-By": "Zend(?:Server)?(?:[\\s/]?([0-9.]+))?\\;version:\\1"
+    },
+    "icon": "Zend.png",
+    "website": "https://zend.com",
+    "name": "Zend"
+  },
+  {
+    "cats": [
+      30
+    ],
+    "cookies": {
+      "ZM_TEST": "true"
+    },
+    "cpe": "cpe:2.3:a:zimbra:zimbra:*:*:*:*:*:*:*:*",
+    "icon": "Zimbra.png",
+    "implies": "Java",
+    "website": "https://www.zimbra.com/",
+    "name": "Zimbra"
+  }
+]
