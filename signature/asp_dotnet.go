@@ -12,9 +12,17 @@ var AspDotNetSignature = Signature{
 		}, {
 			Name:  "set-cookie",
 			Value: "ASP.NET_SessionId",
+		}, {
+			Name: "x-aspnet-version",
 		}},
 		Cookies: []Cookie{{
 			Name: `ASP.NET_SessionId`,
+		}},
+	},
+	VersionPattern: VersionPattern{
+		Headers: []Header{{
+			Name:  "x-aspnet-version",
+			Value: `(\d+\.\d+\.\d+)`,
 		}},
 	},
 

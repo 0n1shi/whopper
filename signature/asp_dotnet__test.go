@@ -45,6 +45,17 @@ func TestAspDotNetSignature(t *testing.T) {
 		},
 		detected: true,
 		version:  "",
+	}, {
+		name: "X-aspnet-version header",
+		response: &crawler.Response{
+			Url: SameHostUrl,
+			Headers: []*crawler.Header{{
+				Name:  "x-aspnet-version",
+				Value: "4.0.30319",
+			}},
+		},
+		detected: true,
+		version:  "4.0.30319",
 	}}
 
 	runTests(t, cases, &AspDotNetSignature)
