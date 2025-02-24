@@ -46,6 +46,7 @@ var Signatures = []*Signature{
 	&AmazonS3Signature,
 	&AngularJsSignature,
 	&ApacheSignature,
+	&AspDotNetSignature,
 	&AwsElbSignature,
 	&BackboneJsSignature,
 	&BootstrapSignature,

@@ -28,7 +28,7 @@ func runTests(test *testing.T, cases []TestCase, signature *Signature) {
 			}
 
 			if detected != c.detected {
-				t.Errorf("deleted = %v, want %v", detected, c.detected)
+				t.Errorf("detected = %v, want %v", detected, c.detected)
 			}
 			if version != c.version {
 				t.Errorf("version = %v, want %v", version, c.version)
