@@ -61,6 +61,7 @@ var Signatures = []*Signature{
 	&JQueryUiSignature,
 	&KongaSignature,
 	&LodashSignature,
+	&MicrosoftIisSignature,
 	&ModPerlSignature,
 	&MomentJsSignature,
 	&NginxSignature,
