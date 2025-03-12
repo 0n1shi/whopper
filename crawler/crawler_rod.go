@@ -3,7 +3,6 @@ package crawler
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -44,29 +43,39 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 	slog.Debug("launching browser ...")
 	launcher := launcher.New()
 	defer launcher.Cleanup() // remove user data such as cookies, cache, etc.
-	debugUrl := launcher.Headless(true).MustLaunch()
+
+	debugUrl, err := launcher.Headless(true).Launch()
+	if err != nil {
+		slog.Error("failed to launch browser", "error", err)
+		return nil, err
+	}
 	slog.Debug("debug URL", "url", debugUrl)
 
 	slog.Debug("connecting to browser ...")
-	browser := rod.New().ControlURL(debugUrl).MustConnect()
+	browser := rod.New().ControlURL(debugUrl)
+	if err := browser.Connect(); err != nil {
+		slog.Error("failed to connect to browser", "error", err)
+		return nil, err
+	}
+	defer browser.MustClose()
+
 	if err := browser.IgnoreCertErrors(true); err != nil {
 		slog.Warn("failed to ignore certificate errors", "error", err)
 	}
-	defer browser.MustClose()
+
+	page, err := browser.Page(proto.TargetCreateTarget{URL: "about:blank"})
+	if err != nil {
+		slog.Error("failed to create a new page", "error", err)
+		return nil, err
+	}
+	defer page.Close()
 
 	responseMap := map[string]*Response{}
 	notFoundRequestIDs := []string{}
 	mu := &sync.Mutex{}
-	var firstPageUrl *string
-	page := browser.MustPage()
-	defer page.MustClose()
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
 		url := omitURL(event.Response.URL)
 		slog.Debug("received response", "url", url, "status", event.Response.Status)
-
-		if firstPageUrl == nil {
-			firstPageUrl = &event.Response.URL
-		}
 
 		cookies := []*Cookie{}
 		cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Response.URL}}.Call(page)
@@ -120,6 +129,46 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 		mu.Lock()
 		response.Body = reply.Body
 		mu.Unlock()
+	}, func(event *proto.FetchRequestPaused) {
+		if event.ResponseStatusCode != nil {
+			slog.Debug("received response", "url", event.Request.URL, "status", *event.ResponseStatusCode)
+			mu.Lock()
+			responseMap[string(event.RequestID)] = &Response{
+				Url:        event.Request.URL,
+				Status:     *event.ResponseStatusCode,
+				StatusText: http.StatusText(*event.ResponseStatusCode),
+				Headers:    headerEntriesToModels(event.ResponseHeaders),
+			}
+			mu.Unlock()
+		}
+
+		if c.onlySameHost {
+			reqURL, err := url.Parse(event.Request.URL)
+			if err != nil {
+				slog.Warn("failed to parse URL", "URL", event.Request.URL, "error", err)
+				return
+			}
+			targetURL, err := url.Parse(targetUrl)
+			if err != nil {
+				slog.Warn("failed to parse URL", "URL", targetUrl, "error", err)
+				return
+			}
+			if reqURL.Hostname() != targetURL.Hostname() {
+				err := proto.FetchFailRequest{
+					RequestID:   event.RequestID,
+					ErrorReason: proto.NetworkErrorReasonAborted,
+				}.Call(page)
+				if err != nil {
+					slog.Warn("failed to fail the request", "error", err)
+				}
+				return
+			}
+		}
+
+		err := proto.FetchContinueRequest{RequestID: event.RequestID, InterceptResponse: true}.Call(page)
+		if err != nil {
+			slog.Warn("failed to continue the request", "error", err)
+		}
 	})()
 	time.Sleep(3 * time.Second) // Wait for the event handler to be registered
 
@@ -132,8 +181,12 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 		}
 	}
 	if err := page.Navigate(targetUrl); err != nil {
-		slog.Error("failed to navigate to the URL", "error", err)
-		return nil, errors.New("failed to navigate to the URL")
+		if err.Error() == "navigation failed: net::ERR_ABORTED" {
+			slog.Warn("navigation aborted", "URL", targetUrl)
+		} else {
+			slog.Error("failed to navigate to the URL", "error", err)
+			return nil, errors.New("failed to navigate to the URL")
+		}
 	}
 	if err := page.Timeout(time.Duration(c.timeoutSeconds) * time.Second).WaitLoad(); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
@@ -145,22 +198,6 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 	}
 	slog.Info("page loaded")
 
-	if c.onlySameHost {
-		if firstPageUrl == nil {
-			slog.Warn("no URL is loaded")
-			return nil, errors.New("no URL is loaded")
-		}
-
-		parsedFirstPageUrl, _ := url.Parse(*firstPageUrl)
-		firstPageHost := parsedFirstPageUrl.Hostname()
-		parsedTargetUrl, _ := url.Parse(targetUrl)
-		targetHost := parsedTargetUrl.Hostname()
-		if firstPageHost != targetHost {
-			slog.Warn("hostname is not the same as the first page", "target", targetHost, "first page", firstPageHost)
-			return nil, fmt.Errorf("hostname is not the same as the first page: %s", firstPageHost)
-		}
-	}
-
 	time.Sleep(3 * time.Second) // Wait for all events to be processed
 
 	for _, requestID := range notFoundRequestIDs {
@@ -171,6 +208,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 
 	responses := []*Response{}
 	for _, response := range responseMap {
+		slog.Debug("response", "url", response.Url, "status", response.Status)
 		responses = append(responses, response)
 	}
 	slog.Info("received responses", "count", len(responses))
