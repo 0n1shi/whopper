@@ -40,6 +40,13 @@ func (c *RodCrawler) SetOnlySameHost(onlySameHost bool) {
 }
 
 func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
+	parsedURL, err := url.Parse(targetUrl)
+	if err != nil {
+		slog.Error("failed to parse URL", "URL", targetUrl, "error", err)
+		return nil, err
+	}
+	tartgetHostname := parsedURL.Hostname()
+
 	slog.Debug("launching browser ...")
 	launcher := launcher.New()
 	defer launcher.Cleanup() // remove user data such as cookies, cache, etc.
@@ -74,8 +81,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 	notFoundRequestIDs := []string{}
 	mu := &sync.Mutex{}
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
-		url := omitURL(event.Response.URL)
-		slog.Debug("received response", "url", url, "status", event.Response.Status)
+		slog.Debug("received response", "url", omitURL(event.Response.URL), "status", event.Response.Status)
 
 		cookies := []*Cookie{}
 		cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Response.URL}}.Call(page)
@@ -117,10 +123,9 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 
 		reply, err := proto.NetworkGetResponseBody{RequestID: event.RequestID}.Call(page)
 		if err != nil {
-			url := omitURL(response.Url)
 			slog.Warn(
 				"failed to get response body",
-				"url", url,
+				"url", omitURL(response.Url),
 				"error", err,
 			)
 			return
@@ -130,8 +135,17 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 		response.Body = reply.Body
 		mu.Unlock()
 	}, func(event *proto.FetchRequestPaused) {
+		if event.ResponseStatusCode == nil {
+			_ = proto.FetchContinueRequest{
+				RequestID:         event.RequestID,
+				InterceptResponse: true,
+			}.Call(page)
+			return
+		}
+
+		slog.Info("page current url", "url", page.MustInfo().URL)
 		if event.ResponseStatusCode != nil {
-			slog.Debug("received response", "url", event.Request.URL, "status", *event.ResponseStatusCode)
+			slog.Info("received response", "url", event.Request.URL, "status", *event.ResponseStatusCode)
 			mu.Lock()
 			responseMap[string(event.RequestID)] = &Response{
 				Url:        event.Request.URL,
@@ -148,12 +162,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 				slog.Warn("failed to parse URL", "URL", event.Request.URL, "error", err)
 				return
 			}
-			targetURL, err := url.Parse(targetUrl)
-			if err != nil {
-				slog.Warn("failed to parse URL", "URL", targetUrl, "error", err)
-				return
-			}
-			if reqURL.Hostname() != targetURL.Hostname() {
+			if reqURL.Hostname() != tartgetHostname {
 				err := proto.FetchFailRequest{
 					RequestID:   event.RequestID,
 					ErrorReason: proto.NetworkErrorReasonAborted,
