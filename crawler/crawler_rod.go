@@ -145,32 +145,46 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 
 		slog.Info("page current url", "url", page.MustInfo().URL)
 		if event.ResponseStatusCode != nil {
-			slog.Info("received response", "url", event.Request.URL, "status", *event.ResponseStatusCode)
+			slog.Info("received response", "url", event.Request.URL, "status", *event.ResponseStatusCode, "resource-type", event.ResourceType)
+			modelHeaders := headerEntriesToModels(event.ResponseHeaders)
+
 			mu.Lock()
 			responseMap[string(event.RequestID)] = &Response{
 				Url:        event.Request.URL,
 				Status:     *event.ResponseStatusCode,
 				StatusText: http.StatusText(*event.ResponseStatusCode),
-				Headers:    headerEntriesToModels(event.ResponseHeaders),
+				Headers:    modelHeaders,
 			}
 			mu.Unlock()
-		}
 
-		if c.onlySameHost {
-			reqURL, err := url.Parse(event.Request.URL)
-			if err != nil {
-				slog.Warn("failed to parse URL", "URL", event.Request.URL, "error", err)
-				return
-			}
-			if reqURL.Hostname() != tartgetHostname {
-				err := proto.FetchFailRequest{
-					RequestID:   event.RequestID,
-					ErrorReason: proto.NetworkErrorReasonAborted,
-				}.Call(page)
-				if err != nil {
-					slog.Warn("failed to fail the request", "error", err)
+			if c.onlySameHost && event.ResourceType == proto.NetworkResourceTypeDocument {
+				redirectURLStr := ""
+				modelHeaders := headerEntriesToModels(event.ResponseHeaders)
+				for _, header := range modelHeaders {
+					if header.Name == "location" {
+						redirectURLStr = header.Value
+						break
+					}
 				}
-				return
+				if redirectURLStr == "" {
+					slog.Warn("redirect URL not found", "URL", event.Request.URL)
+				}
+				redictURL, err := url.Parse(redirectURLStr)
+				if err != nil {
+					slog.Warn("failed to parse redirect URL", "URL", redirectURLStr, "error", err)
+				}
+				redirectHostname := redictURL.Hostname()
+
+				if tartgetHostname != redirectHostname {
+					err := proto.FetchFailRequest{
+						RequestID:   event.RequestID,
+						ErrorReason: proto.NetworkErrorReasonAborted,
+					}.Call(page)
+					if err != nil {
+						slog.Warn("failed to fail the request", "error", err)
+					}
+					return
+				}
 			}
 		}
 
