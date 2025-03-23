@@ -3,6 +3,7 @@ package crawler
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -161,13 +162,26 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 				}
 			}
 
+			cookies := []*Cookie{}
+			cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Request.URL}}.Call(page)
+			if err != nil {
+				slog.Warn(
+					"failed to get cookies",
+					"url", event.Request.URL,
+					"error", err,
+				)
+			} else {
+				cookies = cookieToModels(cookieReply.Cookies)
+			}
 			modelHeaders := headerEntriesToModels(event.ResponseHeaders)
+
 			mu.Lock()
 			responseMap[string(event.RequestID)] = &Response{
 				Url:        event.Request.URL,
 				Status:     *event.ResponseStatusCode,
 				StatusText: http.StatusText(*event.ResponseStatusCode),
 				Headers:    modelHeaders,
+				Cookies:    cookies,
 			}
 			mu.Unlock()
 		}
