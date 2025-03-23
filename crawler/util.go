@@ -8,7 +8,3 @@ func omitURL(url string) string {
 	}
 	return url
 }
-
-func isRedirect(status int) bool {
-	return status >= 300 && status < 400
-}
