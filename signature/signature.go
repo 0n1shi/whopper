@@ -42,6 +42,7 @@ type Signature struct {
 }
 
 var Signatures = []*Signature{
+	&AkamaiBotManagerSignature,
 	&AmazonCloudFrontSignature,
 	&AmazonS3Signature,
 	&AngularJsSignature,
