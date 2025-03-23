@@ -23,6 +23,17 @@ func headerToModels(protoHeaders proto.NetworkHeaders) []*Header {
 	return headers
 }
 
+func headerEntriesToModels(headerEntries []*proto.FetchHeaderEntry) []*Header {
+	headers := make([]*Header, len(headerEntries))
+	for i, entry := range headerEntries {
+		headers[i] = &Header{
+			Name:  entry.Name,
+			Value: entry.Value,
+		}
+	}
+	return headers
+}
+
 func cookieToModels(cookies []*proto.NetworkCookie) []*Cookie {
 	cookieModels := make([]*Cookie, len(cookies))
 	for i, cookie := range cookies {

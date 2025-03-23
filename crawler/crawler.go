@@ -3,6 +3,6 @@ package crawler
 type Crawler interface {
 	SetTimeout(timeoutSeconds uint)
 	SetUserAgent(userAgent string)
-	SetOnlySameHost(onlySameHost bool)
+	SetNoRedirect(noRedirect bool)
 	Crawl(url string) ([]*Response, error)
 }
