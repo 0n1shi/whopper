@@ -18,7 +18,7 @@ import (
 type RodCrawler struct {
 	timeoutSeconds uint
 	userAgent      string
-	onlySameHost   bool
+	noRedirect     bool
 }
 
 var _ Crawler = &RodCrawler{}
@@ -35,8 +35,8 @@ func (c *RodCrawler) SetUserAgent(userAgent string) {
 	c.userAgent = userAgent
 }
 
-func (c *RodCrawler) SetOnlySameHost(onlySameHost bool) {
-	c.onlySameHost = onlySameHost
+func (c *RodCrawler) SetNoRedirect(noRedirect bool) {
+	c.noRedirect = noRedirect
 }
 
 func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
@@ -144,38 +144,12 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 		}
 
 		if event.ResponseStatusCode != nil {
-			modelHeaders := headerEntriesToModels(event.ResponseHeaders)
-
-			mu.Lock()
-			responseMap[string(event.RequestID)] = &Response{
-				Url:        event.Request.URL,
-				Status:     *event.ResponseStatusCode,
-				StatusText: http.StatusText(*event.ResponseStatusCode),
-				Headers:    modelHeaders,
-			}
-			mu.Unlock()
-
-			if c.onlySameHost && isRedirect(*event.ResponseStatusCode) && event.ResourceType == proto.NetworkResourceTypeDocument {
-				redirectURLStr := ""
-				modelHeaders := headerEntriesToModels(event.ResponseHeaders)
-				for _, header := range modelHeaders {
-					if header.Name == "location" {
-						redirectURLStr = header.Value
-						break
-					}
-				}
-				if redirectURLStr == "" {
-					slog.Warn("redirect URL not found", "URL", event.Request.URL)
-					goto Continue
-				}
-				redictURL, err := url.Parse(redirectURLStr)
+			if c.noRedirect {
+				requestURL, err := url.Parse(event.Request.URL)
 				if err != nil {
-					slog.Warn("failed to parse redirect URL", "URL", redirectURLStr, "error", err)
-					goto Continue
+					slog.Warn("failed to parse request URL", "URL", event.Request.URL, "error", err)
 				}
-				redirectHostname := redictURL.Hostname()
-
-				if tartgetHostname != redirectHostname {
+				if requestURL.Hostname() != tartgetHostname && event.ResourceType == proto.NetworkResourceTypeDocument {
 					err := proto.FetchFailRequest{
 						RequestID:   event.RequestID,
 						ErrorReason: proto.NetworkErrorReasonAborted,
@@ -186,9 +160,18 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 					return
 				}
 			}
+
+			modelHeaders := headerEntriesToModels(event.ResponseHeaders)
+			mu.Lock()
+			responseMap[string(event.RequestID)] = &Response{
+				Url:        event.Request.URL,
+				Status:     *event.ResponseStatusCode,
+				StatusText: http.StatusText(*event.ResponseStatusCode),
+				Headers:    modelHeaders,
+			}
+			mu.Unlock()
 		}
 
-	Continue:
 		err := proto.FetchContinueRequest{RequestID: event.RequestID, InterceptResponse: true}.Call(page)
 		if err != nil {
 			slog.Warn("failed to continue the request", "error", err)

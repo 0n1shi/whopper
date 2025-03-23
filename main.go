@@ -66,10 +66,10 @@ func main() {
 				Aliases: []string{"u"},
 			},
 			&cli.BoolFlag{
-				Name:    "same-host",
-				Usage:   "analyze only the same host",
+				Name:    "no-redirect",
+				Usage:   "do not follow redirections",
 				Value:   false,
-				Aliases: []string{"s"},
+				Aliases: []string{"nr"},
 			},
 		},
 		Action: func(ctx *cli.Context) error {
@@ -128,9 +128,9 @@ func main() {
 				c.SetUserAgent(ctx.String("user-agent"))
 				slog.Info("set user agent to crawler", "user agent", ctx.String("user-agent"))
 			}
-			if ctx.Bool("same-host") {
-				c.SetOnlySameHost(true)
-				slog.Info("analyze only the same host")
+			if ctx.Bool("no-redirect") {
+				c.SetNoRedirect(true)
+				slog.Info("do not follow redirections")
 			}
 			w := whopper.NewWhopper(ctx.Bool("debug"), p, c, inspectors, mustBeURL)
 			return w.Run()
