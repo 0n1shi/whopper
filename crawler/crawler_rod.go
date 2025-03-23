@@ -143,9 +143,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 			return
 		}
 
-		slog.Info("page current url", "url", page.MustInfo().URL)
 		if event.ResponseStatusCode != nil {
-			slog.Info("received response", "url", event.Request.URL, "status", *event.ResponseStatusCode, "resource-type", event.ResourceType)
 			modelHeaders := headerEntriesToModels(event.ResponseHeaders)
 
 			mu.Lock()
@@ -157,7 +155,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 			}
 			mu.Unlock()
 
-			if c.onlySameHost && event.ResourceType == proto.NetworkResourceTypeDocument {
+			if c.onlySameHost && isRedirect(*event.ResponseStatusCode) && event.ResourceType == proto.NetworkResourceTypeDocument {
 				redirectURLStr := ""
 				modelHeaders := headerEntriesToModels(event.ResponseHeaders)
 				for _, header := range modelHeaders {
@@ -168,10 +166,12 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 				}
 				if redirectURLStr == "" {
 					slog.Warn("redirect URL not found", "URL", event.Request.URL)
+					goto Continue
 				}
 				redictURL, err := url.Parse(redirectURLStr)
 				if err != nil {
 					slog.Warn("failed to parse redirect URL", "URL", redirectURLStr, "error", err)
+					goto Continue
 				}
 				redirectHostname := redictURL.Hostname()
 
@@ -188,6 +188,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 			}
 		}
 
+	Continue:
 		err := proto.FetchContinueRequest{RequestID: event.RequestID, InterceptResponse: true}.Call(page)
 		if err != nil {
 			slog.Warn("failed to continue the request", "error", err)
