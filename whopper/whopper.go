@@ -16,23 +16,23 @@ type Whopper struct {
 	printer    printer.Printer
 	crawler    crawler.Crawler
 	inspectors []inspector.Inspector
-	targetUrl  string
+	targetURL  string
 }
 
-func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, is []inspector.Inspector, targetUrl string) *Whopper {
+func NewWhopper(debugMode bool, p printer.Printer, c crawler.Crawler, is []inspector.Inspector, targetURL string) *Whopper {
 	return &Whopper{
 		debugMode:  debugMode,
 		printer:    p,
 		crawler:    c,
 		inspectors: is,
-		targetUrl:  targetUrl,
+		targetURL:  targetURL,
 	}
 }
 
 func (w *Whopper) Run() error {
-	slog.Info("starting ...", "url", w.targetUrl)
+	slog.Info("starting ...", "url", w.targetURL)
 
-	responses, err := w.crawler.Crawl(w.targetUrl)
+	responses, err := w.crawler.Crawl(w.targetURL)
 	if err != nil {
 		w.printer.Print(nil, err)
 		return err
@@ -45,8 +45,8 @@ func (w *Whopper) Run() error {
 		return nil // skip the analysis
 	}
 
-	targetUrl, _ := url.Parse(w.targetUrl)
-	targetHost := targetUrl.Hostname()
+	targetURL, _ := url.Parse(w.targetURL)
+	targetHost := targetURL.Hostname()
 	results := analyzer.AnalyzeAll(responses, signature.Signatures, targetHost)
 
 	w.printer.Print(results, err)

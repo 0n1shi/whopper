@@ -15,7 +15,8 @@ func TestAspDotNetSignature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-powered-by",
 				Value: "ASP.NET",
@@ -26,7 +27,8 @@ func TestAspDotNetSignature(t *testing.T) {
 	}, {
 		name: "Set-cookie header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "set-cookie",
 				Value: "ASP.NET_SessionId=abc123; path=/",
@@ -37,7 +39,8 @@ func TestAspDotNetSignature(t *testing.T) {
 	}, {
 		name: "Cookie header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Cookies: []*crawler.Cookie{{
 				Name:  "ASP.NET_SessionId",
 				Value: "abc123",
@@ -48,7 +51,8 @@ func TestAspDotNetSignature(t *testing.T) {
 	}, {
 		name: "X-aspnet-version header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-aspnet-version",
 				Value: "4.0.30319",

@@ -16,7 +16,7 @@ func TestLodashSignature(t *testing.T) {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/bower_components/lodash/lodash.js?r=0.14.9",
+			URL:          "http://x.x.x.x/bower_components/lodash/lodash.js?r=0.14.9",
 		},
 		detected: true,
 		version:  "",

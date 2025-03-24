@@ -6,7 +6,7 @@ var LodashSignature = Signature{
 	Cpe:         "cpe:/a:lodash:lodash",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"lodash",
 		},
 		Bodies: []string{

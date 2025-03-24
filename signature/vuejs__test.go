@@ -29,7 +29,7 @@ func TestVueJsSignature(t *testing.T) {
 	}, {
 		name: "Vue.js in body (minified) with version",
 		response: &crawler.Response{
-			Url:  "/vue.js",
+			URL:  "/vue.js",
 			Body: "bn.version=\"2.6.14\"",
 		},
 		detected: true,

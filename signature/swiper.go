@@ -6,7 +6,7 @@ var SwiperSignature = Signature{
 	Cpe:         "cpe:/a:swiperjs:swiper",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"npm/swiper@",
 		},
 		Bodies: []string{
@@ -14,7 +14,7 @@ var SwiperSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`npm/swiper@(\d+\.\d+\.\d+)/`,
 		},
 		Bodies: []string{

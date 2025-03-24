@@ -15,7 +15,8 @@ func TestMicrosoftIisSignature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Microsoft-IIS",
@@ -26,7 +27,8 @@ func TestMicrosoftIisSignature(t *testing.T) {
 	}, {
 		name: "Server header with version",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Microsoft-IIS/10.0",

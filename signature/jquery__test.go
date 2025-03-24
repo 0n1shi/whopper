@@ -16,7 +16,7 @@ func TestJQuerySignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery",
+			URL:          "https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery",
 		},
 		detected: true,
 		version:  "3.6.0",

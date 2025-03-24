@@ -6,7 +6,7 @@ var JQueryBxSliderSignature = Signature{
 	Cpe:         "cpe:/a:bxslider:bxslider",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"bxslider",
 		},
 		Bodies: []string{
@@ -14,7 +14,7 @@ var JQueryBxSliderSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`bxslider/(\d+\.\d+\.\d+)/`,
 		},
 		Bodies: []string{

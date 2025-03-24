@@ -6,12 +6,12 @@ var WebVitalsSignature = Signature{
 	Cpe:         "cpe:/a:magazine3:core_web_vitals:",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"/web-vitals@",
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`/web-vitals@v?(\d+\.\d+\.\d+)`,
 		},
 	},

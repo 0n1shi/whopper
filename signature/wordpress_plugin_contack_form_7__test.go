@@ -15,14 +15,14 @@ func TestWordpressPluginContackForm7Signature(t *testing.T) {
 	}, {
 		name: "URL",
 		response: &crawler.Response{
-			Url: "https://example.com/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=5.4.1",
+			URL: "https://example.com/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=5.4.1",
 		},
 		detected: true,
 		version:  "5.4.1",
 	}, {
 		name: "URL without version",
 		response: &crawler.Response{
-			Url: "https://example.com/wp-content/plugins/contact-form-7/includes/css/styles.css",
+			URL: "https://example.com/wp-content/plugins/contact-form-7/includes/css/styles.css",
 		},
 		detected: true,
 		version:  "",

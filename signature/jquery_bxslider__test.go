@@ -16,7 +16,7 @@ func TestJQueryBxSliderSignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js",
+			URL:          "https://cdn.jsdelivr.net/bxslider/4.2.12/jquery.bxslider.min.js",
 		},
 		detected: true,
 		version:  "4.2.12",

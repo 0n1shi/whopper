@@ -10,7 +10,7 @@ func TestClaritySignature(t *testing.T) {
 	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
-			Url:          "",
+			URL:          "",
 			ResourceType: crawler.ResourceTypeScript,
 		},
 		detected: false,
@@ -19,7 +19,7 @@ func TestClaritySignature(t *testing.T) {
 		name: "Url",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "https://www.clarity.ms/s/0.7.59/clarity.js",
+			URL:          "https://www.clarity.ms/s/0.7.59/clarity.js",
 		},
 		detected: true,
 		version:  "0.7.59",
@@ -27,7 +27,7 @@ func TestClaritySignature(t *testing.T) {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "https://www.clarity.ms/s/x.x.x/clarity.js",
+			URL:          "https://www.clarity.ms/s/x.x.x/clarity.js",
 			Body:         "/* clarity-js v0.7.59: https://...",
 		},
 		detected: true,

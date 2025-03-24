@@ -16,7 +16,7 @@ func TestAngularJsSignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/bower_components/angular-sanitize/angular-sanitize.js?r=0.14.9",
+			URL:          "http://x.x.x.x/bower_components/angular-sanitize/angular-sanitize.js?r=0.14.9",
 		},
 		detected: true,
 		version:  "",
@@ -24,7 +24,7 @@ func TestAngularJsSignature(t *testing.T) {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/bower_components/angular-sanitize/angular-sanitize.js?r=0.14.9",
+			URL:          "http://x.x.x.x/bower_components/angular-sanitize/angular-sanitize.js?r=0.14.9",
 			Body:         " * @license AngularJS v1.5.11",
 		},
 		detected: true,

@@ -15,7 +15,7 @@ func TestDojoToolkitSignature(t *testing.T) {
 	}, {
 		name: "URL",
 		response: &crawler.Response{
-			Url: "http://example.com/dojo/dojo.js",
+			URL: "http://example.com/dojo/dojo.js",
 		},
 		detected: true,
 		version:  "",

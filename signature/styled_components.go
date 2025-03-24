@@ -6,7 +6,7 @@ var StyledComponentsSignature = Signature{
 	Cpe:         "",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"styled-components",
 		},
 		Bodies: []string{

@@ -15,16 +15,18 @@ func TestWordpressSignature(t *testing.T) {
 	}, {
 		name: "URL",
 		response: &crawler.Response{
-			Url: SameHostUrl,
-			Body: `<meta name="generator" content="WordPress" />`,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
+			Body:       `<meta name="generator" content="WordPress" />`,
 		},
 		detected: true,
 		version:  "",
 	}, {
 		name: "URL 2",
 		response: &crawler.Response{
-			Url: SameHostUrl,
-			Body: `<meta name="generator" content="WordPress 6.7.1" />`,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
+			Body:       `<meta name="generator" content="WordPress 6.7.1" />`,
 		},
 		detected: true,
 		version:  "6.7.1",

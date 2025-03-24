@@ -6,7 +6,7 @@ var JQueryMigrateSignature = Signature{
 	Cpe:         "cpe:/a:jquery_migrate_project:jquery_migrate",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"jquery-migrate",
 		},
 		Bodies: []string{
@@ -15,7 +15,7 @@ var JQueryMigrateSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`jquery-migrate\.min\.js\?ver=(\d+\.\d+\.\d+)`,
 		},
 		Bodies: []string{

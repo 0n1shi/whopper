@@ -3,7 +3,6 @@ package crawler
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -40,10 +39,10 @@ func (c *RodCrawler) SetNoRedirect(noRedirect bool) {
 	c.noRedirect = noRedirect
 }
 
-func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
-	parsedURL, err := url.Parse(targetUrl)
+func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
+	parsedURL, err := url.Parse(targetURL)
 	if err != nil {
-		slog.Error("failed to parse URL", "URL", targetUrl, "error", err)
+		slog.Error("failed to parse URL", "URL", targetURL, "error", err)
 		return nil, err
 	}
 	tartgetHostname := parsedURL.Hostname()
@@ -52,15 +51,15 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 	launcher := launcher.New()
 	defer launcher.Cleanup() // remove user data such as cookies, cache, etc.
 
-	debugUrl, err := launcher.Headless(true).Launch()
+	debugURL, err := launcher.Headless(true).Launch()
 	if err != nil {
 		slog.Error("failed to launch browser", "error", err)
 		return nil, err
 	}
-	slog.Debug("debug URL", "url", debugUrl)
+	slog.Debug("debug URL", "url", debugURL)
 
 	slog.Debug("connecting to browser ...")
-	browser := rod.New().ControlURL(debugUrl)
+	browser := rod.New().ControlURL(debugURL)
 	if err := browser.Connect(); err != nil {
 		slog.Error("failed to connect to browser", "error", err)
 		return nil, err
@@ -203,9 +202,9 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 			slog.Warn("failed to set user agent", "error", err)
 		}
 	}
-	if err := page.Navigate(targetUrl); err != nil {
+	if err := page.Navigate(targetURL); err != nil {
 		if err.Error() == "navigation failed: net::ERR_ABORTED" {
-			slog.Warn("navigation aborted", "URL", targetUrl)
+			slog.Warn("navigation aborted", "URL", targetURL)
 		} else {
 			slog.Error("failed to navigate to the URL", "error", err)
 			return nil, errors.New("failed to navigate to the URL")

@@ -6,8 +6,8 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-var SameHostUrl = "http://example.com"
-var OtherHostUrl = "http://other.com"
+var SameHostURL = "http://example.com"
+var OtherHostURL = "http://other.com"
 
 var SameHost = "example.com"
 

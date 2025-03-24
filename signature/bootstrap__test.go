@@ -15,7 +15,7 @@ func TestBootstrapSignature(t *testing.T) {
 	}, {
 		name: "URL with version",
 		response: &crawler.Response{
-			Url: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
+			URL: "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css",
 		},
 		detected: true,
 		version:  "3.3.7",

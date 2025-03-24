@@ -10,14 +10,14 @@ func TestSwiperSignature(t *testing.T) {
 	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
-			Url: "",
+			URL: "",
 		},
 		detected: false,
 		version:  "",
 	}, {
 		name: "Body",
 		response: &crawler.Response{
-			Url: "https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js?ver=0.1.12",
+			URL: "https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.js?ver=0.1.12",
 		},
 		detected: true,
 		version:  "8.4.7",

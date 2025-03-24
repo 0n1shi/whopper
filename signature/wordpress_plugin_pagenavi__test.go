@@ -24,7 +24,7 @@ func TestWordpressPluginPageNaviSignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeStylesheet,
-			Url:          "https://gmo-cybersecurity.com/wp-content/plugins/wp-pagenavi/pagenavi-css.css?ver=2.70",
+			URL:          "https://gmo-cybersecurity.com/wp-content/plugins/wp-pagenavi/pagenavi-css.css?ver=2.70",
 		},
 		detected: true,
 		version:  "2.70",

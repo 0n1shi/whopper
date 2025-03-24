@@ -6,7 +6,7 @@ var JQueryUiSignature = Signature{
 	Cpe:         "cpe:/a:jqueryui:jquery_ui",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"jquery-ui",
 		},
 		Bodies: []string{
@@ -15,7 +15,7 @@ var JQueryUiSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`jquery-ui-(\d+\.\d+\.\d+)`,
 		},
 		Bodies: []string{

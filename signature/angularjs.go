@@ -9,7 +9,7 @@ var AngularJsSignature = Signature{
 		Bodies: []string{
 			`angular`,
 		},
-		Urls: []string{
+		URLs: []string{
 			`/angular-`,
 		},
 	},

@@ -16,7 +16,7 @@ func TestMomentJsSignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/bower_components/moment/moment.js",
+			URL:          "http://x.x.x.x/bower_components/moment/moment.js",
 		},
 		detected: true,
 		version:  "",
@@ -24,7 +24,7 @@ func TestMomentJsSignature(t *testing.T) {
 		name: "Body",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/bower_components/moment/moment.js",
+			URL:          "http://x.x.x.x/bower_components/moment/moment.js",
 			Body: `//! moment.js
 //! version : 2.9.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors

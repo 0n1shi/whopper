@@ -6,7 +6,7 @@ var BootstrapSignature = Signature{
 	Cpe:         "cpe:/a:getbootstrap:bootstrap",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"/bootstrap/",
 			"/bootstrap.min.css",
 			"/bootstrap.min.js",
@@ -16,7 +16,7 @@ var BootstrapSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`/bootstrap/(\d+\.\d+\.\d+)`,
 		},
 		Bodies: []string{

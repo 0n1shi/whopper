@@ -6,7 +6,7 @@ var UnderscoreSignature = Signature{
 	Cpe:         "cpe:/a:underscorejs:underscore",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"underscore",
 		},
 		Bodies: []string{

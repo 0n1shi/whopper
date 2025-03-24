@@ -6,7 +6,7 @@ var ClaritySignature = Signature{
 	Cpe:         "cpe:/a:microsoft:clarity",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"clarity.js",
 		},
 		Bodies: []string{
@@ -14,7 +14,7 @@ var ClaritySignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`www\.clarity\.ms\/s\/(\d+\.\d+\.\d+)\/clarity\.js`,
 		},
 		Bodies: []string{

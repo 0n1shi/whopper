@@ -6,7 +6,7 @@ var KongaSignature = Signature{
 	Cpe:         "cpe:/a:konga_project:konga",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"konga",
 		},
 		Bodies: []string{
@@ -16,7 +16,7 @@ var KongaSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`konga-loader\.js\?r=(\d+\.\d+\.\d+)`,
 		},
 		Bodies: []string{

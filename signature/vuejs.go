@@ -6,7 +6,7 @@ var VueJsSignature = Signature{
 	Cpe:         "cpe:/a:vuejs:vuejs",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"/vue.js",
 			"/vue.min.js",
 		},
@@ -18,6 +18,7 @@ var VueJsSignature = Signature{
 		Bodies: []string{
 			"Vue.js v(\\d+\\.\\d+\\.\\d+)",
 			"version=\"(\\d+\\.\\d+\\.\\d+)\"",
+			"vue v(\\d+\\.\\d+\\.\\d+)",
 		},
 	},
 }

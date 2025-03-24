@@ -6,12 +6,12 @@ var WordpressPluginContactForm7Signature = Signature{
 	Cpe:         "cpe:/a:takayukister:contact_form_7",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			`/wp-content/plugins/contact-form-7/`,
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`/wp-content/plugins/contact-form-7/.+\?ver=(\d+\.\d+\.\d+)`,
 		},
 	},

@@ -15,7 +15,8 @@ func TestAwsElbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB cookie",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Cookies: []*crawler.Cookie{{
 				Name:  "AWSALB",
 				Value: "XyFb7cYWVbd39UCO3CbDi",
@@ -26,7 +27,8 @@ func TestAwsElbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB cookie 2",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Cookies: []*crawler.Cookie{{
 				Name:  "AWSELB",
 				Value: "XyFb7cYWVbd39UCO3CbDi",
@@ -37,7 +39,8 @@ func TestAwsElbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB cookie 3",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Cookies: []*crawler.Cookie{{
 				Name:  "AWSALBCORS",
 				Value: "XyFb7cYWVbd39UCO3CbDi",
@@ -48,7 +51,8 @@ func TestAwsElbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB cookie 4",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Cookies: []*crawler.Cookie{{
 				Name:  "AWSELBCORS",
 				Value: "XyFb7cYWVbd39UCO3CbDi",
@@ -59,7 +63,8 @@ func TestAwsElbSignature(t *testing.T) {
 	}, {
 		name: "AWSALB HTTP header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "awselb/2.0",

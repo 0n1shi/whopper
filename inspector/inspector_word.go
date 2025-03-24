@@ -26,8 +26,8 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 
 	slog.Info("searching in URLs ...")
 	for _, response := range responses {
-		lowerCaseUrl := strings.ToLower(response.URL)
-		if strings.Contains(lowerCaseUrl, lowerCaseWord) {
+		lowerCaseURL := strings.ToLower(response.URL)
+		if strings.Contains(lowerCaseURL, lowerCaseWord) {
 			url := omitURL(response.URL)
 			fmt.Println(url)
 		}

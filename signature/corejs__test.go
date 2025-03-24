@@ -10,7 +10,7 @@ func TestCoreJsSignature(t *testing.T) {
 	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
-			Url:          "",
+			URL:          "",
 			ResourceType: crawler.ResourceTypeScript,
 		},
 		detected: false,

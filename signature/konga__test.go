@@ -16,7 +16,7 @@ func TestKongaSignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/js/app/core/directives/konga-loader.js?r=0.14.9",
+			URL:          "http://x.x.x.x/js/app/core/directives/konga-loader.js?r=0.14.9",
 		},
 		detected: true,
 		version:  "0.14.9",

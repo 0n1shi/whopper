@@ -14,14 +14,14 @@ type Cookie struct {
 
 type DetectPattern struct {
 	Bodies  []string
-	Urls    []string
+	URLs    []string
 	Headers []Header
 	Cookies []Cookie
 }
 
 type VersionPattern struct {
 	Bodies  []string
-	Urls    []string
+	URLs    []string
 	Headers []Header
 	Cookies []Cookie
 }

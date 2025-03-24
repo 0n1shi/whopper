@@ -6,7 +6,7 @@ var MomentJsSignature = Signature{
 	Cpe:         "cpe:/a:jqueryui:jquery_ui",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"moment",
 		},
 		Bodies: []string{

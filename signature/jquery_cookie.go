@@ -6,7 +6,7 @@ var JQueryCookieSignature = Signature{
 	Cpe:         "cpe:/a:jquery.cookie_project:jquery.cookie",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"jquery-cookie",
 		},
 		Bodies: []string{
@@ -14,7 +14,7 @@ var JQueryCookieSignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`jquery-cookie[@/](\d+\.\d+\.\d+)`,
 		},
 		Bodies: []string{

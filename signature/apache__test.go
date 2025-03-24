@@ -15,7 +15,8 @@ func TestApacheSignature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache",
@@ -26,7 +27,8 @@ func TestApacheSignature(t *testing.T) {
 	}, {
 		name: "Server header with version",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.29 (Ubuntu)",
@@ -37,7 +39,8 @@ func TestApacheSignature(t *testing.T) {
 	}, {
 		name: "Server header with version and other info",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.29 (Ubuntu) PHP/7.2.24-0ubuntu0.18.04.7",
@@ -48,7 +51,8 @@ func TestApacheSignature(t *testing.T) {
 	}, {
 		name: "Server header with version and other info (different order)",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "PHP/7.2.24-0ubuntu0.18.04.7 Apache/2.4.29 (Ubuntu)",
@@ -59,7 +63,8 @@ func TestApacheSignature(t *testing.T) {
 	}, {
 		name: "Server header with version but other host",
 		response: &crawler.Response{
-			Url: OtherHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        OtherHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.29 (Ubuntu)",
@@ -70,7 +75,8 @@ func TestApacheSignature(t *testing.T) {
 	}, {
 		name: "Server header (Nginx)",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "nginx",

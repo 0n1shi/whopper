@@ -28,11 +28,11 @@ func TestDetect(t *testing.T) {
 	}, {
 		name: "url match",
 		response: &crawler.Response{
-			Url: "https://example.com/jquery/3.5.1/jquery.min.js",
+			URL: "https://example.com/jquery/3.5.1/jquery.min.js",
 		},
 		signature: &Signature{
 			DetectPattern: DetectPattern{
-				Urls: []string{"jquery.min.js"},
+				URLs: []string{"jquery.min.js"},
 			},
 		},
 		expected: true,
@@ -105,11 +105,11 @@ func TestDetect(t *testing.T) {
 	}, {
 		name: "url match but different host",
 		response: &crawler.Response{
-			Url: "https://example.com/jquery/3.5.1/jquery.min.js",
+			URL: "https://example.com/jquery/3.5.1/jquery.min.js",
 		},
 		signature: &Signature{
 			DetectPattern: DetectPattern{
-				Urls: []string{"jquery.min.js"},
+				URLs: []string{"jquery.min.js"},
 			},
 			OnlySameHost: true,
 		},
@@ -145,11 +145,11 @@ func TestGetVersion(t *testing.T) {
 	}, {
 		name: "url match",
 		response: &crawler.Response{
-			Url: "https://example.com/jquery/3.5.1/jquery.min.js",
+			URL: "https://example.com/jquery/3.5.1/jquery.min.js",
 		},
 		signature: &Signature{
 			VersionPattern: VersionPattern{
-				Urls: []string{`jquery/(\d+\.\d+\.\d+)/jquery.min.js`},
+				URLs: []string{`jquery/(\d+\.\d+\.\d+)/jquery.min.js`},
 			},
 		},
 		expected: "3.5.1",

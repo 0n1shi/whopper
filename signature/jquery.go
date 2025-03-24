@@ -6,7 +6,7 @@ var JQuerySignature = Signature{
 	Cpe:         "cpe:/a:jquery:jquery",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"jquery",
 		},
 		Bodies: []string{
@@ -15,7 +15,7 @@ var JQuerySignature = Signature{
 		},
 	},
 	VersionPattern: VersionPattern{
-		Urls: []string{
+		URLs: []string{
 			`jquery[@/-](\d+\.\d+\.\d+)`,
 		},
 		Bodies: []string{

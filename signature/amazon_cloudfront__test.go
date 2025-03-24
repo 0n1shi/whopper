@@ -15,7 +15,8 @@ func TestAmazonCloudFrontSignature(t *testing.T) {
 	}, {
 		name: "Via header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "via",
 				Value: "1.1 1234567890abcdef.cloudfront.net (CloudFront)",
@@ -26,7 +27,8 @@ func TestAmazonCloudFrontSignature(t *testing.T) {
 	}, {
 		name: "X-Cache header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-cache",
 				Value: "Hit from cloudfront",
@@ -37,7 +39,8 @@ func TestAmazonCloudFrontSignature(t *testing.T) {
 	}, {
 		name: "x-cache header 2",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-cache",
 				Value: "Miss from cloudfront",
@@ -48,7 +51,8 @@ func TestAmazonCloudFrontSignature(t *testing.T) {
 	}, {
 		name: "x-cache header 3 but different host",
 		response: &crawler.Response{
-			Url: OtherHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        OtherHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-cache",
 				Value: "Error from cloudfront",

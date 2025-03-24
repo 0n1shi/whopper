@@ -6,7 +6,7 @@ var ChartJsSignature = Signature{
 	Cpe:         "cpe:/a:chartjs:chartjs",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"chart.js",
 		},
 		Bodies: []string{

@@ -15,7 +15,8 @@ func TestUnpkgSignature(t *testing.T) {
 	}, {
 		name: "URL contains unpkg.com",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Body: `<html>
 	<head>
 		<title>test</title>

@@ -10,7 +10,7 @@ func TestPhpSignature(t *testing.T) {
 	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
-			Url:          "",
+			URL:          "",
 			ResourceType: crawler.ResourceTypeScript,
 		},
 		detected: false,
@@ -18,7 +18,8 @@ func TestPhpSignature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips PHP/5.4.16",
@@ -29,7 +30,8 @@ func TestPhpSignature(t *testing.T) {
 	}, {
 		name: "Server header 2",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.29 (Unix) OpenSSL/1.0.2n PHP/5.6.33 mod_perl/2.0.8-dev Perl/v5.16.3",
@@ -40,7 +42,8 @@ func TestPhpSignature(t *testing.T) {
 	}, {
 		name: "X-Powered-By header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-powered-by",
 				Value: "PHP/5.3.6-13ubuntu3.6",
@@ -51,7 +54,8 @@ func TestPhpSignature(t *testing.T) {
 	}, {
 		name: "X-Powered-By header 2",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "x-powered-by",
 				Value: "PHP/5.2.10",

@@ -15,7 +15,8 @@ func TestOpenSSLSignature(t *testing.T) {
 	}, {
 		name: "Server header",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.37 (AlmaLinux) OpenSSL/1.1.1k",
@@ -26,7 +27,8 @@ func TestOpenSSLSignature(t *testing.T) {
 	}, {
 		name: "Server header 2",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.29 (Unix) OpenSSL/1.0.2n PHP/5.6.33 mod_perl/2.0.8-dev Perl/v5.16.3",
@@ -37,7 +39,8 @@ func TestOpenSSLSignature(t *testing.T) {
 	}, {
 		name: "Server header 3",
 		response: &crawler.Response{
-			Url: SameHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        SameHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.6 (CentOS) OpenSSL/1.0.2k-fips PHP/5.6.40",
@@ -48,7 +51,8 @@ func TestOpenSSLSignature(t *testing.T) {
 	}, {
 		name: "Server header 4 but different host",
 		response: &crawler.Response{
-			Url: OtherHostUrl,
+			BrowserURL: SameHostURL,
+			URL:        OtherHostURL,
 			Headers: []*crawler.Header{{
 				Name:  "server",
 				Value: "Apache/2.4.29 (Unix) OpenSSL/1.0.2n PHP/5.6.33 mod_perl/2.0.8-dev Perl/v5.16.3",

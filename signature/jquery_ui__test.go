@@ -16,7 +16,7 @@ func TestJQueryUISignature(t *testing.T) {
 		name: "URL (JavaScript)",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeStylesheet,
-			Url:          "https://example.com/jquery-ui.js",
+			URL:          "https://example.com/jquery-ui.js",
 		},
 		detected: true,
 		version:  "",
@@ -24,7 +24,7 @@ func TestJQueryUISignature(t *testing.T) {
 		name: "URL (CSS)",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeStylesheet,
-			Url:          "https://example.com/jquery-ui.css",
+			URL:          "https://example.com/jquery-ui.css",
 		},
 		detected: true,
 		version:  "",
@@ -32,7 +32,7 @@ func TestJQueryUISignature(t *testing.T) {
 		name: "URL with version (JavaScript)",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeStylesheet,
-			Url:          "https://example.com/jquery-ui-1.13.2.custom.js",
+			URL:          "https://example.com/jquery-ui-1.13.2.custom.js",
 		},
 		detected: true,
 		version:  "1.13.2",
@@ -40,7 +40,7 @@ func TestJQueryUISignature(t *testing.T) {
 		name: "URL with version (CSS)",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeStylesheet,
-			Url:          "https://example.com/jquery-ui-1.13.2.custom.css",
+			URL:          "https://example.com/jquery-ui-1.13.2.custom.css",
 		},
 		detected: true,
 		version:  "1.13.2",

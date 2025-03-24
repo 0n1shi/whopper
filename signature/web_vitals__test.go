@@ -25,7 +25,7 @@ func TestWebVitalsSignature(t *testing.T) {
 	}, {
 		name: "URL with web-vitals",
 		response: &crawler.Response{
-			Url: "https://unpkg.com/web-vitals@2.1.4/dist/web-vitals.iife.js",
+			URL: "https://unpkg.com/web-vitals@2.1.4/dist/web-vitals.iife.js",
 		},
 		detected: true,
 		version:  "2.1.4",

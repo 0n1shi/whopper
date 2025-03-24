@@ -15,7 +15,7 @@ func TestJQueryMigrateSignature(t *testing.T) {
 	}, {
 		name: "URL",
 		response: &crawler.Response{
-			Url: "https://example.com/jquery-migrate.min.js?ver=3.3.3",
+			URL: "https://example.com/jquery-migrate.min.js?ver=3.3.3",
 		},
 		detected: true,
 		version:  "3.3.3",

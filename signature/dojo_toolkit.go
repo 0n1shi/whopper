@@ -12,7 +12,7 @@ var DojoToolkitSignature = Signature{
 	Cpe:         "cpe:/a:dojo:dojo_toolkit",
 
 	DetectPattern: DetectPattern{
-		Urls: []string{
+		URLs: []string{
 			"dojo.js",
 		},
 		Bodies: []string{

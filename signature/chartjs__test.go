@@ -16,7 +16,7 @@ func TestChartJsSignature(t *testing.T) {
 		name: "Url",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "http://x.x.x.x/bower_components/chart.js/dist/Chart.js?r=0.14.9",
+			URL:          "http://x.x.x.x/bower_components/chart.js/dist/Chart.js?r=0.14.9",
 		},
 		detected: true,
 		version:  "",

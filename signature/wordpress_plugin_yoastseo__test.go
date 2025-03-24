@@ -10,7 +10,7 @@ func TestWordpressPluginYoastSEOSignature(t *testing.T) {
 	cases := []TestCase{{
 		name: "No body and no url",
 		response: &crawler.Response{
-			Url: "",
+			URL: "",
 		},
 		detected: false,
 		version:  "",

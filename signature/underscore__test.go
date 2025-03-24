@@ -16,7 +16,7 @@ func TestUnderscoreSignature(t *testing.T) {
 		name: "URL",
 		response: &crawler.Response{
 			ResourceType: crawler.ResourceTypeScript,
-			Url:          "https://example.com/js/underscore-min.js",
+			URL:          "https://example.com/js/underscore-min.js",
 		},
 		detected: true,
 		version:  "",

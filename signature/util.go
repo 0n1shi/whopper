@@ -12,8 +12,8 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 		resURL, _ := url.Parse(response.URL)
 		resHost := resURL.Hostname()
 
-		pageURL, _ := url.Parse(response.CurrentPageURL)
-		pageHost := pageURL.Hostname()
+		browserURL, _ := url.Parse(response.BrowserURL)
+		pageHost := browserURL.Hostname()
 
 		if resHost != pageHost {
 			return false
@@ -26,7 +26,7 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 			return true
 		}
 	}
-	for _, re := range pattern.Urls {
+	for _, re := range pattern.URLs {
 		if regexp.MustCompile(re).MatchString(response.URL) {
 			return true
 		}
@@ -62,7 +62,7 @@ func GetVersion(response *crawler.Response, signature *Signature) string {
 			return matches[1]
 		}
 	}
-	for _, re := range pattern.Urls {
+	for _, re := range pattern.URLs {
 		matches := regexp.MustCompile(re).FindStringSubmatch(response.URL)
 		if len(matches) > 1 {
 			return matches[1]
