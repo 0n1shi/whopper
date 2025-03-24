@@ -9,9 +9,13 @@ import (
 
 func Detect(response *crawler.Response, signature *Signature, targetHost string) bool {
 	if signature.OnlySameHost {
-		resURL, _ := url.Parse(response.Url)
+		resURL, _ := url.Parse(response.URL)
 		resHost := resURL.Hostname()
-		if resHost != targetHost {
+
+		pageURL, _ := url.Parse(response.CurrentPageURL)
+		pageHost := pageURL.Hostname()
+
+		if resHost != pageHost {
 			return false
 		}
 	}
@@ -23,7 +27,7 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 		}
 	}
 	for _, re := range pattern.Urls {
-		if regexp.MustCompile(re).MatchString(response.Url) {
+		if regexp.MustCompile(re).MatchString(response.URL) {
 			return true
 		}
 	}
@@ -59,7 +63,7 @@ func GetVersion(response *crawler.Response, signature *Signature) string {
 		}
 	}
 	for _, re := range pattern.Urls {
-		matches := regexp.MustCompile(re).FindStringSubmatch(response.Url)
+		matches := regexp.MustCompile(re).FindStringSubmatch(response.URL)
 		if len(matches) > 1 {
 			return matches[1]
 		}

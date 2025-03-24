@@ -98,7 +98,8 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 
 		mu.Lock()
 		responseMap[string(event.RequestID)] = &Response{
-			Url:          event.Response.URL,
+			BrowserURL:   page.MustInfo().URL,
+			URL:          event.Response.URL,
 			Status:       event.Response.Status,
 			StatusText:   http.StatusText(event.Response.Status),
 			Protocol:     event.Response.Protocol,
@@ -126,7 +127,7 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 		if err != nil {
 			slog.Warn(
 				"failed to get response body",
-				"url", omitURL(response.Url),
+				"url", omitURL(response.URL),
 				"error", err,
 			)
 			return
@@ -177,7 +178,8 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 
 			mu.Lock()
 			responseMap[string(event.RequestID)] = &Response{
-				Url:        event.Request.URL,
+				BrowserURL: page.MustInfo().URL,
+				URL:        event.Request.URL,
 				Status:     *event.ResponseStatusCode,
 				StatusText: http.StatusText(*event.ResponseStatusCode),
 				Headers:    modelHeaders,
@@ -223,13 +225,13 @@ func (c *RodCrawler) Crawl(targetUrl string) ([]*Response, error) {
 
 	for _, requestID := range notFoundRequestIDs {
 		if res, ok := responseMap[requestID]; ok {
-			slog.Warn("failed to get response body", "URL", res.Url)
+			slog.Warn("failed to get response body", "URL", res.URL)
 		}
 	}
 
 	responses := []*Response{}
 	for _, response := range responseMap {
-		slog.Debug("response", "url", response.Url, "status", response.Status)
+		slog.Debug("response", "url", response.URL, "status", response.Status)
 		responses = append(responses, response)
 	}
 	slog.Info("received responses", "count", len(responses))

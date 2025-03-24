@@ -3,7 +3,8 @@ package crawler
 type RequestID string
 
 type Response struct {
-	Url          string
+	BrowserURL   string
+	URL          string
 	Status       int
 	StatusText   string
 	Protocol     string

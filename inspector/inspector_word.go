@@ -26,9 +26,9 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 
 	slog.Info("searching in URLs ...")
 	for _, response := range responses {
-		lowerCaseUrl := strings.ToLower(response.Url)
+		lowerCaseUrl := strings.ToLower(response.URL)
 		if strings.Contains(lowerCaseUrl, lowerCaseWord) {
-			url := omitURL(response.Url)
+			url := omitURL(response.URL)
 			fmt.Println(url)
 		}
 	}
@@ -42,7 +42,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 			if strings.Contains(lowerCaseName, lowerCaseWord) ||
 				strings.Contains(lowerCaseValue, lowerCaseWord) {
 				if !hit {
-					fmt.Println(response.Url)
+					fmt.Println(response.URL)
 					hit = true
 				}
 				headerValue := omitHeaderValue(header.Value)
@@ -60,7 +60,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 			if strings.Contains(lowerCaseName, lowerCaseWord) ||
 				strings.Contains(lowerCaseValue, lowerCaseWord) {
 				if !hit {
-					fmt.Println(response.Url)
+					fmt.Println(response.URL)
 					hit = true
 				}
 				cookieValue := omitCookieValue(cookie.Value)
@@ -76,7 +76,7 @@ func (i *WordInspector) Inspect(responses []*crawler.Response) {
 			lowerCaseLine := strings.ToLower(line)
 			if strings.Contains(lowerCaseLine, lowerCaseWord) {
 				if !hit {
-					fmt.Println(response.Url)
+					fmt.Println(response.URL)
 					hit = true
 				}
 				bodyLine := omitBody(line)
