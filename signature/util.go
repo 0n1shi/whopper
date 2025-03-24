@@ -13,9 +13,9 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 		resHost := resURL.Hostname()
 
 		browserURL, _ := url.Parse(response.BrowserURL)
-		pageHost := browserURL.Hostname()
+		browserHost := browserURL.Hostname()
 
-		if resHost != pageHost {
+		if resHost != browserHost {
 			return false
 		}
 	}
@@ -33,7 +33,7 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 	}
 	for _, sig := range pattern.Headers {
 		for _, header := range response.Headers {
-			if header.Value == "" && header.Name == sig.Name { // ignore header value if it's empty
+			if sig.Value == "" && header.Name == sig.Name { // ignore header value if it's empty
 				return true
 			}
 			if header.Name == sig.Name && regexp.MustCompile(sig.Value).MatchString(header.Value) {
@@ -43,7 +43,7 @@ func Detect(response *crawler.Response, signature *Signature, targetHost string)
 	}
 	for _, sig := range pattern.Cookies {
 		for _, cookie := range response.Cookies {
-			if cookie.Value == "" && cookie.Name == sig.Name { // ignore cookie value if it's empty
+			if sig.Value == "" && cookie.Name == sig.Name { // ignore cookie value if it's empty
 				return true
 			}
 			if cookie.Name == sig.Name && regexp.MustCompile(sig.Value).MatchString(cookie.Value) {
