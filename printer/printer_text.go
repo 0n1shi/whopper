@@ -15,12 +15,14 @@ func NewTextPrinter() *TextPrinter {
 	return &TextPrinter{}
 }
 
-func (p *TextPrinter) Print(results []*analyzer.Result, err error) {
+func (p *TextPrinter) Print(techs []*analyzer.Tech, err error) {
 	fmt.Println()
-	for _, result := range results {
-		fmt.Printf("[+] %s:", result.Name)
-		fmt.Printf(" %s\n", strings.Join(result.Versions, ", "))
-		fmt.Printf("    > %s\n", result.Description)
+	fmt.Printf("[+] Found %d techs\n", len(techs))
+	fmt.Println()
+	for _, tech := range techs {
+		fmt.Printf("[+] %s:", tech.Name)
+		fmt.Printf(" %s\n", strings.Join(tech.Versions, ", "))
+		fmt.Printf("    > %s\n", tech.Description)
 		fmt.Println()
 	}
 }

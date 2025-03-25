@@ -3,6 +3,7 @@ package crawler
 type RequestID string
 
 type Response struct {
+	FrameID      string
 	BrowserURL   string
 	URL          string
 	Status       int
@@ -13,4 +14,9 @@ type Response struct {
 	Cookies      []*Cookie
 	MimeType     string
 	Body         string
+}
+
+type Result struct {
+	PageFrameID string
+	Responses   []*Response
 }

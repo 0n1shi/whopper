@@ -5,20 +5,23 @@ import (
 	"github.com/0n1shi/whopper/signature"
 )
 
-func Analyze(res *crawler.Response, sig *signature.Signature, targetHost string) (detected bool, version string) {
-	if signature.Detect(res, sig, targetHost) {
+func Analyze(pageFrameID string, res *crawler.Response, sig *signature.Signature) (detected bool, version string) {
+	if pageFrameID != res.FrameID { // skip iframes
+		return false, ""
+	}
+	if signature.Detect(res, sig) {
 		return true, signature.GetVersion(res, sig)
 	}
 	return false, ""
 }
 
-func AnalyzeAll(responses []*crawler.Response, signatures []*signature.Signature, targetHost string) []*Result {
-	results := []*Result{}
+func AnalyzeAll(result *crawler.Result, signatures []*signature.Signature) []*Tech {
+	techs := []*Tech{}
 	for _, signature := range signatures {
 		detected := false
 		versions := []string{}
-		for _, response := range responses {
-			found, ver := Analyze(response, signature, targetHost)
+		for _, response := range result.Responses {
+			found, ver := Analyze(result.PageFrameID, response, signature)
 			if found {
 				detected = true
 				if ver != "" {
@@ -27,7 +30,7 @@ func AnalyzeAll(responses []*crawler.Response, signatures []*signature.Signature
 			}
 		}
 		if detected {
-			results = append(results, &Result{
+			techs = append(techs, &Tech{
 				Name:        signature.Name,
 				Description: signature.Description,
 				Versions:    unique(versions),
@@ -35,5 +38,5 @@ func AnalyzeAll(responses []*crawler.Response, signatures []*signature.Signature
 			})
 		}
 	}
-	return results
+	return techs
 }

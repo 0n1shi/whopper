@@ -8,7 +8,6 @@ var BackboneJsSignature = Signature{
 	DetectPattern: DetectPattern{
 		Bodies: []string{
 			`Backbone.history has already been started`,
-			`t.VERSION="(\d+\.\d+\.\d+)"`,
 		},
 	},
 	VersionPattern: VersionPattern{

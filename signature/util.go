@@ -7,7 +7,7 @@ import (
 	"github.com/0n1shi/whopper/crawler"
 )
 
-func Detect(response *crawler.Response, signature *Signature, targetHost string) bool {
+func Detect(response *crawler.Response, signature *Signature) bool {
 	if signature.OnlySameHost {
 		resURL, _ := url.Parse(response.URL)
 		resHost := resURL.Hostname()

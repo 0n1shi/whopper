@@ -21,7 +21,7 @@ type TestCase struct {
 func runTests(test *testing.T, cases []TestCase, signature *Signature) {
 	for _, c := range cases {
 		test.Run(c.name, func(t *testing.T) {
-			detected := Detect(c.response, signature, SameHost)
+			detected := Detect(c.response, signature)
 			version := ""
 			if detected {
 				version = GetVersion(c.response, signature)

@@ -118,7 +118,7 @@ func TestDetect(t *testing.T) {
 	}}
 
 	for _, test := range tests {
-		actual := Detect(test.response, test.signature, test.targetHost)
+		actual := Detect(test.response, test.signature)
 		if actual != test.expected {
 			t.Errorf("Detect(%v, %v, %v) = %v; expected %v", test.response, test.signature, test.targetHost, actual, test.expected)
 		}

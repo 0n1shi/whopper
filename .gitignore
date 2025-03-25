@@ -26,3 +26,4 @@ go.work.sum
 dist/
 *.json
 !assets/*.json
+*.txt

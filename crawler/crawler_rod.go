@@ -39,7 +39,7 @@ func (c *RodCrawler) SetNoRedirect(noRedirect bool) {
 	c.noRedirect = noRedirect
 }
 
-func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
+func (c *RodCrawler) Crawl(targetURL string) (*Result, error) {
 	parsedURL, err := url.Parse(targetURL)
 	if err != nil {
 		slog.Error("failed to parse URL", "URL", targetURL, "error", err)
@@ -76,12 +76,14 @@ func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
 		return nil, err
 	}
 	defer page.Close()
+	pageFrameID := page.FrameID
+	slog.Debug("Page frame", "id", pageFrameID)
 
 	responseMap := map[string]*Response{}
 	notFoundRequestIDs := []string{}
 	mu := &sync.Mutex{}
 	go page.EachEvent(func(event *proto.NetworkResponseReceived) {
-		slog.Debug("received response", "url", omitURL(event.Response.URL), "status", event.Response.Status)
+		slog.Debug("received response", "url", omitURL(event.Response.URL), "status", event.Response.Status, "resource_type", event.Type, "frame_id", event.FrameID)
 
 		cookies := []*Cookie{}
 		cookieReply, err := proto.NetworkGetCookies{Urls: []string{event.Response.URL}}.Call(page)
@@ -97,6 +99,7 @@ func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
 
 		mu.Lock()
 		responseMap[string(event.RequestID)] = &Response{
+			FrameID:      string(event.FrameID),
 			BrowserURL:   page.MustInfo().URL,
 			URL:          event.Response.URL,
 			Status:       event.Response.Status,
@@ -145,6 +148,8 @@ func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
 		}
 
 		if event.ResponseStatusCode != nil {
+			slog.Debug("intercepted response", "url", event.Request.URL, "status", *event.ResponseStatusCode, "resource_type", event.ResourceType, "frame_id", event.FrameID)
+
 			if c.noRedirect {
 				requestURL, err := url.Parse(event.Request.URL)
 				if err != nil {
@@ -177,6 +182,7 @@ func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
 
 			mu.Lock()
 			responseMap[string(event.RequestID)] = &Response{
+				FrameID:    string(event.FrameID),
 				BrowserURL: page.MustInfo().URL,
 				URL:        event.Request.URL,
 				Status:     *event.ResponseStatusCode,
@@ -236,5 +242,8 @@ func (c *RodCrawler) Crawl(targetURL string) ([]*Response, error) {
 	slog.Info("received responses", "count", len(responses))
 
 	slog.Debug("closing browser ...")
-	return responses, nil
+	return &Result{
+		PageFrameID: string(pageFrameID),
+		Responses:   responses,
+	}, nil
 }

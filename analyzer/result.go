@@ -1,6 +1,6 @@
 package analyzer
 
-type Result struct {
+type Tech struct {
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Versions    []string `json:"versions"`

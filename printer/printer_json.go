@@ -18,12 +18,12 @@ func NewJsonPrinter() *JsonPrinter {
 }
 
 type JsonPrinterOutput struct {
-	Completed bool               `json:"completed"`
-	Error     *string            `json:"error"`
-	Results   []*analyzer.Result `json:"results"`
+	Completed bool             `json:"completed"`
+	Error     *string          `json:"error"`
+	Techs     []*analyzer.Tech `json:"techs"`
 }
 
-func (p *JsonPrinter) Print(results []*analyzer.Result, err error) {
+func (p *JsonPrinter) Print(techs []*analyzer.Tech, err error) {
 	var errMessage *string
 	if err != nil {
 		errMessage = new(string)
@@ -32,7 +32,7 @@ func (p *JsonPrinter) Print(results []*analyzer.Result, err error) {
 	output := JsonPrinterOutput{
 		Completed: err == nil,
 		Error:     errMessage,
-		Results:   results,
+		Techs:     techs,
 	}
 
 	jsonOutput, err := json.Marshal(output)
