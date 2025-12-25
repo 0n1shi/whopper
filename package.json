@@ -30,7 +30,9 @@
   "homepage": "https://github.com/0n1shi/whopper#readme",
   "dependencies": {
     "chalk": "^5.6.2",
-    "commander": "^14.0.2"
+    "commander": "^14.0.2",
+    "ora": "^9.0.0",
+    "playwright": "^1.57.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

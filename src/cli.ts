@@ -1,23 +1,27 @@
 import { Command } from "commander";
-import { helloCommand } from "./commands/hello.js";
+import { detectCommand } from "./commands/detect.js";
+import { versionCommand } from "./commands/version.js";
 
 const NAME = "whopper";
 const DESCRIPTION =
   "A CLI tool that discovers and detects web technologies used on websites.";
-const VERSION = "0.1.0";
+export const VERSION = "0.1.0";
 
-export const buildCommand = (): Command => {
-  const program = new Command();
-  program.name(NAME).description(DESCRIPTION).version(VERSION);
+function buildCLI(): Command {
+  const program = new Command()
+    .name(NAME)
+    .description(DESCRIPTION)
+    .version(VERSION)
+    .showHelpAfterError()
+    .showSuggestionAfterError();
 
-  program.addCommand(helloCommand());
-
-  program.showHelpAfterError(true);
-  program.showSuggestionAfterError(true);
+  // Register commands here
+  program.addCommand(detectCommand());
+  program.addCommand(versionCommand());
 
   return program;
-};
+}
 
-export const run = (argv: string[]): void => {
-  buildCommand().parse(argv);
-};
+export function run(argv: string[]): void {
+  buildCLI().parse(argv);
+}
