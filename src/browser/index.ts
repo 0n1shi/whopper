@@ -1,13 +1,19 @@
 import { chromium, type Browser, type Page } from "playwright";
 import type { Response } from "./types.js";
+import { sleep } from "./utils.js";
 
 export type Context = {
   browser: Browser;
   page: Page;
   responses: Response[];
+  timeoutMs: number;
+  timeoutOccurred: boolean;
 };
 
-export async function openPage(url: string): Promise<Context> {
+export async function openPage(
+  url: string,
+  timeoutMs: number,
+): Promise<Context> {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
 
@@ -20,7 +26,21 @@ export async function openPage(url: string): Promise<Context> {
     });
   });
 
-  await page.goto(url, { timeout: 10000 });
+  let timeoutOccurred = false;
+  const goto = page.goto(url, { waitUntil: "networkidle" });
 
-  return { browser, page, responses };
+  await Promise.race([
+    goto.catch(() => {
+      timeoutOccurred = true;
+    }),
+    sleep(timeoutMs),
+  ]);
+
+  return {
+    browser,
+    page,
+    responses,
+    timeoutMs,
+    timeoutOccurred,
+  };
 }
