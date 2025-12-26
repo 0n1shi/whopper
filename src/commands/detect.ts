@@ -17,13 +17,13 @@ export const detectCommand = (): Command => {
 
       for (const detection of detections) {
         console.log(
-          `Detected: ${detection.name} ${detection.evidences
+          `* ${detection.name} ${detection.evidences
             .map((e) => e.version)
             .filter((v) => v)
             .join(", ")} (Confidence: ${detection.confidence})`,
         );
         for (const evidence of detection.evidences) {
-          console.log(`  - [${evidence.type}] ${evidence.value}`);
+          console.log(`  [${evidence.type}] ${evidence.value}`);
         }
       }
       await context.browser.close();
