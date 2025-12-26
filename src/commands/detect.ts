@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { openPage } from "../browser/index.js";
 import { analyze } from "../analyzer/index.js";
 import { signatures } from "../signatures/index.js";
+import { logger } from "../logger/index.js";
 
 export const detectCommand = (): Command => {
   return new Command("detect")
@@ -14,11 +15,12 @@ export const detectCommand = (): Command => {
       10000,
     )
     .action(async (url: string, options: { timeout: number }) => {
+      logger.info(`Starting detection for ${url} with timeout ${options.timeout}ms`);
       const context = await openPage(url, options.timeout);
       const detections = analyze(context, signatures);
 
       if (detections.length === 0) {
-        console.log("No technologies detected.");
+        logger.info("No technologies detected.");
       }
 
       for (const detection of detections) {
