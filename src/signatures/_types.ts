@@ -1,3 +1,5 @@
+export type Confidence = "high" | "medium" | "low";
+
 export type Match = {
   contains?: string;
   regex?: string;
@@ -14,5 +16,5 @@ export type Rule = {
 export type Signature = {
   name: string;
   rules: Rule[];
-  confidence: "high" | "medium" | "low";
+  confidence: Confidence;
 };

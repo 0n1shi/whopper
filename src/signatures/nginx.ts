@@ -6,7 +6,7 @@ export const nginxSignature: Signature = {
   rules: [
     {
       headers: {
-        server: { regex: "^nginx" },
+        server: { regex: "^nginx/(\\d+\\.\\d+\\.\\d+)?" },
       },
     },
   ],
