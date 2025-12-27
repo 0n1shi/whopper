@@ -3,65 +3,89 @@ import type { Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
 import { matchString } from "./match.js";
 import { maxConfidence } from "./util.js";
+import { getValByPath } from "./util.js";
 
 export const applySignature = (
   context: Context,
   signature: Signature,
 ): Detection | undefined => {
   const evidences: Evidence[] = [];
-  for (const rule of signature.rules) {
-    // Match headers
-    if (rule.headers) {
-      for (const [header, match] of Object.entries(rule.headers)) {
-        const response = context.responses.find(
-          (res) => res.headers[header.toLowerCase()],
-        );
-        if (!response) {
+  const rule = signature.rule;
+
+  // Match headers
+  if (rule.headers) {
+    for (const [header, regex] of Object.entries(rule.headers)) {
+      const response = context.responses.find(
+        (res) => res.headers[header.toLowerCase()],
+      );
+      if (!response) {
+        continue;
+      }
+
+      const headerValue = response.headers[header.toLowerCase()];
+      if (!headerValue) {
+        continue;
+      }
+
+      const result = matchString(headerValue, regex);
+      if (!result.hit) {
+        continue;
+      }
+
+      evidences.push({
+        type: "header",
+        value: `${header}: ${headerValue}`,
+        version: result.version,
+        confidence: rule.confidence,
+      });
+    }
+  }
+
+  // Match bodies
+  if (rule.bodies) {
+    for (const regex of rule.bodies) {
+      for (const response of context.responses) {
+        const body = response.headers["content-type"]?.includes("text")
+          ? response.body
+          : "";
+        if (!body) {
           continue;
         }
-
-        const headerValue = response.headers[header.toLowerCase()];
-        if (!headerValue) {
-          continue;
-        }
-
-        const result = matchString(headerValue, match);
+        const result = matchString(body, regex);
         if (!result.hit) {
           continue;
         }
 
         evidences.push({
-          type: "header",
-          value: `${header}: ${headerValue}`,
-          version: result.match,
+          type: "body",
+          value: `${body.substring(0, 100)}...`,
+          version: result.version,
           confidence: rule.confidence,
         });
       }
     }
+  }
 
-    // Match bodies
-    if (rule.bodies) {
-      for (const match of rule.bodies) {
-        for (const response of context.responses) {
-          const body = response.headers["content-type"]?.includes("text")
-            ? response.body
-            : "";
-          if (!body) {
-            continue;
-          }
-          const result = matchString(body, match);
-          if (!result.hit) {
-            continue;
-          }
-
-          evidences.push({
-            type: "body",
-            value: `${body.substring(0, 100)}...`,
-            version: result.match,
-            confidence: rule.confidence,
-          });
-        }
+  if (rule.javascripts) {
+    for (const [jsPath, regex] of Object.entries(rule.javascripts)) {
+      const jsVars = context.javascriptVariables;
+      const val = getValByPath(jsVars, jsPath);
+      if (val === undefined) {
+        continue;
       }
+
+      const valStr = typeof val === "string" ? val : JSON.stringify(val);
+      const result = matchString(valStr, regex);
+      if (!result.hit) {
+        continue;
+      }
+
+      evidences.push({
+        type: "script",
+        value: `${jsPath}: ${valStr}`,
+        version: result.version,
+        confidence: rule.confidence,
+      });
     }
   }
 

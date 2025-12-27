@@ -1,24 +1,16 @@
+import type { Regex } from "../signatures/_types.js";
+
 type MatchResult = {
   hit: boolean;
-  match: string | undefined;
+  version: string | undefined;
 };
 
-export const matchString = (
-  value: string,
-  rule: { contains?: string; regex?: string },
-): MatchResult => {
-  if (rule.regex) {
-    const regex = new RegExp(rule.regex, "i");
-    const match = value.match(regex);
-    if (match) {
-      return { hit: true, match: match.length > 1 ? match[1] : undefined };
-    }
-  }
-  if (rule.contains) {
-    if (value.toLowerCase().includes(rule.contains.toLowerCase())) {
-      return { hit: true, match: undefined };
-    }
+export const matchString = (value: string, regex: Regex): MatchResult => {
+  const regexExp = new RegExp(regex, "i");
+  const match = value.match(regexExp);
+  if (match) {
+    return { hit: true, version: match.length > 1 ? match[1] : undefined };
   }
 
-  return { hit: false, match: undefined };
+  return { hit: false, version: undefined };
 };

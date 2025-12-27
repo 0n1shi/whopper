@@ -7,6 +7,7 @@ export type Context = {
   browser: Browser;
   page: Page;
   responses: Response[];
+  javascriptVariables: Record<string, any>;
   timeoutMs: number;
   timeoutOccurred: boolean;
 };
@@ -45,11 +46,43 @@ export async function openPage(
     logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
   }
 
+  const jsVars = await page.evaluate(() => {
+    const vars: Record<string, any> = {};
+    for (const path of Object.keys(window)) {
+      try {
+        const val = (window as any)[path];
+        if (!val) continue;
+
+        // Only capture primitive types and objects
+        if (
+          typeof val === "string" ||
+          typeof val === "number" ||
+          typeof val === "boolean"
+        ) {
+          vars[path] = val;
+        }
+
+        if (typeof val === "object") {
+          try {
+            JSON.stringify(val);
+            vars[path] = val;
+          } catch {
+            // Skip non-serializable objects
+          }
+        }
+      } catch (e) {
+        // Some properties may throw errors when accessed
+      }
+    }
+    return vars;
+  });
+
   return {
     browser,
     page,
     responses,
     timeoutMs,
     timeoutOccurred,
+    javascriptVariables: jsVars,
   };
 }

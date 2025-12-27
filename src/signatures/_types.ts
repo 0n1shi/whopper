@@ -1,22 +1,19 @@
 export type Confidence = "high" | "medium" | "low";
 
-export type Match = {
-  contains?: string;
-  regex?: string;
-};
+export type Regex = string;
 
 export type Rule = {
   confidence: Confidence;
-  headers?: Record<string, Match>;
-  bodies?: Match[];
-  urls?: Match[];
-  cookies?: Record<string, Match>;
-  globals?: Match[];
+  headers?: Record<string, Regex>;
+  bodies?: Regex[];
+  urls?: Regex[];
+  cookies?: Record<string, Regex>;
+  javascripts?: Record<string, Regex>;
 };
 
 export type Signature = {
   name: string;
   description: string;
   cpe?: string;
-  rules: Rule[];
+  rule: Rule;
 };
