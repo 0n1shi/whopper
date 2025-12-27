@@ -20,6 +20,7 @@ export async function openPage(
 
   const responses: Response[] = [];
   page.on("response", (response) => {
+    logger.debug(`Received response: ${response.url()} - ${response.status()}`);
     responses.push({
       url: response.url(),
       status: response.status(),

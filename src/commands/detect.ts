@@ -2,7 +2,8 @@ import { Command } from "commander";
 import { openPage } from "../browser/index.js";
 import { analyze } from "../analyzer/index.js";
 import { signatures } from "../signatures/index.js";
-import { logger } from "../logger/index.js";
+import { logger, setLogLevel } from "../logger/index.js";
+import { LogLevel } from "../logger/types.js";
 
 export const detectCommand = (): Command => {
   return new Command("detect")
@@ -14,26 +15,35 @@ export const detectCommand = (): Command => {
       (v) => Number(v),
       10000,
     )
-    .action(async (url: string, options: { timeout: number }) => {
-      logger.info(`Starting detection for ${url} with timeout ${options.timeout}ms`);
-      const context = await openPage(url, options.timeout);
-      const detections = analyze(context, signatures);
-
-      if (detections.length === 0) {
-        logger.info("No technologies detected.");
-      }
-
-      for (const detection of detections) {
-        console.log(
-          `* ${detection.name} ${detection.evidences
-            .map((e) => e.version)
-            .filter((v) => v)
-            .join(", ")} (Confidence: ${detection.confidence})`,
-        );
-        for (const evidence of detection.evidences) {
-          console.log(`  [${evidence.type}] ${evidence.value}`);
+    .option("-d, --debug", "Enable debug logging", false)
+    .action(
+      async (url: string, options: { timeout: number; debug: boolean }) => {
+        if (options.debug) {
+          setLogLevel(LogLevel.DEBUG);
         }
-      }
-      await context.browser.close();
-    });
+        logger.info(
+          `Starting detection for ${url} with timeout ${options.timeout}ms`,
+        );
+        const context = await openPage(url, options.timeout);
+        const detections = analyze(context, signatures);
+
+        if (detections.length === 0) {
+          logger.info("No technologies detected.");
+        }
+
+        for (const detection of detections) {
+          console.log(
+            `* ${detection.name} ${detection.evidences
+              .map((e) => e.version)
+              .filter((v) => v)
+              .join(", ")} (Confidence: ${detection.confidence})`,
+          );
+          for (const evidence of detection.evidences) {
+            console.log(`  [${evidence.type}] ${evidence.value}`);
+          }
+        }
+        await context.page.close();
+        await context.browser.close();
+      },
+    );
 };
