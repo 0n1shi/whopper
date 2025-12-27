@@ -4,6 +4,21 @@ import { analyze } from "../analyzer/index.js";
 import { signatures } from "../signatures/index.js";
 import { logger, setLogLevel } from "../logger/index.js";
 import { LogLevel } from "../logger/types.js";
+import chalk from "chalk";
+import type { Confidence } from "../signatures/_types.js";
+
+function colorizeConfidence(confidence: Confidence): string {
+  switch (confidence) {
+    case "high":
+      return chalk.green(confidence);
+    case "medium":
+      return chalk.yellow(confidence);
+    case "low":
+      return chalk.red(confidence);
+    default:
+      return confidence;
+  }
+}
 
 export const detectCommand = (): Command => {
   return new Command("detect")
@@ -31,12 +46,15 @@ export const detectCommand = (): Command => {
           logger.info("No technologies detected.");
         }
 
+        console.log();
         for (const detection of detections) {
           console.log(
-            `* ${detection.name} ${detection.evidences
-              .map((e) => e.version)
-              .filter((v) => v)
-              .join(", ")} (Confidence: ${detection.confidence})`,
+            `* ${chalk.green(detection.name)} ${chalk.green(
+              detection.evidences
+                .map((e) => e.version)
+                .filter((v) => v)
+                .join(", "),
+            )} (Confidence: ${colorizeConfidence(detection.confidence)})`,
           );
           for (const evidence of detection.evidences) {
             console.log(`  [${evidence.type}] ${evidence.value}`);

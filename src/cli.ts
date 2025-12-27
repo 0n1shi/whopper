@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import { detectCommand } from "./commands/detect.js";
 import { versionCommand } from "./commands/version.js";
-import chalk from "chalk";
 import { banner } from "./commands/banner.js";
 
 const NAME = "whopper";
