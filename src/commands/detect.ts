@@ -48,14 +48,13 @@ export const detectCommand = (): Command => {
 
         console.log();
         for (const detection of detections) {
-          console.log(
-            `* ${chalk.green(detection.name)} ${chalk.green(
-              detection.evidences
-                .map((e) => e.version)
-                .filter((v) => v)
-                .join(", "),
-            )} (Confidence: ${colorizeConfidence(detection.confidence)})`,
-          );
+          let message = `* ${chalk.green(detection.name)}`;
+          const versions = detection.evidences.map((e) => e.version).filter((v) => v);
+          if (versions.length > 0) {
+            message += ` ${chalk.green(versions.join(", "))}`;
+          }
+          message += ` (Confidence: ${colorizeConfidence(detection.confidence)})`;
+          console.log(message);
           for (const evidence of detection.evidences) {
             console.log(`  [${evidence.type}] ${evidence.value}`);
           }
