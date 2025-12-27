@@ -6,6 +6,7 @@ export type Match = {
 };
 
 export type Rule = {
+  confidence: Confidence;
   headers?: Record<string, Match>;
   bodies?: Match[];
   urls?: Match[];
@@ -15,6 +16,7 @@ export type Rule = {
 
 export type Signature = {
   name: string;
+  description: string;
+  cpe?: string;
   rules: Rule[];
-  confidence: Confidence;
 };

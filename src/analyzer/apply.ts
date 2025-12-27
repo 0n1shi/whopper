@@ -34,7 +34,7 @@ export const applySignature = (
           type: "header",
           value: `${header}: ${headerValue}`,
           version: result.match,
-          confidence: signature.confidence,
+          confidence: rule.confidence,
         });
       }
     }
@@ -58,7 +58,7 @@ export const applySignature = (
             type: "body",
             value: `${body.substring(0, 100)}...`,
             version: result.match,
-            confidence: signature.confidence,
+            confidence: rule.confidence,
           });
         }
       }
