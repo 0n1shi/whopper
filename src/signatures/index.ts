@@ -7,6 +7,8 @@ import { apacheHttpServerSignature } from "./technologies/apache.js";
 import { phpSignature } from "./technologies/php.js";
 import { jquerySignature } from "./technologies/jquery.js";
 import { wordpressSignature } from "./technologies/wordpress.js";
+import { mysqlSignature } from "./technologies/mysql.js";
+import { corejsSignature } from "./technologies/corejs.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -16,4 +18,6 @@ export const signatures: Signature[] = [
   nginxSignature,
   nextjsSignature,
   wordpressSignature,
+  mysqlSignature,
+  corejsSignature,
 ];
