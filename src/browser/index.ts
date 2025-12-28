@@ -8,7 +8,10 @@ export async function openPage(
   timeoutMs: number,
 ): Promise<Context> {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage();
+  const context = await browser.newContext({
+    ignoreHTTPSErrors: true,
+  });
+  const page = await context.newPage();
 
   const responses: Response[] = [];
   page.on("response", (response) => {

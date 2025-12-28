@@ -1,4 +1,4 @@
-import type { Context } from "../browser/index.js";
+import type { Context } from "../browser/types.js";
 import type { Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
 import { matchString } from "./match.js";

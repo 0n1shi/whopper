@@ -1,4 +1,4 @@
-import type { Context } from "../browser/index.js";
+import type { Context } from "../browser/types.js";
 import type { Signature } from "../signatures/_types.js";
 import { applySignature } from "./apply.js";
 import type { Detection } from "./types.js";
