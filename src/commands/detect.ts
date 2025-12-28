@@ -5,21 +5,12 @@ import { signatures } from "../signatures/index.js";
 import { logger, setLogLevel } from "../logger/index.js";
 import { LogLevel } from "../logger/types.js";
 import chalk from "chalk";
-import type { Confidence } from "../signatures/_types.js";
 import { getJavascriptVariableNames } from "../signatures/utils.js";
-
-function colorizeConfidence(confidence: Confidence): string {
-  switch (confidence) {
-    case "high":
-      return chalk.green(confidence);
-    case "medium":
-      return chalk.yellow(confidence);
-    case "low":
-      return chalk.red(confidence);
-    default:
-      return confidence;
-  }
-}
+import {
+  makeDetectCommandOutput,
+  printDetectCommandOutputAsJSON,
+  printDetectCommandOutputAsText,
+} from "./detect_utils.js";
 
 export const detectCommand = (): Command => {
   return new Command("detect")
@@ -33,16 +24,24 @@ export const detectCommand = (): Command => {
     )
     .option("-d, --debug", "Enable debug logging", false)
     .option("-e, --evidence", "Show evidence for detections", false)
+    .option("-j, --json", "Output results in JSON format", false)
     .action(
       async (
         url: string,
-        options: { timeout: number; debug: boolean; evidence: boolean },
+        options: {
+          timeout: number;
+          debug: boolean;
+          evidence: boolean;
+          json: boolean;
+        },
       ) => {
         if (options.debug) {
           setLogLevel(LogLevel.DEBUG);
         }
+        logger.info(`Starting detection for ${chalk.cyan(url)}`);
         logger.info(
-          `Starting detection for ${url} with timeout ${options.timeout}ms`,
+          "Timeout set to " +
+          chalk.yellow(`${options.timeout.toLocaleString("en-US")}ms`),
         );
         const context = await openPage(
           url,
@@ -50,35 +49,17 @@ export const detectCommand = (): Command => {
           getJavascriptVariableNames(signatures),
         );
         const detections = analyze(context, signatures);
-
         if (detections.length === 0) {
           logger.info("No technologies detected.");
-        }
-
-        console.log();
-        for (const detection of detections) {
-          let message = `* ${chalk.green(detection.name)}`;
-          const versions = [
-            ...new Set(
-              detection.evidences?.map((e) => e.version).filter((v) => v),
-            ),
-          ];
-          if (versions.length > 0) {
-            message += ` ${chalk.green(versions.join(", "))}`;
-          }
-          message += ` (Confidence: ${colorizeConfidence(detection.confidence)})`;
-          console.log(message);
-
-          if (!options.evidence) {
-            continue;
-          }
-          for (const evidence of detection.evidences || []) {
-            console.log(`  [${evidence.type}] ${evidence.value}`);
-          }
-          if (detection.implied) {
-            console.log(`  [implied] ${detection.implied}`);
+        } else {
+          const output = makeDetectCommandOutput(detections, signatures);
+          if (options.json) {
+            printDetectCommandOutputAsJSON(output);
+          } else {
+            printDetectCommandOutputAsText(output, options.evidence);
           }
         }
+
         await context.page.close();
         await context.browser.close();
       },

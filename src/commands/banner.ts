@@ -8,7 +8,7 @@ export function banner(ver: string): string {
 ██║███╗████╔══████║   ████╔═══╝██╔═══╝██╔══╝ ██╔══██╗
 ╚███╔███╔██║  ██╚██████╔██║    ██║    █████████║  ██║
  ╚══╝╚══╝╚═╝  ╚═╝╚═════╝╚═╝    ╚═╝    ╚══════╚═╝  ╚═╝
-                                               v${chalk.bold(ver)}
-${chalk.bold("Whopper")} - A web technology detection tool
+                                               ${chalk.bold.magenta("v" + ver)}
+${chalk.bold.green("Whopper")} - A web technology detection tool
 `;
 }

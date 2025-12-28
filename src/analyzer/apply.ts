@@ -2,7 +2,6 @@ import type { Context } from "../browser/types.js";
 import type { Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
 import { matchString } from "./match.js";
-import { maxConfidence } from "./utils.js";
 
 export const applySignature = (
   context: Context,
@@ -111,7 +110,6 @@ export const applySignature = (
   if (evidences.length > 0) {
     return {
       name: signature.name,
-      confidence: maxConfidence(evidences.map((e) => e.confidence)),
       evidences,
     };
   }

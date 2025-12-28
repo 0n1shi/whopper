@@ -25,5 +25,5 @@ export const wordpressSignature: Signature = {
       "wp-embed\\.min\\.js",
     ],
   },
-  implies: [phpSignature.name, mysqlSignature.name],
+  impliedSoftwares: [phpSignature.name, mysqlSignature.name],
 };
