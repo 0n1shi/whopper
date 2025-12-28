@@ -8,7 +8,7 @@ export const apacheHttpServerSignature: Signature = {
   rule: {
     confidence: "high",
     headers: {
-      server: "^Apache/?(\\d+\\.\\d+\\.\\d+)?$",
+      server: "apache/?(\\d+\\.\\d+\\.\\d+)?",
     },
   },
 };
