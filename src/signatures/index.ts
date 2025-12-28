@@ -10,6 +10,7 @@ import { wordpressSignature } from "./technologies/wordpress.js";
 import { mysqlSignature } from "./technologies/mysql.js";
 import { corejsSignature } from "./technologies/corejs.js";
 import { jqueryCookieSignature } from "./technologies/jquery_cookie.js";
+import { slickSignature } from "./technologies/slick.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -21,5 +22,6 @@ export const signatures: Signature[] = [
   mysqlSignature,
   nginxSignature,
   nextjsSignature,
+  slickSignature,
   wordpressSignature,
 ];
