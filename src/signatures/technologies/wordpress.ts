@@ -1,4 +1,6 @@
 import type { Signature } from "../_types.js";
+import { mysqlSignature } from "./mysql.js";
+import { phpSignature } from "./php.js";
 
 export const wordpressSignature: Signature = {
   name: "WordPress",
@@ -23,4 +25,5 @@ export const wordpressSignature: Signature = {
       "wp-embed\\.min\\.js",
     ],
   },
+  implies: [phpSignature.name, mysqlSignature.name],
 };
