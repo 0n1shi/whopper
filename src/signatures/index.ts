@@ -9,15 +9,17 @@ import { jquerySignature } from "./technologies/jquery.js";
 import { wordpressSignature } from "./technologies/wordpress.js";
 import { mysqlSignature } from "./technologies/mysql.js";
 import { corejsSignature } from "./technologies/corejs.js";
+import { jqueryCookieSignature } from "./technologies/jquery_cookie.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
   awsElbSignature,
+  corejsSignature,
   jquerySignature,
+  jqueryCookieSignature,
   phpSignature,
+  mysqlSignature,
   nginxSignature,
   nextjsSignature,
   wordpressSignature,
-  mysqlSignature,
-  corejsSignature,
 ];

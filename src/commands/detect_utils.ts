@@ -21,13 +21,11 @@ export function makeDetectCommandOutput(
   detections: Detection[],
   signatures: Signature[],
 ): DetectCommandOutput {
-  const detectedSoftwares = detections.flatMap((detection) => {
+  // Handle directly detected softwares
+  const detectedSoftwares = detections.map((detection) => {
     const signature = signatures.find(
       (signature) => signature.name === detection.name,
     )!;
-    const detectedSoftwares: DetectedSoftware[] = [];
-
-    // Main detected software
     const detectedSoftware: DetectedSoftware = {
       name: detection.name,
       description: signature.description,
@@ -52,26 +50,36 @@ export function makeDetectCommandOutput(
     if (cpes && cpes.length > 0) {
       detectedSoftware.cpes = cpes;
     }
-    detectedSoftwares.push(detectedSoftware);
+    return detectedSoftware;
+  });
 
-    // Implied softwares
+  // Handle implied softwares
+  const impliedSoftwares = detectedSoftwares.flatMap((detectedSoftware) => {
+    const signature = signatures.find(
+      (signature) => signature.name === detectedSoftware.name,
+    )!;
     const impliedSignatures = signatures.filter((s) =>
       signature.impliedSoftwares?.includes(s.name),
     );
-    for (const impliedSignature of impliedSignatures) {
-      const impliedDetectedSoftware: DetectedSoftware = {
+    return impliedSignatures.flatMap((impliedSignature) => {
+      // Avoid duplicates
+      if (detectedSoftwares.some((ds) => ds.name === impliedSignature.name)) {
+        return [];
+      }
+
+      const impliedSoftware: DetectedSoftware = {
         name: impliedSignature.name,
         description: impliedSignature.description,
         confidence: detectedSoftware.confidence,
-        impliedBy: detection.name,
+        impliedBy: detectedSoftware.name,
       };
-      detectedSoftwares.push(impliedDetectedSoftware);
-    }
-
-    return detectedSoftwares;
+      return [impliedSoftware];
+    });
   });
 
-  return { detectedSoftwares };
+  return {
+    detectedSoftwares: [...detectedSoftwares, ...impliedSoftwares],
+  };
 }
 
 export function printDetectCommandOutputAsText(
@@ -94,6 +102,9 @@ export function printDetectCommandOutputAsText(
     }
     for (const evidence of detection.evidences || []) {
       console.log(`    [${evidence.type}] ${evidence.value}`);
+    }
+    if (detection.impliedBy) {
+      console.log(`    [implied] ${detection.impliedBy}`);
     }
   }
 }
