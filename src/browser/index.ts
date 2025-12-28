@@ -1,16 +1,7 @@
-import { chromium, type Browser, type Page } from "playwright";
-import type { Response } from "./types.js";
+import { chromium } from "playwright";
+import type { Context, Response } from "./types.js";
 import { sleep } from "./utils.js";
 import { logger } from "../logger/index.js";
-
-export type Context = {
-  browser: Browser;
-  page: Page;
-  responses: Response[];
-  javascriptVariables: Record<string, any>;
-  timeoutMs: number;
-  timeoutOccurred: boolean;
-};
 
 export async function openPage(
   url: string,
@@ -46,7 +37,18 @@ export async function openPage(
     logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
   }
 
-  const jsVars = await page.evaluate(() => {
+  const cookies = (await page.context().cookies()).map((cookie) => ({
+    name: cookie.name,
+    value: cookie.value,
+    domain: cookie.domain,
+    path: cookie.path,
+    expires: cookie.expires,
+    httpOnly: cookie.httpOnly,
+    secure: cookie.secure,
+    sameSite: cookie.sameSite,
+  }));
+
+  const javascriptVariables = await page.evaluate(() => {
     const vars: Record<string, any> = {};
     for (const path of Object.keys(window)) {
       try {
@@ -81,8 +83,9 @@ export async function openPage(
     browser,
     page,
     responses,
+    javascriptVariables,
+    cookies,
     timeoutMs,
     timeoutOccurred,
-    javascriptVariables: jsVars,
   };
 }
