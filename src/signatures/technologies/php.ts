@@ -7,6 +7,7 @@ export const phpSignature: Signature = {
   cpe: "cpe:/a:php:php",
   rule: {
     confidence: "high",
+    urls: ["\\.php$"],
     headers: {
       server: "php/?(\\d+\\.\\d+\\.\\d+)?",
       "x-powered-by": "php/?(\\d+\\.\\d+\\.\\d+)?",
@@ -16,4 +17,3 @@ export const phpSignature: Signature = {
     },
   },
 };
-
