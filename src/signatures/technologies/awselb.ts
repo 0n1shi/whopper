@@ -1,4 +1,4 @@
-import type { Signature } from "./_types.js";
+import type { Signature } from "../_types.js";
 
 export const awsElbSignature: Signature = {
   name: "AWS Elastic Load Balancer",
