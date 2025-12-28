@@ -32,8 +32,12 @@ export const detectCommand = (): Command => {
       10000,
     )
     .option("-d, --debug", "Enable debug logging", false)
+    .option("-e, --evidence", "Show evidence for detections", false)
     .action(
-      async (url: string, options: { timeout: number; debug: boolean }) => {
+      async (
+        url: string,
+        options: { timeout: number; debug: boolean; evidence: boolean },
+      ) => {
         if (options.debug) {
           setLogLevel(LogLevel.DEBUG);
         }
@@ -64,6 +68,10 @@ export const detectCommand = (): Command => {
           }
           message += ` (Confidence: ${colorizeConfidence(detection.confidence)})`;
           console.log(message);
+
+          if (!options.evidence) {
+            continue;
+          }
           for (const evidence of detection.evidences || []) {
             console.log(`  [${evidence.type}] ${evidence.value}`);
           }
