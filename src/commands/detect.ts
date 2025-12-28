@@ -49,7 +49,11 @@ export const detectCommand = (): Command => {
         console.log();
         for (const detection of detections) {
           let message = `* ${chalk.green(detection.name)}`;
-          const versions = detection.evidences.map((e) => e.version).filter((v) => v);
+          const versions = [
+            ...new Set(
+              detection.evidences.map((e) => e.version).filter((v) => v),
+            ),
+          ];
           if (versions.length > 0) {
             message += ` ${chalk.green(versions.join(", "))}`;
           }
