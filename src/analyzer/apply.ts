@@ -12,6 +12,26 @@ export const applySignature = (
   const evidences: Evidence[] = [];
   const rule = signature.rule;
 
+  // Match urls
+  if (rule.urls) {
+    for (const regex of rule.urls) {
+      for (const response of context.responses) {
+        const url = response.url;
+        const result = matchString(url, regex);
+        if (!result.hit) {
+          continue;
+        }
+
+        evidences.push({
+          type: "url",
+          value: url,
+          version: result.version,
+          confidence: rule.confidence,
+        });
+      }
+    }
+  }
+
   // Match headers
   if (rule.headers) {
     for (const [header, regex] of Object.entries(rule.headers)) {

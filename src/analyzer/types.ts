@@ -1,6 +1,6 @@
 import type { Confidence } from "../signatures/_types.js";
 
-type EvidenceType = "header" | "body" | "cookie" | "script";
+type EvidenceType = "header" | "body" | "cookie" | "script" | "url";
 
 export type Evidence = {
   type: EvidenceType;
