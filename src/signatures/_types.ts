@@ -8,7 +8,7 @@ export type Rule = {
   bodies?: Regex[];
   urls?: Regex[];
   cookies?: Record<string, Regex>;
-  javascripts?: Record<string, Regex>;
+  javascriptVariables?: Record<string, Regex>;
 };
 
 export type Signature = {

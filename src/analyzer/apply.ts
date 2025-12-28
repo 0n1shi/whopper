@@ -2,8 +2,7 @@ import type { Context } from "../browser/types.js";
 import type { Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
 import { matchString } from "./match.js";
-import { maxConfidence } from "./util.js";
-import { getValByPath } from "./util.js";
+import { maxConfidence } from "./utils.js";
 
 export const applySignature = (
   context: Context,
@@ -86,10 +85,10 @@ export const applySignature = (
     }
   }
 
-  if (rule.javascripts) {
-    for (const [jsPath, regex] of Object.entries(rule.javascripts)) {
+  if (rule.javascriptVariables) {
+    for (const [name, regex] of Object.entries(rule.javascriptVariables)) {
       const jsVars = context.javascriptVariables;
-      const val = getValByPath(jsVars, jsPath);
+      const val = jsVars[name];
       if (val === undefined) {
         continue;
       }
@@ -102,7 +101,7 @@ export const applySignature = (
 
       evidences.push({
         type: "script",
-        value: `${jsPath}: ${valStr}`,
+        value: `${name}: ${valStr}`,
         version: result.version,
         confidence: rule.confidence,
       });

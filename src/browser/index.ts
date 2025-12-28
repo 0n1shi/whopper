@@ -6,6 +6,7 @@ import { logger } from "../logger/index.js";
 export async function openPage(
   url: string,
   timeoutMs: number,
+  javascriptVariableNames: string[],
 ): Promise<Context> {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
@@ -51,36 +52,48 @@ export async function openPage(
     sameSite: cookie.sameSite,
   }));
 
-  const javascriptVariables = await page.evaluate(() => {
+  const javascriptVariables = await page.evaluate((jsVarNames: string[]) => {
     const vars: Record<string, any> = {};
-    for (const path of Object.keys(window)) {
+    const resolvePath = (root: any, path: string): unknown => {
+      const parts = path.split(".");
+      let current = root;
+
+      for (const part of parts) {
+        if (current == null) return undefined;
+        current = current[part];
+      }
+      return current;
+    };
+
+    for (const name of jsVarNames) {
       try {
-        const val = (window as any)[path];
+        vars[name] = undefined; // Default to undefined
+
+        const val = resolvePath(window, name);
         if (!val) continue;
 
-        // Only capture primitive types and objects
         if (
           typeof val === "string" ||
           typeof val === "number" ||
           typeof val === "boolean"
         ) {
-          vars[path] = val;
+          vars[name] = val;
         }
 
         if (typeof val === "object") {
           try {
             JSON.stringify(val);
-            vars[path] = val;
+            vars[name] = val;
           } catch {
             // Skip non-serializable objects
           }
         }
-      } catch (e) {
+      } catch {
         // Some properties may throw errors when accessed
       }
     }
     return vars;
-  });
+  }, javascriptVariableNames);
 
   return {
     browser,

@@ -9,12 +9,3 @@ export const maxConfidence = (confidences: Confidence[]): Confidence => {
   }
   return "low";
 };
-
-export function getValByPath(obj: any, path: string): any {
-  return path.split(".").reduce((acc, key) => {
-    if (acc && typeof acc === "object") {
-      return (acc as any)[key];
-    }
-    return undefined;
-  }, obj);
-}

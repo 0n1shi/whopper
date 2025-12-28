@@ -6,6 +6,7 @@ import { logger, setLogLevel } from "../logger/index.js";
 import { LogLevel } from "../logger/types.js";
 import chalk from "chalk";
 import type { Confidence } from "../signatures/_types.js";
+import { getJavascriptVariableNames } from "../signatures/utils.js";
 
 function colorizeConfidence(confidence: Confidence): string {
   switch (confidence) {
@@ -39,7 +40,11 @@ export const detectCommand = (): Command => {
         logger.info(
           `Starting detection for ${url} with timeout ${options.timeout}ms`,
         );
-        const context = await openPage(url, options.timeout);
+        const context = await openPage(
+          url,
+          options.timeout,
+          getJavascriptVariableNames(signatures),
+        );
         const detections = analyze(context, signatures);
 
         if (detections.length === 0) {

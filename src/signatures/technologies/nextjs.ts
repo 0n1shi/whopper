@@ -10,7 +10,7 @@ export const nextjsSignature: Signature = {
     headers: {
       "x-powered-by": "^Next\\.js (\\d+\\.\\d+\\.\\d+)?",
     },
-    javascripts: {
+    javascriptVariables: {
       __NEXT_DATA__: "",
       "next.version": "(.+)$",
     },
