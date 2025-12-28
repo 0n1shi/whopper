@@ -1,3 +1,5 @@
+import chalk from "chalk";
+
 export function banner(ver: string): string {
   return `
 ██╗    ████╗  ██╗██████╗██████╗██████╗█████████████╗
@@ -6,7 +8,7 @@ export function banner(ver: string): string {
 ██║███╗████╔══████║   ████╔═══╝██╔═══╝██╔══╝ ██╔══██╗
 ╚███╔███╔██║  ██╚██████╔██║    ██║    █████████║  ██║
  ╚══╝╚══╝╚═╝  ╚═╝╚═════╝╚═╝    ╚═╝    ╚══════╚═╝  ╚═╝
-                                               v${ver}
-Whopper - A web technology detection tool
+                                               v${chalk.bold(ver)}
+${chalk.bold("Whopper")} - A web technology detection tool
 `;
 }
