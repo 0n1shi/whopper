@@ -15,5 +15,6 @@ export type Signature = {
   name: string;
   description: string;
   cpe?: string;
-  rule: Rule;
+  rule?: Rule;
+  implies?: string[];
 };

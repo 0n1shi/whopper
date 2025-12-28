@@ -12,7 +12,7 @@ export const applySignature = (
   const rule = signature.rule;
 
   // Match urls
-  if (rule.urls) {
+  if (rule?.urls) {
     for (const regex of rule.urls) {
       for (const response of context.responses) {
         const url = response.url;
@@ -32,7 +32,7 @@ export const applySignature = (
   }
 
   // Match headers
-  if (rule.headers) {
+  if (rule?.headers) {
     for (const [header, regex] of Object.entries(rule.headers)) {
       const response = context.responses.find(
         (res) => res.headers[header.toLowerCase()],
@@ -61,7 +61,7 @@ export const applySignature = (
   }
 
   // Match bodies
-  if (rule.bodies) {
+  if (rule?.bodies) {
     for (const regex of rule.bodies) {
       for (const response of context.responses) {
         const body = response.headers["content-type"]?.includes("text")
@@ -85,7 +85,7 @@ export const applySignature = (
     }
   }
 
-  if (rule.javascriptVariables) {
+  if (rule?.javascriptVariables) {
     for (const [name, regex] of Object.entries(rule.javascriptVariables)) {
       const jsVars = context.javascriptVariables;
       const val = jsVars[name];

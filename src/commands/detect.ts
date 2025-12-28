@@ -56,7 +56,7 @@ export const detectCommand = (): Command => {
           let message = `* ${chalk.green(detection.name)}`;
           const versions = [
             ...new Set(
-              detection.evidences.map((e) => e.version).filter((v) => v),
+              detection.evidences?.map((e) => e.version).filter((v) => v),
             ),
           ];
           if (versions.length > 0) {
@@ -64,8 +64,11 @@ export const detectCommand = (): Command => {
           }
           message += ` (Confidence: ${colorizeConfidence(detection.confidence)})`;
           console.log(message);
-          for (const evidence of detection.evidences) {
+          for (const evidence of detection.evidences || []) {
             console.log(`  [${evidence.type}] ${evidence.value}`);
+          }
+          if (detection.implied) {
+            console.log(`  [implied] ${detection.implied}`);
           }
         }
         await context.page.close();

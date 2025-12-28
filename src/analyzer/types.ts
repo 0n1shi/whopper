@@ -12,5 +12,6 @@ export type Evidence = {
 export type Detection = {
   name: string;
   confidence: Confidence;
-  evidences: Evidence[];
+  evidences?: Evidence[];
+  implied?: string;
 };
