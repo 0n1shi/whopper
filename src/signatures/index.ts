@@ -6,6 +6,7 @@ import { awsElbSignature } from "./technologies/awselb.js";
 import { apacheHttpServerSignature } from "./technologies/apache.js";
 import { phpSignature } from "./technologies/php.js";
 import { jquerySignature } from "./technologies/jquery.js";
+import { wordpressSignature } from "./technologies/wordpress.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -14,4 +15,5 @@ export const signatures: Signature[] = [
   phpSignature,
   nginxSignature,
   nextjsSignature,
+  wordpressSignature,
 ];
