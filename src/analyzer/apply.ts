@@ -84,6 +84,28 @@ export const applySignature = (
     }
   }
 
+  // Match cookies
+  if (rule?.cookies) {
+    for (const [name, regex] of Object.entries(rule.cookies)) {
+      const cookie = context.cookies.find((c) => new RegExp(name).test(c.name));
+      if (!cookie) {
+        continue;
+      }
+
+      const result = matchString(cookie.value, regex);
+      if (!result.hit) {
+        continue;
+      }
+
+      evidences.push({
+        type: "cookie",
+        value: `${cookie.name}: ${cookie.value}`,
+        version: result.version,
+        confidence: rule.confidence,
+      });
+    }
+  }
+
   if (rule?.javascriptVariables) {
     for (const [name, regex] of Object.entries(rule.javascriptVariables)) {
       const jsVars = context.javascriptVariables;
