@@ -15,13 +15,20 @@ export async function openPage(
   const page = await context.newPage();
 
   const responses: Response[] = [];
-  page.on("response", (response) => {
+  page.on("response", async (response) => {
     logger.debug(`Received response: ${response.url()} - ${response.status()}`);
-    responses.push({
+    const res: Response = {
       url: response.url(),
       status: response.status(),
       headers: response.headers(),
-    });
+    };
+
+    const body = await response.text().catch(() => null);
+    if (body) {
+      res.body = body;
+    }
+
+    responses.push(res);
   });
 
   let timeoutOccurred = false;
