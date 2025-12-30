@@ -40,7 +40,7 @@ export async function openPage(
   ]);
 
   if (result === "loaded") {
-    logger.info(`Page loaded successfully: ${url}`);
+    logger.info("Page loaded successfully");
   } else if (result === "timeout") {
     timeoutOccurred = true;
     logger.warn(`Timeout of ${timeoutMs}ms exceeded while loading ${url}`);
