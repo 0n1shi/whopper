@@ -14,6 +14,7 @@ import { slickSignature } from "./technologies/slick.js";
 import { yawsHttpServerSignature } from "./technologies/yaws.js";
 import { bootstrapSignature } from "./technologies/bootstrap.js";
 import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
+import { swiperSignature } from "./technologies/spiwer.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -28,6 +29,7 @@ export const signatures: Signature[] = [
   nginxSignature,
   nextjsSignature,
   slickSignature,
+  swiperSignature,
   yawsHttpServerSignature,
   wordpressSignature,
 ];
