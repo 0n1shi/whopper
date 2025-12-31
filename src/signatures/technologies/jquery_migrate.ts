@@ -8,7 +8,7 @@ export const jqueryMigrateSignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "jquery[.-]?migrate[.-/](\\d+\\.\\d+\\.\\d+)?",
+      "jquery[.-]?migrate[./-]?(\\d+\\.\\d+\\.\\d+)?",
       "jquery[.-]?migrate.*?ver=(\\d+\\.\\d+\\.\\d+)?",
     ],
     javascriptVariables: {

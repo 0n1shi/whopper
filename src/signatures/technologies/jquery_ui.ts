@@ -9,12 +9,12 @@ export const jqueryUiSignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "jquery-ui[/-.]?(\\d+\\.\\d+\\.\\d+)?",
+      "jquery-ui[./-]?(\\d+\\.\\d+\\.\\d+)?",
       "(\\d+\\.\\d+\\.\\d+)?/jquery-ui",
       "jquery-ui.*\\.js",
     ],
     javascriptVariables: {
-      "jQuery.ui.version": "\\d+\\.\\d+\\.\\d+",
+      "jQuery.ui.version": "(\\d+\\.\\d+\\.\\d+)?",
     },
   },
   impliedSoftwares: [jquerySignature.name],

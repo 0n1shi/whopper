@@ -17,6 +17,7 @@ import { jqueryUiSignature } from "./technologies/jquery_ui.js";
 import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
 import { swiperSignature } from "./technologies/spiwer.js";
 import { microsoftAspSignature } from "./technologies/microsoft_asp.js";
+import { microsoftIisSignature } from "./technologies/microsoft_iis.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -29,6 +30,7 @@ export const signatures: Signature[] = [
   jqueryMigrateSignature,
   phpSignature,
   microsoftAspSignature,
+  microsoftIisSignature,
   mysqlSignature,
   nginxSignature,
   nextjsSignature,
