@@ -13,6 +13,7 @@ import { jqueryCookieSignature } from "./technologies/jquery_cookie.js";
 import { slickSignature } from "./technologies/slick.js";
 import { yawsHttpServerSignature } from "./technologies/yaws.js";
 import { bootstrapSignature } from "./technologies/bootstrap.js";
+import { jqueryUiSignature } from "./technologies/jquery_ui.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -21,6 +22,7 @@ export const signatures: Signature[] = [
   corejsSignature,
   jquerySignature,
   jqueryCookieSignature,
+  jqueryUiSignature,
   phpSignature,
   mysqlSignature,
   nginxSignature,
