@@ -14,6 +14,9 @@ import { slickSignature } from "./technologies/slick.js";
 import { yawsHttpServerSignature } from "./technologies/yaws.js";
 import { bootstrapSignature } from "./technologies/bootstrap.js";
 import { jqueryUiSignature } from "./technologies/jquery_ui.js";
+import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
+import { swiperSignature } from "./technologies/spiwer.js";
+import { microsoftAspSignature } from "./technologies/microsoft_asp.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
@@ -23,11 +26,14 @@ export const signatures: Signature[] = [
   jquerySignature,
   jqueryCookieSignature,
   jqueryUiSignature,
+  jqueryMigrateSignature,
   phpSignature,
+  microsoftAspSignature,
   mysqlSignature,
   nginxSignature,
   nextjsSignature,
   slickSignature,
+  swiperSignature,
   yawsHttpServerSignature,
   wordpressSignature,
 ];
