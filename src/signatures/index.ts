@@ -18,24 +18,26 @@ import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
 import { swiperSignature } from "./technologies/spiwer.js";
 import { microsoftAspSignature } from "./technologies/microsoft_asp.js";
 import { microsoftIisSignature } from "./technologies/microsoft_iis.js";
+import { gsapSignature } from "./technologies/gsap.js";
 
 export const signatures: Signature[] = [
   apacheHttpServerSignature,
   awsElbSignature,
   bootstrapSignature,
   corejsSignature,
+  gsapSignature,
   jquerySignature,
   jqueryCookieSignature,
-  jqueryUiSignature,
   jqueryMigrateSignature,
-  phpSignature,
+  jqueryUiSignature,
   microsoftAspSignature,
   microsoftIisSignature,
   mysqlSignature,
   nginxSignature,
   nextjsSignature,
+  phpSignature,
   slickSignature,
   swiperSignature,
-  yawsHttpServerSignature,
   wordpressSignature,
+  yawsHttpServerSignature,
 ];
