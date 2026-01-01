@@ -2,7 +2,7 @@
 
 A CLI tool that detects web technologies used by websites, similar to Wappalyzer or BuiltWith.
 
-## Installation
+## 📦 Installation
 
 You can install Whopper using npm:
 
@@ -10,7 +10,7 @@ You can install Whopper using npm:
 npm install -g whopper
 ```
 
-## Usage
+## 🚀 Usage
 
 To analyze a website, run the following command:
 
@@ -42,7 +42,7 @@ Commands:
 
 This command will analyze the specified URL and output the detected technologies.
 
-## Features
+## ✨ Features
 
 - Detects a wide range of web technologies including CMS, frameworks, libraries, and more.
 - Provides detailed information about each detected technology.
@@ -50,7 +50,7 @@ This command will analyze the specified URL and output the detected technologies
 - Regularly updated technology database.
 - Open-source and community-driven.
 
-## Development
+## 🛠️ Development
 
 To contribute to Whopper, clone the repository and install the dependencies:
 
