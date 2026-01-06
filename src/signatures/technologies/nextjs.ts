@@ -1,4 +1,5 @@
 import type { Signature } from "../_types.js";
+import { reactSignature } from "./react.js";
 
 export const nextjsSignature: Signature = {
   name: "Next.js",
@@ -8,11 +9,12 @@ export const nextjsSignature: Signature = {
   rule: {
     confidence: "high",
     headers: {
-      "x-powered-by": "^Next\\.js (\\d+\\.\\d+\\.\\d+)?",
+      "x-powered-by": "^Next\\.js ?([0-9.]+)?",
     },
     javascriptVariables: {
       __NEXT_DATA__: "",
       "next.version": "(.+)$",
     },
   },
+  impliedSoftwares: [reactSignature.name],
 };
