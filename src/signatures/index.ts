@@ -50,11 +50,50 @@ import { scrollMagicSignature } from "./technologies/scroll_magic.js";
 import { flickitySignature } from "./technologies/flickity.js";
 import { dataTablesSignature } from "./technologies/data_tables.js";
 import { backboneJsSignature } from "./technologies/backbone_js.js";
+import { photoSwipeSignature } from "./technologies/photoswipe.js";
+import { monsterInsightsSignature } from "./technologies/monsterinsights.js";
+import { wooCommerceSignature } from "./technologies/woocommerce.js";
+import { astroSignature } from "./technologies/astro.js";
+import { googlePageSpeedSignature } from "./technologies/google_pagespeed.js";
+import { hammerJsSignature } from "./technologies/hammer_js.js";
+import { sweetAlert2Signature } from "./technologies/sweetalert2.js";
+import { requireJsSignature } from "./technologies/requirejs.js";
+import { pythonSignature } from "./technologies/python.js";
+import { drupalSignature } from "./technologies/drupal.js";
+import { alpineJsSignature } from "./technologies/alpine_js.js";
+import { angularSignature } from "./technologies/angular.js";
+import { prototypeSignature } from "./technologies/prototype.js";
+import { lenisSignature } from "./technologies/lenis.js";
+import { sliderRevolutionSignature } from "./technologies/slider_revolution.js";
+import { toastrSignature } from "./technologies/toastr.js";
+import { apacheTomcatSignature } from "./technologies/apache_tomcat.js";
+import { modJkSignature } from "./technologies/mod_jk.js";
+import { firebaseSignature } from "./technologies/firebase.js";
+import { quillSignature } from "./technologies/quill.js";
+import { d3Signature } from "./technologies/d3.js";
+import { animeJsSignature } from "./technologies/anime_js.js";
+import { froalaEditorSignature } from "./technologies/froala_editor.js";
+import { perlSignature } from "./technologies/perl.js";
+import { pixiJsSignature } from "./technologies/pixijs.js";
+import { concreteCmsSignature } from "./technologies/concrete_cms.js";
+import { modPerlSignature } from "./technologies/mod_perl.js";
+import { allInOneSeoPackSignature } from "./technologies/all_in_one_seo_pack.js";
+import { helloElementorSignature } from "./technologies/hello_elementor.js";
+import { addToAnySignature } from "./technologies/addtoany.js";
+import { addToAnyShareButtonsSignature } from "./technologies/addtoany_share_buttons.js";
 
 export const signatures: Signature[] = [
+  addToAnySignature,
+  addToAnyShareButtonsSignature,
+  allInOneSeoPackSignature,
+  alpineJsSignature,
+  angularSignature,
   apacheHttpServerSignature,
+  apacheTomcatSignature,
+  astroSignature,
   awsElbSignature,
   aosSignature,
+  animeJsSignature,
   animateCssSignature,
   angularJsSignature,
   autoptimizeSignature,
@@ -64,20 +103,35 @@ export const signatures: Signature[] = [
   chartJsSignature,
   clipboardJsSignature,
   contactForm7Signature,
+  concreteCmsSignature,
   corejsSignature,
   cryptoJsSignature,
   dataTablesSignature,
+  d3Signature,
+  drupalSignature,
   elementorSignature,
+  firebaseSignature,
   flickitySignature,
+  froalaEditorSignature,
   gsapSignature,
+  googlePageSpeedSignature,
+  hammerJsSignature,
+  helloElementorSignature,
   jquerySignature,
   jqueryCookieSignature,
   jqueryMigrateSignature,
   jqueryUiSignature,
   lightningSignature,
   lodashSignature,
+  lenisSignature,
   momentJsSignature,
+  modJkSignature,
+  modPerlSignature,
+  monsterInsightsSignature,
   fancyBoxSignature,
+  photoSwipeSignature,
+  perlSignature,
+  pixiJsSignature,
   microsoftHttpApiSignature,
   microsoftAspSignature,
   microsoftIisSignature,
@@ -88,13 +142,21 @@ export const signatures: Signature[] = [
   openRestySignature,
   openSslSignature,
   phpSignature,
+  prototypeSignature,
+  pythonSignature,
+  quillSignature,
+  requireJsSignature,
   scrollMagicSignature,
+  sliderRevolutionSignature,
   sentrySignature,
+  sweetAlert2Signature,
+  toastrSignature,
   threeJsSignature,
   reactSignature,
   siteKitSignature,
   slickSignature,
   swiperSignature,
+  wooCommerceSignature,
   webVitalsSignature,
   vueJsSignature,
   wordpressSignature,
