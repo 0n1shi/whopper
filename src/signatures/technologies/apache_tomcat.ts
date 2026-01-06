@@ -4,7 +4,7 @@ export const apacheTomcatSignature: Signature = {
   name: "Apache Tomcat",
   description:
     "Apache Tomcat is an open-source implementation of the Java Servlet, JavaServer Pages, Java Expression Language and WebSocket technologies.",
-  cpe: "cpe:2.3:a:apache:tomcat:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:apache:tomcat",
   rule: {
     confidence: "high",
     headers: {

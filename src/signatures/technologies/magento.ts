@@ -5,7 +5,7 @@ import { phpSignature } from "./php.js";
 export const magentoSignature: Signature = {
   name: "Magento",
   description: "Magento is an open-source ecommerce platform written in PHP.",
-  cpe: "cpe:2.3:a:magento:magento:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:magento:magento",
   rule: {
     confidence: "high",
     urls: ["js/mage", "static/_requirejs", "skin/frontend/"],

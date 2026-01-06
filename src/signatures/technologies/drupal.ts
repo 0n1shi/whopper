@@ -4,7 +4,7 @@ import { phpSignature } from "./php.js";
 export const drupalSignature: Signature = {
   name: "Drupal",
   description: "Drupal is a free and open-source web content management framework.",
-  cpe: "cpe:2.3:a:drupal:drupal:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:drupal:drupal",
   rule: {
     confidence: "high",
     headers: {

@@ -4,7 +4,7 @@ import { phpSignature } from "./php.js";
 export const mediaWikiSignature: Signature = {
   name: "MediaWiki",
   description: "MediaWiki is a free and open-source wiki engine.",
-  cpe: "cpe:2.3:a:mediawiki:mediawiki:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:mediawiki:mediawiki",
   rule: {
     confidence: "high",
     bodies: [

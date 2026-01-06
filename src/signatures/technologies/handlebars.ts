@@ -4,7 +4,7 @@ export const handlebarsSignature: Signature = {
   name: "Handlebars",
   description:
     "Handlebars is a JavaScript library used to create reusable webpage templates.",
-  cpe: "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:handlebars.js_project:handlebars.js",
   rule: {
     confidence: "high",
     urls: [

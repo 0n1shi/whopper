@@ -6,7 +6,7 @@ export const modWsgiSignature: Signature = {
   name: "mod_wsgi",
   description:
     "mod_wsgi is an Apache HTTP Server module that provides a WSGI compliant interface for hosting Python based web applications under Apache.",
-  cpe: "cpe:2.3:a:modwsgi:mod_wsgi:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:modwsgi:mod_wsgi",
   rule: {
     confidence: "high",
     headers: {

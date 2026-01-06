@@ -4,7 +4,7 @@ export const prototypeSignature: Signature = {
   name: "Prototype",
   description:
     "Prototype is a JavaScript Framework that aims to ease development of web applications.",
-  cpe: "cpe:2.3:a:prototypejs:prototype:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:prototypejs:prototype",
   rule: {
     confidence: "high",
     urls: ["(?:prototype|protoaculous)(?:-([\\d.]*[\\d]))?.*\\.js"],

@@ -6,7 +6,7 @@ export const directAdminSignature: Signature = {
   name: "DirectAdmin",
   description:
     "DirectAdmin is a graphical web-based web hosting control panel designed to make administration of websites easier.",
-  cpe: "cpe:2.3:a:directadmin:directadmin:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:directadmin:directadmin",
   rule: {
     confidence: "high",
     headers: {

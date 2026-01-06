@@ -4,7 +4,7 @@ import { phpSignature } from "./php.js";
 export const concreteCmsSignature: Signature = {
   name: "Concrete CMS",
   description: "Concrete CMS is an open-source content management system.",
-  cpe: "cpe:2.3:a:concrete5:concrete5:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:concrete5:concrete5",
   rule: {
     confidence: "high",
     urls: ["/concrete/js/"],
