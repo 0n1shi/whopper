@@ -131,11 +131,57 @@ import { wpFormsSignature } from "./technologies/wpforms.js";
 import { mathJaxSignature } from "./technologies/mathjax.js";
 import { dojoSignature } from "./technologies/dojo.js";
 import { wpGoogleMapPluginSignature } from "./technologies/wp_google_map_plugin.js";
+import { profilePressSignature } from "./technologies/profilepress.js";
+import { exactMetricsSignature } from "./technologies/exactmetrics.js";
+import { generatePressSignature } from "./technologies/generatepress.js";
+import { modWsgiSignature } from "./technologies/mod_wsgi.js";
+import { mediaWikiSignature } from "./technologies/mediawiki.js";
+import { knockoutJsSignature } from "./technologies/knockout_js.js";
+import { highchartsSignature } from "./technologies/highcharts.js";
+import { wpmuDevSmushSignature } from "./technologies/wpmudev_smush.js";
+import { mailchimpForWordPressSignature } from "./technologies/mailchimp_for_wordpress.js";
+import { siteOriginWidgetsBundleSignature } from "./technologies/siteorigin_widgets_bundle.js";
+import { neveSignature } from "./technologies/neve.js";
+import { googleTagManagerForWordPressSignature } from "./technologies/google_tag_manager_for_wordpress.js";
+import { eleventySignature } from "./technologies/eleventy.js";
+import { phusionPassengerSignature } from "./technologies/phusion_passenger.js";
+import { kadenceWpKadenceSignature } from "./technologies/kadence_wp_kadence.js";
+import { jettySignature } from "./technologies/jetty.js";
+import { bulmaSignature } from "./technologies/bulma.js";
+import { a3LazyLoadSignature } from "./technologies/a3_lazy_load.js";
+import { yuiSignature } from "./technologies/yui.js";
+import { extendifySignature } from "./technologies/extendify.js";
+import { asciidoctorSignature } from "./technologies/asciidoctor.js";
+import { translateWordPressSignature } from "./technologies/translate_wordpress.js";
+import { breadcrumbNavXtSignature } from "./technologies/breadcrumb_navxt.js";
+import { lighttpdSignature } from "./technologies/lighttpd.js";
+import { barbaJsSignature } from "./technologies/barba_js.js";
+import { scriptaculousSignature } from "./technologies/script_aculo_us.js";
+import { marionetteJsSignature } from "./technologies/marionette_js.js";
+import { plotlySignature } from "./technologies/plotly.js";
+import { hubSpotWordPressPluginSignature } from "./technologies/hubspot_wordpress_plugin.js";
+import { gravityFormsSignature } from "./technologies/gravity_forms.js";
+import { recentPostsWidgetWithThumbnailsSignature } from "./technologies/recent_posts_widget_with_thumbnails.js";
+import { ghostSignature } from "./technologies/ghost.js";
+import { qwikSignature } from "./technologies/qwik.js";
+import { fourthwallSignature } from "./technologies/fourthwall.js";
+import { fullPageJsSignature } from "./technologies/fullpage_js.js";
+import { fooGallerySignature } from "./technologies/foogallery.js";
+import { hugoSignature } from "./technologies/hugo.js";
+import { aceSignature } from "./technologies/ace.js";
+import { modDavSignature } from "./technologies/mod_dav.js";
+import { adobeClientDataLayerSignature } from "./technologies/adobe_client_data_layer.js";
+import { mailchimpForWooCommerceSignature } from "./technologies/mailchimp_for_woocommerce.js";
+import { recaptchaV2ForContactForm7Signature } from "./technologies/recaptcha_v2_for_contact_form_7.js";
+import { miniServSignature } from "./technologies/miniserv.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
   addToAnyShareButtonsSignature,
   allInOneSeoPackSignature,
+  a3LazyLoadSignature,
+  aceSignature,
+  adobeClientDataLayerSignature,
   alpineJsSignature,
   angularSignature,
   apolloSignature,
@@ -144,6 +190,8 @@ export const signatures: Signature[] = [
   astroSignature,
   astraSignature,
   awsElbSignature,
+  barbaJsSignature,
+  breadcrumbNavXtSignature,
   browserUpdateOrgSignature,
   aosSignature,
   animeJsSignature,
@@ -152,6 +200,7 @@ export const signatures: Signature[] = [
   autoptimizeSignature,
   axiosSignature,
   backboneJsSignature,
+  bulmaSignature,
   bootstrapSignature,
   canvasJsSignature,
   chartJsSignature,
@@ -172,22 +221,36 @@ export const signatures: Signature[] = [
   dropzoneSignature,
   drupalSignature,
   elementorSignature,
+  eleventySignature,
+  extendifySignature,
+  exactMetricsSignature,
   extJsSignature,
   firebaseSignature,
   fingerprintJsSignature,
   flickitySignature,
   flaskSignature,
   flowbiteSignature,
+  fooGallerySignature,
+  fourthwallSignature,
   froalaEditorSignature,
+  fullPageJsSignature,
+  generatePressSignature,
   gatsbySignature,
   gsapSignature,
+  ghostSignature,
   googlePageSpeedSignature,
+  googleTagManagerForWordPressSignature,
   gutenbergSignature,
   hammerJsSignature,
   handlebarsSignature,
+  highchartsSignature,
   helloElementorSignature,
+  hubSpotWordPressPluginSignature,
+  gravityFormsSignature,
+  hugoSignature,
   intersectionObserverSignature,
   ivorySearchSignature,
+  jettySignature,
   jqueryMobileSignature,
   jqueryModalSignature,
   jquerySignature,
@@ -195,22 +258,36 @@ export const signatures: Signature[] = [
   jqueryMigrateSignature,
   jqueryUiSignature,
   kendoUiSignature,
+  kadenceWpKadenceSignature,
   katexSignature,
+  knockoutJsSignature,
   lineLoginSignature,
   lightningSignature,
   litElementSignature,
   litHtmlSignature,
   lodashSignature,
   lenisSignature,
+  lighttpdSignature,
   magentoSignature,
   masterSliderSignature,
+  marionetteJsSignature,
   mathJaxSignature,
+  mediaWikiSignature,
+  mailchimpForWooCommerceSignature,
+  mailchimpForWordPressSignature,
+  miniServSignature,
   modSslSignature,
+  modDavSignature,
+  modWsgiSignature,
   momentJsSignature,
   mooToolsSignature,
   modJkSignature,
   modPerlSignature,
   monsterInsightsSignature,
+  neveSignature,
+  phusionPassengerSignature,
+  plotlySignature,
+  profilePressSignature,
   polyfillSignature,
   fancyBoxSignature,
   photoSwipeSignature,
@@ -228,13 +305,18 @@ export const signatures: Signature[] = [
   phpSignature,
   prototypeSignature,
   pythonSignature,
+  qwikSignature,
   quillSignature,
   raphaelSignature,
+  recaptchaV2ForContactForm7Signature,
+  recentPostsWidgetWithThumbnailsSignature,
   requireJsSignature,
   responsiveLightboxGallerySignature,
   scrollMagicSignature,
+  scriptaculousSignature,
   sliderRevolutionSignature,
   sentrySignature,
+  siteOriginWidgetsBundleSignature,
   shortcodesUltimateSignature,
   siteOriginPageBuilderSignature,
   socketIoSignature,
@@ -247,6 +329,7 @@ export const signatures: Signature[] = [
   tinyMceSignature,
   tinySliderSignature,
   toastrSignature,
+  translateWordPressSignature,
   threeJsSignature,
   reactSignature,
   siteKitSignature,
@@ -257,9 +340,12 @@ export const signatures: Signature[] = [
   wpFormsSignature,
   wpGoogleMapPluginSignature,
   wpmlSignature,
+  wpmuDevSmushSignature,
   vueJsSignature,
   wordpressSignature,
   xregexpSignature,
+  yuiSignature,
+  asciidoctorSignature,
   yoastSeoSignature,
   yawsHttpServerSignature,
   mustacheSignature,
