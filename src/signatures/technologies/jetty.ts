@@ -6,7 +6,7 @@ export const jettySignature: Signature = {
   rule: {
     confidence: "high",
     headers: {
-      Server: "Jetty(?:\\(([\\d\\.]*\\d+))?)",
+      Server: "Jetty(?:\\((\\d+(?:\\.\\d+)*)\\))?",
     },
   },
 };
