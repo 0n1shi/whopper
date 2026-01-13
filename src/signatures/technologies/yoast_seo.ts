@@ -5,6 +5,7 @@ export const yoastSeoSignature: Signature = {
   name: "Yoast SEO",
   description:
     "Yoast SEO is a search engine optimisation plugin for WordPress and other platforms.",
+  cpe: "cpe:/a:yoast:yoast_seo",
   rule: {
     confidence: "high",
     bodies: [
