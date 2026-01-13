@@ -15,7 +15,7 @@ import { yawsHttpServerSignature } from "./technologies/yaws.js";
 import { bootstrapSignature } from "./technologies/bootstrap.js";
 import { jqueryUiSignature } from "./technologies/jquery_ui.js";
 import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
-import { swiperSignature } from "./technologies/spiwer.js";
+import { swiperSignature } from "./technologies/swiper.js";
 import { microsoftAspSignature } from "./technologies/microsoft_asp.js";
 import { microsoftIisSignature } from "./technologies/microsoft_iis.js";
 import { gsapSignature } from "./technologies/gsap.js";
