@@ -37,16 +37,26 @@ export function makeDetectCommandOutput(
     if (evidences && evidences.length > 0) {
       detectedSoftware.evidences = evidences;
     }
-    const versions = evidences
-      ?.map((evidence) => evidence.version)
-      .filter((v): v is string => v !== undefined);
+    const versions = [
+      ...new Set(
+        evidences
+          ?.map((evidence) => evidence.version)
+          .filter((v): v is string => v !== undefined),
+      ),
+    ];
     if (versions && versions.length > 0) {
       detectedSoftware.versions = versions;
     }
-    const cpes = evidences
-      ?.map((evidence) => evidence.version)
-      .filter((v): v is string => v !== undefined)
-      .map((version) => signature.cpe + ":" + version);
+    const cpes = signature.cpe
+      ? [
+          ...new Set(
+            evidences
+              ?.map((evidence) => evidence.version)
+              .filter((v): v is string => v !== undefined)
+              .map((version) => signature.cpe + ":" + version),
+          ),
+        ]
+      : undefined;
     if (cpes && cpes.length > 0) {
       detectedSoftware.cpes = cpes;
     }
