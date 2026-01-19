@@ -204,6 +204,56 @@ import { codeIgniterSignature } from "./technologies/codeigniter.js";
 import { f5BigIpSignature } from "./technologies/f5_bigip.js";
 import { isotopeSignature } from "./technologies/isotope.js";
 import { expressSignature } from "./technologies/express.js";
+import { muiSignature } from "./technologies/mui.js";
+import { ewwwImageOptimizerSignature } from "./technologies/ewww_image_optimizer.js";
+import { typescriptSignature } from "./technologies/typescript.js";
+import { wixSignature } from "./technologies/wix.js";
+import { makeShopSignature } from "./technologies/makeshop.js";
+import { cowboySignature } from "./technologies/cowboy.js";
+import { erlangSignature } from "./technologies/erlang.js";
+import { liteSpeedSignature } from "./technologies/litespeed.js";
+import { almaLinuxSignature } from "./technologies/almalinux.js";
+import { hubSpotCmsHubSignature } from "./technologies/hubspot_cms_hub.js";
+import { dayJsSignature } from "./technologies/day_js.js";
+import { markoSignature } from "./technologies/marko.js";
+import { googleSignInSignature } from "./technologies/google_sign_in.js";
+import { salesforceSignature } from "./technologies/salesforce.js";
+import { polylangSignature } from "./technologies/polylang.js";
+import { kestrelSignature } from "./technologies/kestrel.js";
+import { redHatSignature } from "./technologies/red_hat.js";
+import { smashBalloonInstagramFeedSignature } from "./technologies/smash_balloon_instagram_feed.js";
+import { preactSignature } from "./technologies/preact.js";
+import { javaServerFacesSignature } from "./technologies/javaserver_faces.js";
+import { riotSignature } from "./technologies/riot.js";
+import { metaSliderSignature } from "./technologies/metaslider.js";
+import { uiKitSignature } from "./technologies/uikit.js";
+import { zoneJsSignature } from "./technologies/zone_js.js";
+import { tablePressSignature } from "./technologies/tablepress.js";
+import { zendeskSignature } from "./technologies/zendesk.js";
+import { cakePhpSignature } from "./technologies/cakephp.js";
+import { alertifyJsSignature } from "./technologies/alertifyjs.js";
+import { adobeFlashSignature } from "./technologies/adobe_flash.js";
+import { materialDesignLiteSignature } from "./technologies/material_design_lite.js";
+import { vuetifySignature } from "./technologies/vuetify.js";
+import { rankMathSeoSignature } from "./technologies/rankmath_seo.js";
+import { wpRocketSignature } from "./technologies/wp_rocket.js";
+import { tippyJsSignature } from "./technologies/tippy_js.js";
+import { wpFastestCacheSignature } from "./technologies/wp_fastest_cache.js";
+import { joomlaSignature } from "./technologies/joomla.js";
+import { inertiaJsSignature } from "./technologies/inertia_js.js";
+import { wordPressSuperCacheSignature } from "./technologies/wordpress_super_cache.js";
+import { squirrelMailSignature } from "./technologies/squirrelmail.js";
+import { ziggySignature } from "./technologies/ziggy.js";
+import { w3TotalCacheSignature } from "./technologies/w3_total_cache.js";
+import { smartSlider3Signature } from "./technologies/smart_slider_3.js";
+import { wpBakerySignature } from "./technologies/wpbakery.js";
+import { roundCubeSignature } from "./technologies/roundcube.js";
+import { ecCubeSignature } from "./technologies/ec_cube.js";
+import { sitecoreSignature } from "./technologies/sitecore.js";
+import { twentySeventeenSignature } from "./technologies/twenty_seventeen.js";
+import { debianSignature } from "./technologies/debian.js";
+import { lozadJsSignature } from "./technologies/lozad_js.js";
+import { elementUiSignature } from "./technologies/element_ui.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -410,4 +460,54 @@ export const signatures: Signature[] = [
   f5BigIpSignature,
   isotopeSignature,
   expressSignature,
+  muiSignature,
+  ewwwImageOptimizerSignature,
+  typescriptSignature,
+  wixSignature,
+  makeShopSignature,
+  cowboySignature,
+  erlangSignature,
+  liteSpeedSignature,
+  almaLinuxSignature,
+  hubSpotCmsHubSignature,
+  dayJsSignature,
+  markoSignature,
+  googleSignInSignature,
+  salesforceSignature,
+  polylangSignature,
+  kestrelSignature,
+  redHatSignature,
+  smashBalloonInstagramFeedSignature,
+  preactSignature,
+  javaServerFacesSignature,
+  riotSignature,
+  metaSliderSignature,
+  uiKitSignature,
+  zoneJsSignature,
+  tablePressSignature,
+  zendeskSignature,
+  cakePhpSignature,
+  alertifyJsSignature,
+  adobeFlashSignature,
+  materialDesignLiteSignature,
+  vuetifySignature,
+  rankMathSeoSignature,
+  wpRocketSignature,
+  tippyJsSignature,
+  wpFastestCacheSignature,
+  joomlaSignature,
+  inertiaJsSignature,
+  wordPressSuperCacheSignature,
+  squirrelMailSignature,
+  ziggySignature,
+  w3TotalCacheSignature,
+  smartSlider3Signature,
+  wpBakerySignature,
+  roundCubeSignature,
+  ecCubeSignature,
+  sitecoreSignature,
+  twentySeventeenSignature,
+  debianSignature,
+  lozadJsSignature,
+  elementUiSignature,
 ];
