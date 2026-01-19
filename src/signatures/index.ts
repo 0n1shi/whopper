@@ -404,6 +404,32 @@ import { loginWithAmazonSignature } from "./technologies/login_with_amazon.js";
 import { howlerSignature } from "./technologies/howler_js.js";
 import { ultimatelysocialSignature } from "./technologies/ultimatelysocial.js";
 import { intercomSignature } from "./technologies/intercom.js";
+import { wpRoyalAsheSignature } from "./technologies/wp_royal_ashe.js";
+import { webfactoryMaintenanceSignature } from "./technologies/webfactory_maintenance.js";
+import { colibriWpSignature } from "./technologies/colibri_wp.js";
+import { soundmanagerSignature } from "./technologies/soundmanager.js";
+import { bubbleSignature } from "./technologies/bubble.js";
+import { perfmattersSignature } from "./technologies/perfmatters.js";
+import { crocoblockJetelementsSignature } from "./technologies/crocoblock_jetelements.js";
+import { pixelyoursiteSignature } from "./technologies/pixelyoursite.js";
+import { xpressengineSignature } from "./technologies/xpressengine.js";
+import { helixUltimateSignature } from "./technologies/helix_ultimate.js";
+import { cmsMadeSimpleSignature } from "./technologies/cms_made_simple.js";
+import { formidableFormSignature } from "./technologies/formidable_form.js";
+import { phpdebugbarSignature } from "./technologies/php_debug_bar.js";
+import { boostCommerceSignature } from "./technologies/boost_commerce.js";
+import { goSignature } from "./technologies/go.js";
+import { macaronSignature } from "./technologies/macaron.js";
+import { mdbootstrapSignature } from "./technologies/mdbootstrap.js";
+import { ramdaSignature } from "./technologies/ramda.js";
+import { godaddyCoblocksSignature } from "./technologies/godaddy_coblocks.js";
+import { ampSignature } from "./technologies/amp.js";
+import { patternByEtsySignature } from "./technologies/pattern_by_etsy.js";
+import { boomerangSignature } from "./technologies/boomerang.js";
+import { moodleSignature } from "./technologies/moodle.js";
+import { ebisumartSignature } from "./technologies/ebisumart.js";
+import { onepressSocialLockerSignature } from "./technologies/onepress_social_locker.js";
+import { wpStatisticsSignature } from "./technologies/wp_statistics.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -810,4 +836,30 @@ export const signatures: Signature[] = [
   howlerSignature,
   ultimatelysocialSignature,
   intercomSignature,
+  wpRoyalAsheSignature,
+  webfactoryMaintenanceSignature,
+  colibriWpSignature,
+  soundmanagerSignature,
+  bubbleSignature,
+  perfmattersSignature,
+  crocoblockJetelementsSignature,
+  pixelyoursiteSignature,
+  xpressengineSignature,
+  helixUltimateSignature,
+  cmsMadeSimpleSignature,
+  formidableFormSignature,
+  phpdebugbarSignature,
+  boostCommerceSignature,
+  goSignature,
+  macaronSignature,
+  mdbootstrapSignature,
+  ramdaSignature,
+  godaddyCoblocksSignature,
+  ampSignature,
+  patternByEtsySignature,
+  boomerangSignature,
+  moodleSignature,
+  ebisumartSignature,
+  onepressSocialLockerSignature,
+  wpStatisticsSignature,
 ];
