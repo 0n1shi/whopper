@@ -7,8 +7,7 @@ export const htmxSignature: Signature = {
     confidence: "high",
     bodies: [
       "data-src[^>]+\\/dist\\/htmx.min.js",
-      "min",
-      "js",
+      "hx-(?:get|post|put|delete|patch|boost|trigger|swap|target|include|vals|confirm)=",
     ],
     urls: [
       "/htmx\\.org@([\\d\\.]+)",
