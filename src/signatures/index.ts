@@ -354,6 +354,56 @@ import { gliderSignature } from "./technologies/glider_js.js";
 import { coreuiSignature } from "./technologies/coreui.js";
 import { redisSignature } from "./technologies/redis.js";
 import { themegraphyGraphySignature } from "./technologies/themegraphy_graphy.js";
+import { essentialAddonsForElementorSignature } from "./technologies/essential_addons_for_elementor.js";
+import { listSignature } from "./technologies/list_js.js";
+import { channelIoSignature } from "./technologies/channel_io.js";
+import { instantPageSignature } from "./technologies/instant_page.js";
+import { kineticjsSignature } from "./technologies/kineticjs.js";
+import { phppgadminSignature } from "./technologies/phppgadmin.js";
+import { apexchartsSignature } from "./technologies/apexcharts_js.js";
+import { microcmsSignature } from "./technologies/microcms.js";
+import { pagekitSignature } from "./technologies/pagekit.js";
+import { microsoftWordSignature } from "./technologies/microsoft_word.js";
+import { echartsSignature } from "./technologies/echarts.js";
+import { fusionchartsSignature } from "./technologies/fusioncharts.js";
+import { googleWebToolkitSignature } from "./technologies/google_web_toolkit.js";
+import { extendthemesMesmerizeSignature } from "./technologies/extendthemes_mesmerize.js";
+import { xenforoSignature } from "./technologies/xenforo.js";
+import { twentyTwentySignature } from "./technologies/twenty_twenty.js";
+import { choicesSignature } from "./technologies/choices.js";
+import { adobeColdfusionSignature } from "./technologies/adobe_coldfusion.js";
+import { cfmlSignature } from "./technologies/cfml.js";
+import { sapCustomerDataCloudSignInSignature } from "./technologies/sap_customer_data_cloud_sign_in.js";
+import { twentyFifteenSignature } from "./technologies/twenty_fifteen.js";
+import { glideSignature } from "./technologies/glide_js.js";
+import { lazysizesUnveilhooksPluginSignature } from "./technologies/lazy_sizes_unveilhooks_plugin.js";
+import { algoliaSignature } from "./technologies/algolia.js";
+import { flyingPagesSignature } from "./technologies/flying_pages.js";
+import { mermaidSignature } from "./technologies/mermaid.js";
+import { zimbraSignature } from "./technologies/zimbra.js";
+import { draftpressHfcmSignature } from "./technologies/draftpress_hfcm.js";
+import { csCartSignature } from "./technologies/cs_cart.js";
+import { libphonenumberSignature } from "./technologies/libphonenumber.js";
+import { chakraUiSignature } from "./technologies/chakra_ui.js";
+import { googleWebServerSignature } from "./technologies/google_web_server.js";
+import { opengseSignature } from "./technologies/opengse.js";
+import { springSignature } from "./technologies/spring.js";
+import { misskeySignature } from "./technologies/misskey.js";
+import { themebeezCreamMagazineSignature } from "./technologies/themebeez_cream_magazine.js";
+import { htmxSignature } from "./technologies/htmx.js";
+import { bricksSignature } from "./technologies/bricks.js";
+import { seedprodComingSoonSignature } from "./technologies/seedprod_coming_soon.js";
+import { mobxSignature } from "./technologies/mobx.js";
+import { cafe24Signature } from "./technologies/cafe24.js";
+import { twentyNineteenSignature } from "./technologies/twenty_nineteen.js";
+import { cyberchimpsResponsiveSignature } from "./technologies/cyberchimps_responsive.js";
+import { genesisThemeSignature } from "./technologies/genesis_theme.js";
+import { tdesignSignature } from "./technologies/tdesign.js";
+import { xchartsSignature } from "./technologies/xcharts.js";
+import { loginWithAmazonSignature } from "./technologies/login_with_amazon.js";
+import { howlerSignature } from "./technologies/howler_js.js";
+import { ultimatelysocialSignature } from "./technologies/ultimatelysocial.js";
+import { intercomSignature } from "./technologies/intercom.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -710,4 +760,54 @@ export const signatures: Signature[] = [
   coreuiSignature,
   redisSignature,
   themegraphyGraphySignature,
+  essentialAddonsForElementorSignature,
+  listSignature,
+  channelIoSignature,
+  instantPageSignature,
+  kineticjsSignature,
+  phppgadminSignature,
+  apexchartsSignature,
+  microcmsSignature,
+  pagekitSignature,
+  microsoftWordSignature,
+  echartsSignature,
+  fusionchartsSignature,
+  googleWebToolkitSignature,
+  extendthemesMesmerizeSignature,
+  xenforoSignature,
+  twentyTwentySignature,
+  choicesSignature,
+  adobeColdfusionSignature,
+  cfmlSignature,
+  sapCustomerDataCloudSignInSignature,
+  twentyFifteenSignature,
+  glideSignature,
+  lazysizesUnveilhooksPluginSignature,
+  algoliaSignature,
+  flyingPagesSignature,
+  mermaidSignature,
+  zimbraSignature,
+  draftpressHfcmSignature,
+  csCartSignature,
+  libphonenumberSignature,
+  chakraUiSignature,
+  googleWebServerSignature,
+  opengseSignature,
+  springSignature,
+  misskeySignature,
+  themebeezCreamMagazineSignature,
+  htmxSignature,
+  bricksSignature,
+  seedprodComingSoonSignature,
+  mobxSignature,
+  cafe24Signature,
+  twentyNineteenSignature,
+  cyberchimpsResponsiveSignature,
+  genesisThemeSignature,
+  tdesignSignature,
+  xchartsSignature,
+  loginWithAmazonSignature,
+  howlerSignature,
+  ultimatelysocialSignature,
+  intercomSignature,
 ];
