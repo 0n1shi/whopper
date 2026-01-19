@@ -174,6 +174,36 @@ import { adobeClientDataLayerSignature } from "./technologies/adobe_client_data_
 import { mailchimpForWooCommerceSignature } from "./technologies/mailchimp_for_woocommerce.js";
 import { recaptchaV2ForContactForm7Signature } from "./technologies/recaptcha_v2_for_contact_form_7.js";
 import { miniServSignature } from "./technologies/miniserv.js";
+import { windowsServerSignature } from "./technologies/windows_server.js";
+import { facebookLoginSignature } from "./technologies/facebook_login.js";
+import { nodeJsSignature } from "./technologies/node_js.js";
+import { dreamWeaverSignature } from "./technologies/dreamweaver.js";
+import { cartFunctionalitySignature } from "./technologies/cart_functionality.js";
+import { lazySizesSignature } from "./technologies/lazy_sizes.js";
+import { javaSignature } from "./technologies/java.js";
+import { ubuntuSignature } from "./technologies/ubuntu.js";
+import { laravelSignature } from "./technologies/laravel.js";
+import { wpPageNaviSignature } from "./technologies/wp_page_navi.js";
+import { emotionSignature } from "./technologies/emotion.js";
+import { lightboxSignature } from "./technologies/lightbox.js";
+import { envoySignature } from "./technologies/envoy.js";
+import { nuxtJsSignature } from "./technologies/nuxt_js.js";
+import { rubySignature } from "./technologies/ruby.js";
+import { rubyOnRailsSignature } from "./technologies/ruby_on_rails.js";
+import { owlCarouselSignature } from "./technologies/owl_carousel.js";
+import { particlesJsSignature } from "./technologies/particles_js.js";
+import { pleskSignature } from "./technologies/plesk.js";
+import { splideSignature } from "./technologies/splide.js";
+import { select2Signature } from "./technologies/select2.js";
+import { unixSignature } from "./technologies/unix.js";
+import { underscoreJsSignature } from "./technologies/underscore_js.js";
+import { shopifySignature } from "./technologies/shopify.js";
+import { aBlogCmsSignature } from "./technologies/a_blog_cms.js";
+import { centOsSignature } from "./technologies/centos.js";
+import { codeIgniterSignature } from "./technologies/codeigniter.js";
+import { f5BigIpSignature } from "./technologies/f5_bigip.js";
+import { isotopeSignature } from "./technologies/isotope.js";
+import { expressSignature } from "./technologies/express.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -350,4 +380,34 @@ export const signatures: Signature[] = [
   yawsHttpServerSignature,
   mustacheSignature,
   zurbFoundationSignature,
+  windowsServerSignature,
+  facebookLoginSignature,
+  nodeJsSignature,
+  dreamWeaverSignature,
+  cartFunctionalitySignature,
+  lazySizesSignature,
+  javaSignature,
+  ubuntuSignature,
+  laravelSignature,
+  wpPageNaviSignature,
+  emotionSignature,
+  lightboxSignature,
+  envoySignature,
+  nuxtJsSignature,
+  rubySignature,
+  rubyOnRailsSignature,
+  owlCarouselSignature,
+  particlesJsSignature,
+  pleskSignature,
+  splideSignature,
+  select2Signature,
+  unixSignature,
+  underscoreJsSignature,
+  shopifySignature,
+  aBlogCmsSignature,
+  centOsSignature,
+  codeIgniterSignature,
+  f5BigIpSignature,
+  isotopeSignature,
+  expressSignature,
 ];
