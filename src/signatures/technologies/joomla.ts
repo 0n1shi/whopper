@@ -4,7 +4,7 @@ import { phpSignature } from "./php.js";
 export const joomlaSignature: Signature = {
   name: "Joomla",
   description: "Joomla is a free and open-source content management system for publishing web content.",
-  cpe: "cpe:2.3:a:joomla:joomla:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:joomla:joomla",
   rule: {
     confidence: "high",
     headers: {

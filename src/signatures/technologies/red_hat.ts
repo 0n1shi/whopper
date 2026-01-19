@@ -3,7 +3,7 @@ import type { Signature } from "../_types.js";
 export const redHatSignature: Signature = {
   name: "Red Hat",
   description: "Red Hat is an open-source Linux operating system.",
-  cpe: "cpe:2.3:o:redhat:linux:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/o:redhat:linux",
   rule: {
     confidence: "high",
     headers: {

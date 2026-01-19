@@ -4,7 +4,7 @@ import { microsoftAspSignature } from "./microsoft_asp.js";
 export const sitecoreSignature: Signature = {
   name: "Sitecore",
   description: "Sitecore provides web content management, and multichannel marketing automation software.",
-  cpe: "cpe:2.3:a:sitecore:*:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:sitecore:sitecore",
   rule: {
     confidence: "high",
     cookies: {
