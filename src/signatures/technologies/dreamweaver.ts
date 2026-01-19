@@ -4,7 +4,7 @@ export const dreamWeaverSignature: Signature = {
   name: "DreamWeaver",
   description:
     "Dreamweaver is a development tool for creating, publishing, and managing websites and mobile content.",
-  cpe: "cpe:2.3:a:adobe:dreamweaver:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:adobe:dreamweaver",
   rule: {
     confidence: "high",
     bodies: [

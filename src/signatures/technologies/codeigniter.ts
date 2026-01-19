@@ -4,7 +4,7 @@ import { phpSignature } from "./php.js";
 export const codeIgniterSignature: Signature = {
   name: "CodeIgniter",
   description: "CodeIgniter is an open-source PHP web framework.",
-  cpe: "cpe:2.3:a:codeigniter:codeigniter:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:codeigniter:codeigniter",
   rule: {
     confidence: "high",
     cookies: {

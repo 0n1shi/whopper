@@ -5,7 +5,7 @@ export const rubyOnRailsSignature: Signature = {
   name: "Ruby on Rails",
   description:
     "Ruby on Rails is a server-side web application framework written in Ruby under the MIT License.",
-  cpe: "cpe:2.3:a:rubyonrails:rails:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:rubyonrails:rails",
   rule: {
     confidence: "high",
     headers: {

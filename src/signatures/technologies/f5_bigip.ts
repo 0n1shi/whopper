@@ -4,7 +4,7 @@ export const f5BigIpSignature: Signature = {
   name: "F5 BigIP",
   description:
     "F5's BIG-IP is a family of products covering software and hardware designed around application availability, access control, and security solutions.",
-  cpe: "cpe:2.3:a:f5:big-ip:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:f5:big-ip",
   rule: {
     confidence: "high",
     headers: {

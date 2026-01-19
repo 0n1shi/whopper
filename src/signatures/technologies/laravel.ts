@@ -4,7 +4,7 @@ import { phpSignature } from "./php.js";
 export const laravelSignature: Signature = {
   name: "Laravel",
   description: "Laravel is a free, open-source PHP web framework.",
-  cpe: "cpe:2.3:a:laravel:laravel:*:*:*:*:*:*:*:*",
+  cpe: "cpe:/a:laravel:laravel",
   rule: {
     confidence: "high",
     cookies: {
