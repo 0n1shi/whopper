@@ -304,6 +304,56 @@ import { popupMakerSignature } from "./technologies/popup_maker.js";
 import { synologyDiskstationSignature } from "./technologies/synology_diskstation.js";
 import { uvicornSignature } from "./technologies/uvicorn.js";
 import { typo3CmsSignature } from "./technologies/typo3_cms.js";
+import { metismenuSignature } from "./technologies/metismenu.js";
+import { yiiSignature } from "./technologies/yii.js";
+import { woocommerceStripePaymentGatewaySignature } from "./technologies/woocommerce_stripe_payment_gateway.js";
+import { famethemesOnepressSignature } from "./technologies/famethemes_onepress.js";
+import { hatenaBlogSignature } from "./technologies/hatena_blog.js";
+import { jplayerSignature } from "./technologies/jplayer.js";
+import { muuriSignature } from "./technologies/muuri.js";
+import { graphqlSignature } from "./technologies/graphql.js";
+import { typepadSignature } from "./technologies/typepad.js";
+import { bootstrapTableSignature } from "./technologies/bootstrap_table.js";
+import { svelteSignature } from "./technologies/svelte.js";
+import { jquerySparklinesSignature } from "./technologies/jquery_sparklines.js";
+import { adobeExperienceManagerSignature } from "./technologies/adobe_experience_manager.js";
+import { auraSignature } from "./technologies/aura.js";
+import { salesforceDeskSignature } from "./technologies/salesforce_desk.js";
+import { pulseSecureSignature } from "./technologies/pulse_secure.js";
+import { mooveGdprConsentSignature } from "./technologies/moove_gdpr_consent.js";
+import { opencartSignature } from "./technologies/opencart.js";
+import { outlookWebAppSignature } from "./technologies/outlook_web_app.js";
+import { svgSupportSignature } from "./technologies/svg_support.js";
+import { pureCssSignature } from "./technologies/pure_css.js";
+import { winkSignature } from "./technologies/wink.js";
+import { superpwaSignature } from "./technologies/superpwa.js";
+import { jetpackSignature } from "./technologies/jetpack.js";
+import { jssSignature } from "./technologies/jss.js";
+import { linkedinSignInSignature } from "./technologies/linkedin_sign_in.js";
+import { microsoftVisualStudioSignature } from "./technologies/microsoft_visual_studio.js";
+import { siteoriginVantageSignature } from "./technologies/siteorigin_vantage.js";
+import { highlightSignature } from "./technologies/highlight_js.js";
+import { playSignature } from "./technologies/play.js";
+import { scalaSignature } from "./technologies/scala.js";
+import { twentySixteenSignature } from "./technologies/twenty_sixteen.js";
+import { embedplusSignature } from "./technologies/embedplus.js";
+import { meteorSignature } from "./technologies/meteor.js";
+import { mongodbSignature } from "./technologies/mongodb.js";
+import { caddySignature } from "./technologies/caddy.js";
+import { sonarqubesSignature } from "./technologies/sonarqubes.js";
+import { elementskitSignature } from "./technologies/elementskit.js";
+import { twitterTypeaheadSignature } from "./technologies/twitter_typeahead_js.js";
+import { remixSignature } from "./technologies/remix.js";
+import { apacheTrafficServerSignature } from "./technologies/apache_traffic_server.js";
+import { salesforceServiceCloudSignature } from "./technologies/salesforce_service_cloud.js";
+import { tengineSignature } from "./technologies/tengine.js";
+import { hclDominoSignature } from "./technologies/hcl_domino.js";
+import { amazonWebstoreSignature } from "./technologies/amazon_webstore.js";
+import { craftCmsSignature } from "./technologies/craft_cms.js";
+import { gliderSignature } from "./technologies/glider_js.js";
+import { coreuiSignature } from "./technologies/coreui.js";
+import { redisSignature } from "./technologies/redis.js";
+import { themegraphyGraphySignature } from "./technologies/themegraphy_graphy.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -610,4 +660,54 @@ export const signatures: Signature[] = [
   synologyDiskstationSignature,
   uvicornSignature,
   typo3CmsSignature,
+  metismenuSignature,
+  yiiSignature,
+  woocommerceStripePaymentGatewaySignature,
+  famethemesOnepressSignature,
+  hatenaBlogSignature,
+  jplayerSignature,
+  muuriSignature,
+  graphqlSignature,
+  typepadSignature,
+  bootstrapTableSignature,
+  svelteSignature,
+  jquerySparklinesSignature,
+  adobeExperienceManagerSignature,
+  auraSignature,
+  salesforceDeskSignature,
+  pulseSecureSignature,
+  mooveGdprConsentSignature,
+  opencartSignature,
+  outlookWebAppSignature,
+  svgSupportSignature,
+  pureCssSignature,
+  winkSignature,
+  superpwaSignature,
+  jetpackSignature,
+  jssSignature,
+  linkedinSignInSignature,
+  microsoftVisualStudioSignature,
+  siteoriginVantageSignature,
+  highlightSignature,
+  playSignature,
+  scalaSignature,
+  twentySixteenSignature,
+  embedplusSignature,
+  meteorSignature,
+  mongodbSignature,
+  caddySignature,
+  sonarqubesSignature,
+  elementskitSignature,
+  twitterTypeaheadSignature,
+  remixSignature,
+  apacheTrafficServerSignature,
+  salesforceServiceCloudSignature,
+  tengineSignature,
+  hclDominoSignature,
+  amazonWebstoreSignature,
+  craftCmsSignature,
+  gliderSignature,
+  coreuiSignature,
+  redisSignature,
+  themegraphyGraphySignature,
 ];
