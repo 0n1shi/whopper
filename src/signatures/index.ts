@@ -254,6 +254,56 @@ import { twentySeventeenSignature } from "./technologies/twenty_seventeen.js";
 import { debianSignature } from "./technologies/debian.js";
 import { lozadJsSignature } from "./technologies/lozad_js.js";
 import { elementUiSignature } from "./technologies/element_ui.js";
+import { antDesignSignature } from "./technologies/ant_design.js";
+import { wpOptimizeSignature } from "./technologies/wp_optimize.js";
+import { sweetalertSignature } from "./technologies/sweetalert.js";
+import { gitlabSignature } from "./technologies/gitlab.js";
+import { scrollrevealSignature } from "./technologies/scrollreveal.js";
+import { colormeshopSignature } from "./technologies/colormeshop.js";
+import { civicthemeSignature } from "./technologies/civic_theme.js";
+import { stimulusSignature } from "./technologies/stimulus.js";
+import { decimalSignature } from "./technologies/decimal_js.js";
+import { freebsdSignature } from "./technologies/freebsd.js";
+import { exhibitSignature } from "./technologies/exhibit.js";
+import { twentyFourteenSignature } from "./technologies/twenty_fourteen.js";
+import { storesJpSignature } from "./technologies/stores_jp.js";
+import { cpanelSignature } from "./technologies/cpanel.js";
+import { ecforceSignature } from "./technologies/ecforce.js";
+import { liteYoutubeEmbedSignature } from "./technologies/lite_youtube_embed.js";
+import { theEventsCalendarSignature } from "./technologies/the_events_calendar.js";
+import { loadableComponentsSignature } from "./technologies/loadable_components.js";
+import { machothemesNewsmagSignature } from "./technologies/machothemes_newsmag.js";
+import { ckeditorSignature } from "./technologies/ckeditor.js";
+import { redmineSignature } from "./technologies/redmine.js";
+import { tailwindCssSignature } from "./technologies/tailwind_css.js";
+import { markedSignature } from "./technologies/marked.js";
+import { amazonEc2Signature } from "./technologies/amazon_ec2.js";
+import { elementorHeaderFooterBuilderSignature } from "./technologies/elementor_header_footer_builder.js";
+import { jsobservableSignature } from "./technologies/jsobservable.js";
+import { jsrenderSignature } from "./technologies/jsrender.js";
+import { jsviewsSignature } from "./technologies/jsviews.js";
+import { prettyphotoSignature } from "./technologies/prettyphoto.js";
+import { djangoSignature } from "./technologies/django.js";
+import { wixEcommerceSignature } from "./technologies/wix_ecommerce.js";
+import { swaggerUiSignature } from "./technologies/swagger_ui.js";
+import { blazorSignature } from "./technologies/blazor.js";
+import { jqueryPjaxSignature } from "./technologies/jquery_pjax.js";
+import { gtranslateSignature } from "./technologies/gtranslate.js";
+import { selectizeSignature } from "./technologies/selectize.js";
+import { twentyTwelveSignature } from "./technologies/twenty_twelve.js";
+import { livewireSignature } from "./technologies/livewire.js";
+import { futureShopSignature } from "./technologies/future_shop.js";
+import { rxjsSignature } from "./technologies/rxjs.js";
+import { phpmyadminSignature } from "./technologies/phpmyadmin.js";
+import { hoganSignature } from "./technologies/hogan_js.js";
+import { zeptoSignature } from "./technologies/zepto.js";
+import { jimdoSignature } from "./technologies/jimdo.js";
+import { akismetSignature } from "./technologies/akismet.js";
+import { yamahaRtSignature } from "./technologies/yamaha_rt.js";
+import { popupMakerSignature } from "./technologies/popup_maker.js";
+import { synologyDiskstationSignature } from "./technologies/synology_diskstation.js";
+import { uvicornSignature } from "./technologies/uvicorn.js";
+import { typo3CmsSignature } from "./technologies/typo3_cms.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -510,4 +560,54 @@ export const signatures: Signature[] = [
   debianSignature,
   lozadJsSignature,
   elementUiSignature,
+  antDesignSignature,
+  wpOptimizeSignature,
+  sweetalertSignature,
+  gitlabSignature,
+  scrollrevealSignature,
+  colormeshopSignature,
+  civicthemeSignature,
+  stimulusSignature,
+  decimalSignature,
+  freebsdSignature,
+  exhibitSignature,
+  twentyFourteenSignature,
+  storesJpSignature,
+  cpanelSignature,
+  ecforceSignature,
+  liteYoutubeEmbedSignature,
+  theEventsCalendarSignature,
+  loadableComponentsSignature,
+  machothemesNewsmagSignature,
+  ckeditorSignature,
+  redmineSignature,
+  tailwindCssSignature,
+  markedSignature,
+  amazonEc2Signature,
+  elementorHeaderFooterBuilderSignature,
+  jsobservableSignature,
+  jsrenderSignature,
+  jsviewsSignature,
+  prettyphotoSignature,
+  djangoSignature,
+  wixEcommerceSignature,
+  swaggerUiSignature,
+  blazorSignature,
+  jqueryPjaxSignature,
+  gtranslateSignature,
+  selectizeSignature,
+  twentyTwelveSignature,
+  livewireSignature,
+  futureShopSignature,
+  rxjsSignature,
+  phpmyadminSignature,
+  hoganSignature,
+  zeptoSignature,
+  jimdoSignature,
+  akismetSignature,
+  yamahaRtSignature,
+  popupMakerSignature,
+  synologyDiskstationSignature,
+  uvicornSignature,
+  typo3CmsSignature,
 ];
