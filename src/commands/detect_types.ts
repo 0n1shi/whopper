@@ -3,7 +3,7 @@ import type { Confidence } from "../signatures/_types.js";
 
 export type DetectedSoftware = {
   name: string;
-  description: string;
+  description?: string;
   versions?: string[];
   cpes?: string[];
   confidence: Confidence;

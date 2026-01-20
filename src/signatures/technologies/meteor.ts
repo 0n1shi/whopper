@@ -1,5 +1,5 @@
 import type { Signature } from "../_types.js";
-import { mongoDbSignature } from "./mongodb.js";
+import { mongodbSignature } from "./mongodb.js";
 import { nodeJsSignature } from "./node_js.js";
 
 export const meteorSignature: Signature = {
@@ -14,5 +14,5 @@ export const meteorSignature: Signature = {
       "Meteor.release": "^METEOR@([\\d.]+)",
     },
   },
-  impliedSoftwares: [mongoDbSignature.name, nodeJsSignature.name],
+  impliedSoftwares: [mongodbSignature.name, nodeJsSignature.name],
 };
