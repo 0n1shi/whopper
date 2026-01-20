@@ -430,6 +430,8 @@ import { moodleSignature } from "./technologies/moodle.js";
 import { ebisumartSignature } from "./technologies/ebisumart.js";
 import { onepressSocialLockerSignature } from "./technologies/onepress_social_locker.js";
 import { wpStatisticsSignature } from "./technologies/wp_statistics.js";
+import { pwaSignature } from "./technologies/pwa.js";
+import { stripeSignature } from "./technologies/stripe.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -862,4 +864,6 @@ export const signatures: Signature[] = [
   ebisumartSignature,
   onepressSocialLockerSignature,
   wpStatisticsSignature,
+  pwaSignature,
+  stripeSignature,
 ];

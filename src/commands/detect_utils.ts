@@ -28,11 +28,13 @@ export function makeDetectCommandOutput(
     )!;
     const detectedSoftware: DetectedSoftware = {
       name: detection.name,
-      description: signature.description,
       confidence: maxConfidence(
         detection.evidences?.map((e) => e.confidence) || [],
       ),
     };
+    if (signature.description) {
+      detectedSoftware.description = signature.description;
+    }
     const evidences = detection.evidences;
     if (evidences && evidences.length > 0) {
       detectedSoftware.evidences = evidences;
@@ -79,10 +81,12 @@ export function makeDetectCommandOutput(
 
       const impliedSoftware: DetectedSoftware = {
         name: impliedSignature.name,
-        description: impliedSignature.description,
         confidence: detectedSoftware.confidence,
         impliedBy: detectedSoftware.name,
       };
+      if (impliedSignature.description) {
+        impliedSoftware.description = impliedSignature.description;
+      }
       return [impliedSoftware];
     });
   });

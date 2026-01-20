@@ -1,5 +1,5 @@
 import type { Signature } from "../_types.js";
-import { jsViewsSignature } from "./jsviews.js";
+import { jsviewsSignature } from "./jsviews.js";
 
 export const jsrenderSignature: Signature = {
   name: "JsRender",
@@ -10,5 +10,5 @@ export const jsrenderSignature: Signature = {
       "([\\d\\.]+)?/jsrender(?:\\.min)?\\.js",
     ],
   },
-  impliedSoftwares: [jsViewsSignature.name],
+  impliedSoftwares: [jsviewsSignature.name],
 };

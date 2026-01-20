@@ -13,7 +13,7 @@ export type Rule = {
 
 export type Signature = {
   name: string;
-  description: string;
+  description?: string;
   cpe?: string;
   rule?: Rule;
   impliedSoftwares?: string[];
