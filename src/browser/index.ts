@@ -48,59 +48,68 @@ export async function openPage(
     logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
   }
 
-  const cookies = (await page.context().cookies()).map((cookie) => ({
-    name: cookie.name,
-    value: cookie.value,
-    domain: cookie.domain,
-    path: cookie.path,
-    expires: cookie.expires,
-    httpOnly: cookie.httpOnly,
-    secure: cookie.secure,
-    sameSite: cookie.sameSite,
-  }));
+  let cookies: Context["cookies"] = [];
+  let javascriptVariables: Record<string, unknown> = {};
 
-  const javascriptVariables = await page.evaluate((jsVarNames: string[]) => {
-    const vars: Record<string, any> = {};
-    const resolvePath = (root: any, path: string): unknown => {
-      const parts = path.split(".");
-      let current = root;
+  try {
+    cookies = (await page.context().cookies()).map((cookie) => ({
+      name: cookie.name,
+      value: cookie.value,
+      domain: cookie.domain,
+      path: cookie.path,
+      expires: cookie.expires,
+      httpOnly: cookie.httpOnly,
+      secure: cookie.secure,
+      sameSite: cookie.sameSite,
+    }));
 
-      for (const part of parts) {
-        if (current == null) return undefined;
-        current = current[part];
-      }
-      return current;
-    };
+    javascriptVariables = await page.evaluate((jsVarNames: string[]) => {
+      const vars: Record<string, any> = {};
+      const resolvePath = (root: any, path: string): unknown => {
+        const parts = path.split(".");
+        let current = root;
 
-    for (const name of jsVarNames) {
-      try {
-        vars[name] = undefined; // Default to undefined
-
-        const val = resolvePath(window, name);
-        if (!val) continue;
-
-        if (
-          typeof val === "string" ||
-          typeof val === "number" ||
-          typeof val === "boolean"
-        ) {
-          vars[name] = val;
+        for (const part of parts) {
+          if (current == null) return undefined;
+          current = current[part];
         }
+        return current;
+      };
 
-        if (typeof val === "object") {
-          try {
-            JSON.stringify(val);
+      for (const name of jsVarNames) {
+        try {
+          vars[name] = undefined; // Default to undefined
+
+          const val = resolvePath(window, name);
+          if (!val) continue;
+
+          if (
+            typeof val === "string" ||
+            typeof val === "number" ||
+            typeof val === "boolean"
+          ) {
             vars[name] = val;
-          } catch {
-            // Skip non-serializable objects
           }
+
+          if (typeof val === "object") {
+            try {
+              JSON.stringify(val);
+              vars[name] = val;
+            } catch {
+              // Skip non-serializable objects
+            }
+          }
+        } catch {
+          // Some properties may throw errors when accessed
         }
-      } catch {
-        // Some properties may throw errors when accessed
       }
-    }
-    return vars;
-  }, javascriptVariableNames);
+      return vars;
+    }, javascriptVariableNames);
+  } catch (e) {
+    logger.warn(
+      "Failed to extract cookies or JavaScript variables (page context may have been destroyed)",
+    );
+  }
 
   return {
     browser,
