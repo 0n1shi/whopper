@@ -33,18 +33,13 @@ export const applySignature = (
   // Match headers
   if (rule?.headers) {
     for (const [header, regex] of Object.entries(rule.headers)) {
-      const response = context.responses.find(
-        (res) => res.headers[header.toLowerCase()],
-      );
+      const headerKey = header.toLowerCase();
+      const response = context.responses.find((res) => res.headers[headerKey]);
       if (!response) {
         continue;
       }
 
-      const headerValue = response.headers[header.toLowerCase()];
-      if (!headerValue) {
-        continue;
-      }
-
+      const headerValue = response.headers[headerKey]!;
       const result = matchString(headerValue, regex);
       if (!result.hit) {
         continue;
