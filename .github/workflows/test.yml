@@ -1,0 +1,95 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm test -- --reporter=verbose 2>&1 | tee test-output.txt
+
+      - name: Create coverage summary
+        if: always()
+        id: coverage
+        run: |
+          # Extract coverage table from output
+          coverage=$(grep -A 10 "% Coverage report" test-output.txt | tail -n +2 || echo "Coverage report not found")
+
+          # Get test summary
+          tests_passed=$(grep -E "Tests.*passed" test-output.txt || echo "")
+
+          # Create markdown summary
+          {
+            echo "## Test Results"
+            echo ""
+            if grep -q "✓" test-output.txt; then
+              echo "✅ All tests passed"
+            else
+              echo "❌ Some tests failed"
+            fi
+            echo ""
+            echo "### Summary"
+            echo "\`\`\`"
+            echo "$tests_passed"
+            echo "\`\`\`"
+            echo ""
+            echo "### Coverage"
+            echo "\`\`\`"
+            echo "$coverage"
+            echo "\`\`\`"
+          } > coverage-summary.md
+
+          cat coverage-summary.md
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('coverage-summary.md', 'utf8');
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('## Test Results')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: summary
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: summary
+              });
+            }
