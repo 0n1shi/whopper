@@ -25,31 +25,41 @@ jobs:
         run: npm ci
 
       - name: Run tests with coverage
-        run: npm test -- --reporter=verbose 2>&1 | tee test-output.txt
+        run: npm test -- --reporter=verbose 2>&1 | tee test-output-raw.txt
 
       - name: Create coverage summary
         if: always()
         id: coverage
         run: |
-          # Extract coverage table from output
-          coverage=$(grep -A 10 "% Coverage report" test-output.txt | tail -n +2 || echo "Coverage report not found")
+          # Strip ANSI color codes
+          sed 's/\x1b\[[0-9;]*m//g' test-output-raw.txt > test-output.txt
+
+          # Extract coverage table
+          coverage=$(sed -n '/^-.*-$/,/^-.*-$/p' test-output.txt | head -20 || echo "Coverage report not found")
 
           # Get test summary
-          tests_passed=$(grep -E "Tests.*passed" test-output.txt || echo "")
+          test_files=$(grep "Test Files" test-output.txt | sed 's/^[[:space:]]*//' || echo "")
+          tests=$(grep "Tests" test-output.txt | grep -v "Test Files" | sed 's/^[[:space:]]*//' || echo "")
+          duration=$(grep "Duration" test-output.txt | sed 's/^[[:space:]]*//' || echo "")
+
+          # Check if tests passed
+          if grep -q "passed" test-output.txt && ! grep -q "failed" test-output.txt; then
+            status="✅ All tests passed"
+          else
+            status="❌ Some tests failed"
+          fi
 
           # Create markdown summary
           {
             echo "## Test Results"
             echo ""
-            if grep -q "✓" test-output.txt; then
-              echo "✅ All tests passed"
-            else
-              echo "❌ Some tests failed"
-            fi
+            echo "$status"
             echo ""
             echo "### Summary"
             echo "\`\`\`"
-            echo "$tests_passed"
+            echo "$test_files"
+            echo "$tests"
+            echo "$duration"
             echo "\`\`\`"
             echo ""
             echo "### Coverage"
