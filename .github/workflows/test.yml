@@ -1,0 +1,109 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm test -- --reporter=verbose 2>&1 | tee test-output-raw.txt
+
+      - name: Create coverage summary
+        if: always()
+        id: coverage
+        run: |
+          # Strip ANSI color codes
+          sed 's/\x1b\[[0-9;]*m//g' test-output-raw.txt > test-output.txt
+
+          # Extract coverage table (from "Coverage report" to the end)
+          coverage=$(grep -A 20 "Coverage report" test-output.txt | tail -n +2 || echo "Coverage report not found")
+
+          # Get test summary
+          test_files=$(grep "Test Files" test-output.txt | sed 's/^[[:space:]]*//' || echo "")
+          tests=$(grep "Tests" test-output.txt | grep -v "Test Files" | sed 's/^[[:space:]]*//' || echo "")
+          duration=$(grep "Duration" test-output.txt | sed 's/^[[:space:]]*//' || echo "")
+
+          # Check if tests passed
+          if grep -q "passed" test-output.txt && ! grep -q "failed" test-output.txt; then
+            status="✅ All tests passed"
+          else
+            status="❌ Some tests failed"
+          fi
+
+          # Create markdown summary
+          {
+            echo "## Test Results"
+            echo ""
+            echo "$status"
+            echo ""
+            echo "### Summary"
+            echo "\`\`\`"
+            echo "$test_files"
+            echo "$tests"
+            echo "$duration"
+            echo "\`\`\`"
+            echo ""
+            echo "### Coverage"
+            echo "\`\`\`"
+            echo "$coverage"
+            echo "\`\`\`"
+          } > coverage-summary.md
+
+          cat coverage-summary.md
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('coverage-summary.md', 'utf8');
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('## Test Results')
+            );
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: summary
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: summary
+              });
+            }
