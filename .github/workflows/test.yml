@@ -34,8 +34,8 @@ jobs:
           # Strip ANSI color codes
           sed 's/\x1b\[[0-9;]*m//g' test-output-raw.txt > test-output.txt
 
-          # Extract coverage table
-          coverage=$(sed -n '/^-.*-$/,/^-.*-$/p' test-output.txt | head -20 || echo "Coverage report not found")
+          # Extract coverage table (from "Coverage report" to the end)
+          coverage=$(grep -A 20 "Coverage report" test-output.txt | tail -n +2 || echo "Coverage report not found")
 
           # Get test summary
           test_files=$(grep "Test Files" test-output.txt | sed 's/^[[:space:]]*//' || echo "")
