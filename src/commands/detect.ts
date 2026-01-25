@@ -43,25 +43,47 @@ export const detectCommand = (): Command => {
           "Timeout set to " +
           chalk.yellow(`${options.timeout.toLocaleString("en-US")}ms`),
         );
-        const context = await openPage(
-          url,
-          options.timeout,
-          getJavascriptVariableNames(signatures),
-        );
-        const detections = analyze(context, signatures);
-        if (detections.length === 0) {
-          logger.info("No technologies detected.");
-        } else {
-          const output = makeDetectCommandOutput(detections, signatures);
-          if (options.json) {
-            printDetectCommandOutputAsJSON(output);
+
+        let context: Awaited<ReturnType<typeof openPage>> | null = null;
+        try {
+          context = await openPage(
+            url,
+            options.timeout,
+            getJavascriptVariableNames(signatures),
+          );
+          const detections = analyze(context, signatures);
+          if (detections.length === 0) {
+            logger.info("No technologies detected.");
           } else {
-            printDetectCommandOutputAsText(output, options.evidence);
+            const output = makeDetectCommandOutput(detections, signatures);
+            if (options.json) {
+              printDetectCommandOutputAsJSON(output);
+            } else {
+              printDetectCommandOutputAsText(output, options.evidence);
+            }
+          }
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : String(error);
+          if (
+            message.includes("Executable doesn't exist") ||
+            message.includes("playwright install")
+          ) {
+            logger.error(
+              "Playwright browsers are not installed. Please run: " +
+              chalk.yellow("npx playwright install"),
+            );
+          } else {
+            logger.error(`Detection failed: ${message.split("\n")[0]}`);
+          }
+          process.exitCode = 1;
+          return;
+        } finally {
+          if (context) {
+            await context.page.close();
+            await context.browser.close();
           }
         }
-
-        await context.page.close();
-        await context.browser.close();
       },
     );
 };
