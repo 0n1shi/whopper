@@ -91,8 +91,63 @@ export function makeDetectCommandOutput(
     });
   });
 
+  const mergedByName = new Map<string, DetectedSoftware>();
+  const allSoftwares = [...detectedSoftwares, ...impliedSoftwares];
+
+  for (const software of allSoftwares) {
+    const existing = mergedByName.get(software.name);
+    if (!existing) {
+      mergedByName.set(software.name, software);
+      continue;
+    }
+
+    const impliedBy = [
+      ...(existing.impliedBy ? existing.impliedBy.split(", ") : []),
+      ...(software.impliedBy ? software.impliedBy.split(", ") : []),
+    ];
+    const uniqueImpliedBy = [...new Set(impliedBy)].filter((v) => v.length > 0);
+
+    const merged: DetectedSoftware = {
+      name: software.name,
+      confidence: maxConfidence([existing.confidence, software.confidence]),
+    };
+
+    const description = existing.description ?? software.description;
+    if (description) {
+      merged.description = description;
+    }
+
+    const versions = [
+      ...new Set([...(existing.versions || []), ...(software.versions || [])]),
+    ];
+    if (versions.length > 0) {
+      merged.versions = versions;
+    }
+
+    const cpes = [
+      ...new Set([...(existing.cpes || []), ...(software.cpes || [])]),
+    ];
+    if (cpes.length > 0) {
+      merged.cpes = cpes;
+    }
+
+    const evidences = [
+      ...(existing.evidences || []),
+      ...(software.evidences || []),
+    ];
+    if (evidences.length > 0) {
+      merged.evidences = evidences;
+    }
+
+    if (uniqueImpliedBy.length > 0) {
+      merged.impliedBy = uniqueImpliedBy.join(", ");
+    }
+
+    mergedByName.set(software.name, merged);
+  }
+
   return {
-    detectedSoftwares: [...detectedSoftwares, ...impliedSoftwares],
+    detectedSoftwares: [...mergedByName.values()],
   };
 }
 
