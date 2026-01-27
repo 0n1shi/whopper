@@ -86,7 +86,7 @@
 - [x] `src/commands/detect_utils.test.ts` - 完了 (23テスト)
 - [x] `src/logger/index.test.ts` - 完了 (12テスト)
 - [x] `src/logger/utils.test.ts` - 完了 (2テスト)
-- [ ] `src/commands/detect.test.ts` - 保留（Playwrightモック化が複雑）
+- [x] `src/commands/detect.test.ts` - 完了 (20テスト)
 - [x] `src/signatures/utils.test.ts` - 完了 (6テスト)
 - [x] `src/cli.test.ts` - 完了 (4テスト)
 - [x] `src/commands/banner.test.ts` - 完了 (4テスト)
@@ -96,8 +96,8 @@
 - [ ] E2Eテスト
 
 ### 現在のテスト状況
-- **合計テスト数**: 112個 (32個 → 89個 → 112個)
-- **カバレッジ**: 80%
+- **合計テスト数**: 132個 (32個 → 89個 → 112個 → 132個)
+- **カバレッジ**: 88.76%
 
 ## メモ
 
