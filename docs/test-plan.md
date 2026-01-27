@@ -82,22 +82,22 @@
 
 ## 進捗管理
 
-- [ ] `src/browser/index.test.ts` - Playwrightモック化が複雑なため保留
+- [x] `src/browser/index.test.ts` - 完了 (11テスト) Playwrightモック化
 - [x] `src/commands/detect_utils.test.ts` - 完了 (23テスト)
 - [x] `src/logger/index.test.ts` - 完了 (12テスト)
 - [x] `src/logger/utils.test.ts` - 完了 (2テスト)
-- [ ] `src/commands/detect.test.ts` - Playwrightモック化が複雑なため保留
+- [ ] `src/commands/detect.test.ts` - 保留（Playwrightモック化が複雑）
 - [x] `src/signatures/utils.test.ts` - 完了 (6テスト)
 - [x] `src/cli.test.ts` - 完了 (4テスト)
 - [x] `src/commands/banner.test.ts` - 完了 (4テスト)
 - [x] `src/commands/version.test.ts` - 完了 (3テスト)
 - [x] `src/browser/utils.test.ts` - 完了 (3テスト)
-- [ ] 署名バリデーションテスト
+- [x] `src/signatures/signatures.test.ts` - 完了 (12テスト) 署名バリデーション
 - [ ] E2Eテスト
 
 ### 現在のテスト状況
-- **合計テスト数**: 89個 (32個 → 89個)
-- **カバレッジ**: 98%以上
+- **合計テスト数**: 112個 (32個 → 89個 → 112個)
+- **カバレッジ**: 80%
 
 ## メモ
 
