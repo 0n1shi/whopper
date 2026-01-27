@@ -1,6 +1,6 @@
 # Whopper
 
-[![npm version](https://img.shields.io/npm/v/whopper)](https://www.npmjs.com/package/whopper)
+[![npm version](https://img.shields.io/npm/v/whopper?color=blue)](https://www.npmjs.com/package/whopper)
 [![codecov](https://codecov.io/gh/0n1shi/whopper/graph/badge.svg)](https://codecov.io/gh/0n1shi/whopper)
 
 A CLI tool that detects web technologies used by websites, similar to Wappalyzer or BuiltWith.
