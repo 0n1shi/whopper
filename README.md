@@ -1,5 +1,7 @@
 # Whopper
 
+[![codecov](https://codecov.io/gh/0n1shi/whopper/graph/badge.svg)](https://codecov.io/gh/0n1shi/whopper)
+
 A CLI tool that detects web technologies used by websites, similar to Wappalyzer or BuiltWith.
 
 ## 📦 Installation
