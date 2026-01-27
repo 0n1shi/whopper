@@ -1,6 +1,6 @@
 {
   "name": "whopper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Whopper is a CLI tool that discovers and detects web technologies used on websites.",
   "scripts": {
     "build": "tsc -p tsconfig.json",

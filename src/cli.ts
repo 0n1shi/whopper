@@ -6,7 +6,7 @@ import { banner } from "./commands/banner.js";
 const NAME = "whopper";
 const DESCRIPTION =
   "A CLI tool that discovers and detects web technologies used on websites.";
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.1";
 
 function buildCLI(): Command {
   const program = new Command()
