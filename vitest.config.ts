@@ -6,7 +6,12 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
-      exclude: ["**/*.test.ts", "**/node_modules/**", "dist/**"],
+      exclude: [
+        "**/*.test.ts",
+        "**/node_modules/**",
+        "dist/**",
+        "src/signatures/technologies/**",
+      ],
     },
   },
 });
