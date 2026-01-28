@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import { createRequire } from "module";
 import { detectCommand } from "./commands/detect.js";
-import { versionCommand } from "./commands/version.js";
 import { banner } from "./commands/banner.js";
 
 const require = createRequire(import.meta.url);
@@ -16,13 +15,12 @@ function buildCLI(): Command {
   const program = new Command()
     .name(NAME)
     .description(DESCRIPTION)
-    .version(VERSION)
+    .version(VERSION, "-v, --version")
     .showHelpAfterError()
     .showSuggestionAfterError();
 
   // Register commands here
   program.addCommand(detectCommand());
-  program.addCommand(versionCommand());
 
   return program;
 }

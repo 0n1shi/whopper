@@ -28,14 +28,6 @@ describe("CLI E2E Tests", () => {
       const { stdout } = await execAsync(`node ${CLI_PATH} --help`);
       expect(stdout).toContain("Usage:");
       expect(stdout).toContain("detect");
-      expect(stdout).toContain("version");
-    });
-  });
-
-  describe("version command", () => {
-    it("should output version number", async () => {
-      const { stdout } = await execAsync(`node ${CLI_PATH} version`);
-      expect(stdout.trim()).toMatch(/^\d+\.\d+\.\d+$/);
     });
   });
 
