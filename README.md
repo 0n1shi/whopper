@@ -34,12 +34,11 @@ Usage: whopper [options] [command]
 A CLI tool that discovers and detects web technologies used on websites.
 
 Options:
-  -V, --version           output the version number
+  -v, --version           output the version number
   -h, --help              display help for command
 
 Commands:
   detect [options] <url>  Detects technologies used on the specified website URL.
-  version                 Displays the current version of the CLI tool.
   help [command]          display help for command
 ```
 
@@ -62,4 +61,14 @@ git clone https://github.com/0n1shi/whopper
 cd $_
 npm install
 npm link
+```
+
+### Releasing a New Version
+
+To release a new version:
+
+```bash
+npm version patch  # or minor, major
+git push --follow-tags
+npm publish
 ```
