@@ -58,8 +58,8 @@ This command will analyze the specified URL and output the detected technologies
 To contribute to Whopper, clone the repository and install the dependencies:
 
 ```bash
-$ git clone https://github.com/0n1shi/whopper
-$ cd whopper
-$ npm install
-$ npm link
+git clone https://github.com/0n1shi/whopper
+cd $_
+npm install
+npm link
 ```
