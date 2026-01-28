@@ -38,10 +38,14 @@ vi.mock("../logger/index.js", () => ({
   },
 }));
 
-// Mock sleep to be instant in tests
-vi.mock("./utils.js", () => ({
-  sleep: vi.fn(() => Promise.resolve()),
-}));
+// Mock sleep to be instant in tests, but keep extractJsVariables
+vi.mock("./utils.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./utils.js")>();
+  return {
+    ...actual,
+    sleep: vi.fn(() => Promise.resolve()),
+  };
+});
 
 import { chromium } from "playwright";
 import { logger } from "../logger/index.js";
@@ -257,6 +261,80 @@ describe("openPage", () => {
         "response",
         expect.any(Function),
       );
+    });
+
+    it("should capture responses with body", async () => {
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        // Simulate a response being received during page load
+        await capturedCallback({
+          url: () => "https://example.com/api/data",
+          status: () => 200,
+          headers: () => ({ "content-type": "application/json" }),
+          text: () => Promise.resolve('{"data": "test"}'),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toEqual({
+        url: "https://example.com/api/data",
+        status: 200,
+        headers: { "content-type": "application/json" },
+        body: '{"data": "test"}',
+      });
+      expect(logger.debug).toHaveBeenCalledWith(
+        "Received response: https://example.com/api/data - 200",
+      );
+    });
+
+    it("should capture responses without body when text() fails", async () => {
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        await capturedCallback({
+          url: () => "https://example.com/binary",
+          status: () => 200,
+          headers: () => ({ "content-type": "application/octet-stream" }),
+          text: () => Promise.reject(new Error("Cannot read binary")),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toEqual({
+        url: "https://example.com/binary",
+        status: 200,
+        headers: { "content-type": "application/octet-stream" },
+      });
+      expect(result.responses[0]?.body).toBeUndefined();
     });
   });
 });

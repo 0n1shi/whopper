@@ -1,6 +1,6 @@
 import { chromium } from "playwright";
 import type { Context, Response } from "./types.js";
-import { sleep } from "./utils.js";
+import { sleep, extractJsVariables } from "./utils.js";
 import { logger } from "../logger/index.js";
 
 export async function openPage(
@@ -63,48 +63,17 @@ export async function openPage(
       sameSite: cookie.sameSite,
     }));
 
-    javascriptVariables = await page.evaluate((jsVarNames: string[]) => {
-      const vars: Record<string, any> = {};
-      const resolvePath = (root: any, path: string): unknown => {
-        const parts = path.split(".");
-        let current = root;
-
-        for (const part of parts) {
-          if (current == null) return undefined;
-          current = current[part];
-        }
-        return current;
-      };
-
-      for (const name of jsVarNames) {
-        try {
-          vars[name] = undefined; // Default to undefined
-
-          const val = resolvePath(window, name);
-          if (!val) continue;
-
-          if (
-            typeof val === "string" ||
-            typeof val === "number" ||
-            typeof val === "boolean"
-          ) {
-            vars[name] = val;
-          }
-
-          if (typeof val === "object") {
-            try {
-              JSON.stringify(val);
-              vars[name] = val;
-            } catch {
-              // Skip non-serializable objects
-            }
-          }
-        } catch {
-          // Some properties may throw errors when accessed
-        }
-      }
-      return vars;
-    }, javascriptVariableNames);
+    javascriptVariables = await page.evaluate(
+      ({ varNames, extractFn }) => {
+        // Re-create the function in browser context
+        const fn = new Function("return " + extractFn)();
+        return fn(window, varNames);
+      },
+      {
+        varNames: javascriptVariableNames,
+        extractFn: extractJsVariables.toString(),
+      },
+    );
   } catch (e) {
     logger.warn(
       "Failed to extract cookies or JavaScript variables (page context may have been destroyed)",
