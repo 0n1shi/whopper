@@ -43,7 +43,7 @@ jobs:
         run: npm test
 
       - name: Bump version
-        run: npm version ${{ inputs.version }} -m "chore: release v%s"
+        run: 'npm version ${{ inputs.version }} -m "chore: release v%s"'
 
       - name: Push changes
         run: git push --follow-tags
