@@ -15,7 +15,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.actor == '0n1shi'
 
     permissions:
       contents: write
