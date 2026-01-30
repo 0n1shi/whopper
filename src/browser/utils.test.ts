@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { sleep, resolvePath, extractJsVariables } from "./utils.js";
+import { sleep, extractJsVariables } from "./utils.js";
 
 describe("sleep", () => {
   beforeEach(() => {
@@ -38,41 +38,6 @@ describe("sleep", () => {
   });
 });
 
-describe("resolvePath", () => {
-  it("should resolve simple property path", () => {
-    const obj = { foo: "bar" };
-    expect(resolvePath(obj, "foo")).toBe("bar");
-  });
-
-  it("should resolve nested property path", () => {
-    const obj = { a: { b: { c: "deep" } } };
-    expect(resolvePath(obj, "a.b.c")).toBe("deep");
-  });
-
-  it("should return undefined for non-existent path", () => {
-    const obj = { foo: "bar" };
-    expect(resolvePath(obj, "baz")).toBeUndefined();
-  });
-
-  it("should return undefined when intermediate is null", () => {
-    const obj = { a: null };
-    expect(resolvePath(obj, "a.b.c")).toBeUndefined();
-  });
-
-  it("should return undefined when intermediate is undefined", () => {
-    const obj = { a: undefined };
-    expect(resolvePath(obj, "a.b")).toBeUndefined();
-  });
-
-  it("should return undefined for null root", () => {
-    expect(resolvePath(null, "foo")).toBeUndefined();
-  });
-
-  it("should return undefined for undefined root", () => {
-    expect(resolvePath(undefined, "foo")).toBeUndefined();
-  });
-});
-
 describe("extractJsVariables", () => {
   it("should extract string variables", () => {
     const windowObj = { jQuery: { fn: { jquery: "3.6.0" } } };
@@ -98,12 +63,18 @@ describe("extractJsVariables", () => {
     expect(result["config"]).toEqual({ debug: true, name: "test" });
   });
 
-  it("should skip non-serializable objects (circular references)", () => {
+  it("should mark non-serializable objects (circular references) as [Object]", () => {
     const circular: Record<string, unknown> = { name: "circular" };
     circular.self = circular;
     const windowObj = { circular };
     const result = extractJsVariables(windowObj, ["circular"]);
-    expect(result["circular"]).toBeUndefined();
+    expect(result["circular"]).toBe("[Object]");
+  });
+
+  it("should mark functions as [Function]", () => {
+    const windowObj = { jQuery: () => {} };
+    const result = extractJsVariables(windowObj, ["jQuery"]);
+    expect(result["jQuery"]).toBe("[Function]");
   });
 
   it("should set undefined for non-existent variables", () => {
@@ -130,12 +101,12 @@ describe("extractJsVariables", () => {
     expect(result["dangerous"]).toBeUndefined();
   });
 
-  it("should skip falsy values (null, 0, empty string) appropriately", () => {
+  it("should handle falsy values appropriately", () => {
     const windowObj = { nullVal: null, zero: 0, empty: "" };
     const result = extractJsVariables(windowObj, ["nullVal", "zero", "empty"]);
-    // All falsy values get skipped after resolvePath because of `if (!val) continue;`
+    // null is skipped, but 0 and empty string are valid values
     expect(result["nullVal"]).toBeUndefined();
-    expect(result["zero"]).toBeUndefined();
-    expect(result["empty"]).toBeUndefined();
+    expect(result["zero"]).toBe(0);
+    expect(result["empty"]).toBe("");
   });
 });

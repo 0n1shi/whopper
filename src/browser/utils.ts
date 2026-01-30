@@ -3,35 +3,35 @@ export function sleep(ms: number) {
 }
 
 /**
- * Resolves a dot-notated path on an object (e.g., "window.jQuery.fn.jquery")
- */
-export function resolvePath(root: unknown, path: string): unknown {
-  const parts = path.split(".");
-  let current: unknown = root;
-
-  for (const part of parts) {
-    if (current == null) return undefined;
-    current = (current as Record<string, unknown>)[part];
-  }
-  return current;
-}
-
-/**
  * Extracts JavaScript variables from a window-like object.
  * Used inside page.evaluate() to extract values from the browser context.
+ * NOTE: This function must be self-contained (no external dependencies)
+ * because it gets serialized and executed in the browser context.
  */
 export function extractJsVariables(
   windowObj: unknown,
   varNames: string[],
 ): Record<string, unknown> {
+  // Inline resolvePath to make this function self-contained for browser context
+  function resolvePathInline(root: unknown, path: string): unknown {
+    const parts = path.split(".");
+    let current: unknown = root;
+
+    for (const part of parts) {
+      if (current == null) return undefined;
+      current = (current as Record<string, unknown>)[part];
+    }
+    return current;
+  }
+
   const vars: Record<string, unknown> = {};
 
   for (const name of varNames) {
     try {
       vars[name] = undefined;
 
-      const val = resolvePath(windowObj, name);
-      if (!val) continue;
+      const val = resolvePathInline(windowObj, name);
+      if (val === undefined || val === null) continue;
 
       if (
         typeof val === "string" ||
@@ -39,14 +39,16 @@ export function extractJsVariables(
         typeof val === "boolean"
       ) {
         vars[name] = val;
-      }
-
-      if (typeof val === "object") {
+      } else if (typeof val === "function") {
+        // For functions like jQuery, try to get version info or mark as present
+        vars[name] = "[Function]";
+      } else if (typeof val === "object") {
         try {
           JSON.stringify(val);
           vars[name] = val;
         } catch {
-          // Skip non-serializable objects
+          // Non-serializable object, mark as present
+          vars[name] = "[Object]";
         }
       }
     } catch {

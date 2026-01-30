@@ -74,7 +74,7 @@ export async function openPage(
         extractFn: extractJsVariables.toString(),
       },
     );
-  } catch (e) {
+  } catch {
     logger.warn(
       "Failed to extract cookies or JavaScript variables (page context may have been destroyed)",
     );
