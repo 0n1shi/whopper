@@ -228,6 +228,8 @@ describe("openPage", () => {
           name: "session",
           value: "abc123",
           domain: "example.com",
+          host: "example.com",
+          isFirstParty: true,
           path: "/",
           expires: -1,
           httpOnly: true,
@@ -235,6 +237,34 @@ describe("openPage", () => {
           sameSite: "Lax",
         },
       ]);
+    });
+
+    it("should mark third-party cookies as non first-party", async () => {
+      const mockCookies = [
+        {
+          name: "tracking",
+          value: "xyz",
+          domain: ".thirdparty.example",
+          path: "/",
+          expires: -1,
+          httpOnly: false,
+          secure: true,
+          sameSite: "None" as const,
+        },
+      ];
+
+      mockPage.goto.mockResolvedValue(undefined);
+      mockBrowserContext.cookies.mockResolvedValue(mockCookies);
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.cookies[0]).toMatchObject({
+        host: "thirdparty.example",
+        isFirstParty: false,
+      });
     });
   });
 
@@ -293,6 +323,8 @@ describe("openPage", () => {
       expect(result.responses).toHaveLength(1);
       expect(result.responses[0]).toEqual({
         url: "https://example.com/api/data",
+        host: "example.com",
+        isFirstParty: true,
         status: 200,
         headers: { "content-type": "application/json" },
         body: '{"data": "test"}',
@@ -331,10 +363,44 @@ describe("openPage", () => {
       expect(result.responses).toHaveLength(1);
       expect(result.responses[0]).toEqual({
         url: "https://example.com/binary",
+        host: "example.com",
+        isFirstParty: true,
         status: 200,
         headers: { "content-type": "application/octet-stream" },
       });
       expect(result.responses[0]?.body).toBeUndefined();
+    });
+
+    it("should mark third-party responses as non first-party", async () => {
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        await capturedCallback({
+          url: () => "https://cdn.example.net/app.js",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/javascript" }),
+          text: () => Promise.resolve("console.log('ok')"),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.responses[0]).toMatchObject({
+        host: "cdn.example.net",
+        isFirstParty: false,
+      });
     });
   });
 });

@@ -6,9 +6,12 @@ export const adobeFlashSignature: Signature = {
   cpe: "cpe:/a:adobe:flash",
   rule: {
     confidence: "high",
+    urls: [
+      "\\.swf(?:\\?|$)",
+    ],
     bodies: [
-      "application/x-shockwave-flash",
-      "\\.(?:swf)",
+      "<(?:object|embed)[^>]+application\\/x\\-shockwave\\-flash",
+      "<(?:object|embed)[^>]+\\.swf(?:\\?|[\"'])",
     ],
   },
 };

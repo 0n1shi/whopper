@@ -6,6 +6,8 @@ export type Cookie = {
   name: string;
   value: string;
   domain: string;
+  host: string;
+  isFirstParty: boolean;
   path: string;
   expires: number;
   httpOnly: boolean;
@@ -15,6 +17,8 @@ export type Cookie = {
 
 export type Response = {
   url: string;
+  host: string;
+  isFirstParty: boolean;
   status: number;
   headers: Headers;
   body?: string;
@@ -24,7 +28,7 @@ export type Context = {
   browser: Browser;
   page: Page;
   responses: Response[];
-  javascriptVariables: Record<string, any>;
+  javascriptVariables: Record<string, unknown>;
   cookies: Cookie[];
   timeoutMs: number;
   timeoutOccurred: boolean;

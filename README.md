@@ -44,6 +44,9 @@ Commands:
 
 This command will analyze the specified URL and output the detected technologies.
 
+By default, detection is scoped to first-party resources (`--scope first-party`).
+Use `--scope all` if you want to include third-party resources such as CDNs and embedded services.
+
 ## ✨ Features
 
 - Detects a wide range of web technologies including CMS, frameworks, libraries, and more.

@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { sleep, extractJsVariables } from "./utils.js";
+import {
+  sleep,
+  extractJsVariables,
+  getHostFromUrl,
+  isFirstPartyHost,
+} from "./utils.js";
 
 describe("sleep", () => {
   beforeEach(() => {
@@ -108,5 +113,27 @@ describe("extractJsVariables", () => {
     expect(result["nullVal"]).toBeUndefined();
     expect(result["zero"]).toBe(0);
     expect(result["empty"]).toBe("");
+  });
+});
+
+describe("URL and host utilities", () => {
+  it("should extract host from valid URL", () => {
+    expect(getHostFromUrl("https://example.com/path?q=1")).toBe("example.com");
+  });
+
+  it("should return undefined for invalid URL", () => {
+    expect(getHostFromUrl("not-a-url")).toBeUndefined();
+  });
+
+  it("should identify same host as first-party", () => {
+    expect(isFirstPartyHost("example.com", "example.com")).toBe(true);
+  });
+
+  it("should identify same registrable domain as first-party", () => {
+    expect(isFirstPartyHost("app.example.com", "cdn.example.com")).toBe(true);
+  });
+
+  it("should identify different domain as third-party", () => {
+    expect(isFirstPartyHost("example.com", "example.net")).toBe(false);
   });
 });

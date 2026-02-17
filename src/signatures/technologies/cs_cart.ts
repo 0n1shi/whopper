@@ -7,13 +7,13 @@ export const csCartSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+.cs\\-cart.com",
-      "target[^>]+_blank",
-      "cs-cart",
-      "com",
+      "href[^>]+cs\\-cart\\.com",
+      "\\b(?:Tygh|tygh)\\.",
+      "\\bcs\\-cart\\b",
     ],
     urls: [
       "var/cache/misc/assets/js/tygh/scripts-(?:[\\d\\w]+)\\.js",
+      "\\/js\\/tygh\\/",
     ],
     javascriptVariables: {
       "fn_buy_together_apply_discount": "",

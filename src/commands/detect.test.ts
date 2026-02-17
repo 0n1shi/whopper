@@ -122,6 +122,14 @@ describe("detectCommand", () => {
       const jsonOpt = options.find((o) => o.long === "--json");
       expect(jsonOpt).toBeDefined();
     });
+
+    it("should have scope option with default first-party", () => {
+      const command = detectCommand();
+      const options = command.options;
+      const scopeOpt = options.find((o) => o.long === "--scope");
+      expect(scopeOpt).toBeDefined();
+      expect(scopeOpt?.defaultValue).toBe("first-party");
+    });
   });
 
   describe("action execution", () => {
@@ -167,6 +175,26 @@ describe("detectCommand", () => {
 
       expect(mockContext.page.close).toHaveBeenCalled();
       expect(mockContext.browser.close).toHaveBeenCalled();
+    });
+
+    it("should analyze in first-party scope by default", async () => {
+      await runCommand();
+
+      expect(analyze).toHaveBeenCalledWith(
+        mockContext,
+        expect.any(Array),
+        { scope: "first-party" },
+      );
+    });
+
+    it("should analyze in all scope when --scope all is set", async () => {
+      await runCommand(["--scope", "all"]);
+
+      expect(analyze).toHaveBeenCalledWith(
+        mockContext,
+        expect.any(Array),
+        { scope: "all" },
+      );
     });
   });
 

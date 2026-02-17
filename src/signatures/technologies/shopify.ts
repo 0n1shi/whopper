@@ -20,9 +20,8 @@ export const shopifySignature: Signature = {
       "^https?//.+\\.myshopify\\.com",
     ],
     bodies: [
-      "shopify-checkout-api-token",
-      "shopify-digital-wallet",
-      "href=[\"'][^\"']*(?:cdn\\.|\\.my)shopify\\.com",
+      "(?:href|src)=[\"'][^\"']*(?:cdn\\.|\\.my)shopify\\.com",
+      "https?:\\/\\/[^\"'\\s]*(?:cdn\\.|\\.my)shopify\\.com",
     ],
     javascriptVariables: {
       SHOPIFY_API_BASE_URL: "",

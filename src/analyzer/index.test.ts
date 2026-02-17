@@ -26,6 +26,8 @@ describe("analyze", () => {
       responses: [
         {
           url: "https://example.com",
+          host: "example.com",
+          isFirstParty: true,
           status: 200,
           headers: { server: "Apache/2.4.0" },
         },
@@ -51,6 +53,8 @@ describe("analyze", () => {
       responses: [
         {
           url: "https://example.com",
+          host: "example.com",
+          isFirstParty: true,
           status: 200,
           headers: { server: "nginx/1.20.0" },
         },
@@ -85,6 +89,8 @@ describe("analyze", () => {
       responses: [
         {
           url: "https://example.com/wp-content/style.css",
+          host: "example.com",
+          isFirstParty: true,
           status: 200,
           headers: {
             server: "nginx/1.20.0",
@@ -97,6 +103,8 @@ describe("analyze", () => {
           name: "PHPSESSID",
           value: "abc123",
           domain: "example.com",
+          host: "example.com",
+          isFirstParty: true,
           path: "/",
           expires: -1,
           httpOnly: true,
@@ -145,6 +153,8 @@ describe("analyze", () => {
       responses: [
         {
           url: "https://example.com",
+          host: "example.com",
+          isFirstParty: true,
           status: 200,
           headers: { server: "nginx" },
         },
@@ -160,6 +170,8 @@ describe("analyze", () => {
       responses: [
         {
           url: "https://example.com",
+          host: "example.com",
+          isFirstParty: true,
           status: 200,
           headers: { server: "nginx" },
         },
@@ -184,5 +196,37 @@ describe("analyze", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]?.name).toBe("Nginx");
+  });
+
+  it("should honor first-party scope filtering", () => {
+    const context = createMockContext({
+      responses: [
+        {
+          url: "https://cdn.example.com",
+          host: "cdn.example.com",
+          isFirstParty: false,
+          status: 200,
+          headers: { "x-powered-by": "PHP/8.3" },
+        },
+      ],
+    });
+
+    const signatures: Signature[] = [
+      {
+        name: "PHP",
+        rule: {
+          confidence: "high",
+          headers: { "x-powered-by": "PHP/(\\d+\\.\\d+)" },
+        },
+      },
+    ];
+
+    const allResult = analyze(context, signatures, { scope: "all" });
+    const firstPartyResult = analyze(context, signatures, {
+      scope: "first-party",
+    });
+
+    expect(allResult).toHaveLength(1);
+    expect(firstPartyResult).toEqual([]);
   });
 });

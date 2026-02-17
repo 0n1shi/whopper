@@ -1,6 +1,11 @@
 import { chromium } from "playwright";
 import type { Context, Response } from "./types.js";
-import { sleep, extractJsVariables } from "./utils.js";
+import {
+  sleep,
+  extractJsVariables,
+  getHostFromUrl,
+  isFirstPartyHost,
+} from "./utils.js";
 import { logger } from "../logger/index.js";
 
 export async function openPage(
@@ -8,6 +13,11 @@ export async function openPage(
   timeoutMs: number,
   javascriptVariableNames: string[],
 ): Promise<Context> {
+  const pageHost = getHostFromUrl(url);
+  if (!pageHost) {
+    throw new Error(`Invalid URL: ${url}`);
+  }
+
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
@@ -16,9 +26,15 @@ export async function openPage(
 
   const responses: Response[] = [];
   page.on("response", async (response) => {
-    logger.debug(`Received response: ${response.url()} - ${response.status()}`);
+    const responseUrl = response.url();
+    const responseHost = getHostFromUrl(responseUrl) ?? "";
+    logger.debug(`Received response: ${responseUrl} - ${response.status()}`);
     const res: Response = {
-      url: response.url(),
+      url: responseUrl,
+      host: responseHost,
+      isFirstParty: responseHost
+        ? isFirstPartyHost(pageHost, responseHost)
+        : false,
       status: response.status(),
       headers: response.headers(),
     };
@@ -52,16 +68,21 @@ export async function openPage(
   let javascriptVariables: Record<string, unknown> = {};
 
   try {
-    cookies = (await page.context().cookies()).map((cookie) => ({
-      name: cookie.name,
-      value: cookie.value,
-      domain: cookie.domain,
-      path: cookie.path,
-      expires: cookie.expires,
-      httpOnly: cookie.httpOnly,
-      secure: cookie.secure,
-      sameSite: cookie.sameSite,
-    }));
+    cookies = (await page.context().cookies()).map((cookie) => {
+      const cookieHost = cookie.domain.replace(/^\./, "").toLowerCase();
+      return {
+        host: cookieHost,
+        isFirstParty: isFirstPartyHost(pageHost, cookieHost),
+        name: cookie.name,
+        value: cookie.value,
+        domain: cookie.domain,
+        path: cookie.path,
+        expires: cookie.expires,
+        httpOnly: cookie.httpOnly,
+        secure: cookie.secure,
+        sameSite: cookie.sameSite,
+      };
+    });
 
     javascriptVariables = await page.evaluate(
       ({ varNames, extractFn }) => {

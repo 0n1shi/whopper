@@ -1,19 +1,29 @@
 import type { Context } from "../browser/types.js";
 import type { Signature } from "../signatures/_types.js";
-import type { Detection, Evidence } from "./types.js";
+import type { AnalyzeOptions, Detection, Evidence } from "./types.js";
 import { matchString } from "./match.js";
 
 export const applySignature = (
   context: Context,
   signature: Signature,
+  options: AnalyzeOptions = {},
 ): Detection | undefined => {
   const evidences: Evidence[] = [];
   const rule = signature.rule;
+  const scope = options.scope ?? "all";
+  const responses =
+    scope === "first-party"
+      ? context.responses.filter((response) => response.isFirstParty ?? true)
+      : context.responses;
+  const cookies =
+    scope === "first-party"
+      ? context.cookies.filter((cookie) => cookie.isFirstParty ?? true)
+      : context.cookies;
 
   // Match urls
   if (rule?.urls) {
     for (const regex of rule.urls) {
-      for (const response of context.responses) {
+      for (const response of responses) {
         const url = response.url;
         const result = matchString(url, regex);
         if (!result.hit) {
@@ -25,6 +35,8 @@ export const applySignature = (
           value: url,
           version: result.version,
           confidence: rule.confidence,
+          host: response.host,
+          sourceUrl: response.url,
         });
       }
     }
@@ -34,7 +46,7 @@ export const applySignature = (
   if (rule?.headers) {
     for (const [header, regex] of Object.entries(rule.headers)) {
       const headerKey = header.toLowerCase();
-      const response = context.responses.find((res) => res.headers[headerKey]);
+      const response = responses.find((res) => res.headers[headerKey]);
       if (!response) {
         continue;
       }
@@ -50,6 +62,8 @@ export const applySignature = (
         value: `${header}: ${headerValue}`,
         version: result.version,
         confidence: rule.confidence,
+        host: response.host,
+        sourceUrl: response.url,
       });
     }
   }
@@ -57,7 +71,7 @@ export const applySignature = (
   // Match bodies
   if (rule?.bodies) {
     for (const regex of rule.bodies) {
-      for (const response of context.responses) {
+      for (const response of responses) {
         const body = response.headers["content-type"]?.includes("text")
           ? response.body
           : "";
@@ -74,6 +88,8 @@ export const applySignature = (
           value: `${body.substring(0, 100)}...`,
           version: result.version,
           confidence: rule.confidence,
+          host: response.host,
+          sourceUrl: response.url,
         });
       }
     }
@@ -82,7 +98,8 @@ export const applySignature = (
   // Match cookies
   if (rule?.cookies) {
     for (const [name, regex] of Object.entries(rule.cookies)) {
-      const cookie = context.cookies.find((c) => new RegExp(name).test(c.name));
+      const cookieNameRegex = new RegExp(`^(?:${name})$`, "i");
+      const cookie = cookies.find((c) => cookieNameRegex.test(c.name));
       if (!cookie) {
         continue;
       }
@@ -97,6 +114,7 @@ export const applySignature = (
         value: `${cookie.name}: ${cookie.value}`,
         version: result.version,
         confidence: rule.confidence,
+        host: cookie.host,
       });
     }
   }

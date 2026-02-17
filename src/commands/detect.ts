@@ -1,6 +1,7 @@
-import { Command } from "commander";
+import { Command, InvalidArgumentError } from "commander";
 import { openPage } from "../browser/index.js";
 import { analyze } from "../analyzer/index.js";
+import type { DetectionScope } from "../analyzer/types.js";
 import { signatures } from "../signatures/index.js";
 import { logger, setLogLevel } from "../logger/index.js";
 import { LogLevel } from "../logger/types.js";
@@ -11,6 +12,14 @@ import {
   printDetectCommandOutputAsJSON,
   printDetectCommandOutputAsText,
 } from "./detect_utils.js";
+
+function parseScope(scope: string): DetectionScope {
+  if (scope === "first-party" || scope === "all") {
+    return scope;
+  }
+
+  throw new InvalidArgumentError("Scope must be either 'first-party' or 'all'.");
+}
 
 export const detectCommand = (): Command => {
   return new Command("detect")
@@ -25,6 +34,12 @@ export const detectCommand = (): Command => {
     .option("-d, --debug", "Enable debug logging", false)
     .option("-e, --evidence", "Show evidence for detections", false)
     .option("-j, --json", "Output results in JSON format", false)
+    .option(
+      "--scope <scope>",
+      "Detection scope: first-party (default) or all",
+      parseScope,
+      "first-party" as DetectionScope,
+    )
     .action(
       async (
         url: string,
@@ -33,6 +48,7 @@ export const detectCommand = (): Command => {
           debug: boolean;
           evidence: boolean;
           json: boolean;
+          scope: DetectionScope;
         },
       ) => {
         if (options.debug) {
@@ -51,7 +67,9 @@ export const detectCommand = (): Command => {
             options.timeout,
             getJavascriptVariableNames(signatures),
           );
-          const detections = analyze(context, signatures);
+          const detections = analyze(context, signatures, {
+            scope: options.scope,
+          });
           if (detections.length === 0) {
             logger.info("No technologies detected.");
           } else {

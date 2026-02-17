@@ -2,6 +2,65 @@ export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function normalizeHostname(hostname: string): string {
+  return hostname.toLowerCase().replace(/\.$/, "");
+}
+
+const commonSecondLevelTlds = new Set([
+  "co.jp",
+  "ne.jp",
+  "or.jp",
+  "go.jp",
+  "ac.jp",
+  "co.uk",
+  "org.uk",
+  "gov.uk",
+  "co.kr",
+  "com.au",
+  "com.br",
+  "co.nz",
+]);
+
+function toRegistrableDomain(hostname: string): string {
+  const parts = hostname.split(".").filter((part) => part.length > 0);
+  if (parts.length <= 2) {
+    return hostname;
+  }
+
+  const lastTwo = parts.slice(-2).join(".");
+
+  if (commonSecondLevelTlds.has(lastTwo) && parts.length >= 3) {
+    return parts.slice(-3).join(".");
+  }
+
+  return lastTwo;
+}
+
+export function getHostFromUrl(url: string): string | undefined {
+  try {
+    return normalizeHostname(new URL(url).hostname);
+  } catch {
+    return undefined;
+  }
+}
+
+export function isFirstPartyHost(
+  pageHost: string,
+  candidateHost: string,
+): boolean {
+  const base = normalizeHostname(pageHost);
+  const candidate = normalizeHostname(candidateHost);
+  if (!base || !candidate) {
+    return false;
+  }
+
+  if (base === candidate) {
+    return true;
+  }
+
+  return toRegistrableDomain(base) === toRegistrableDomain(candidate);
+}
+
 /**
  * Extracts JavaScript variables from a window-like object.
  * Used inside page.evaluate() to extract values from the browser context.

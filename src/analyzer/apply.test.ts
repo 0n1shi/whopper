@@ -24,6 +24,8 @@ function createMockContext(
 function createMockResponse(overrides: Partial<Response> = {}): Response {
   return {
     url: "https://example.com",
+    host: "example.com",
+    isFirstParty: true,
     status: 200,
     headers: {},
     body: "",
@@ -36,6 +38,8 @@ function createMockCookie(overrides: Partial<Cookie> = {}): Cookie {
     name: "test",
     value: "value",
     domain: "example.com",
+    host: "example.com",
+    isFirstParty: true,
     path: "/",
     expires: -1,
     httpOnly: false,
@@ -299,6 +303,30 @@ describe("applySignature", () => {
       expect(result).toBeDefined();
     });
 
+    it("should not match partial cookie names", () => {
+      const signature: Signature = {
+        name: "Ruby on Rails",
+        rule: {
+          confidence: "high",
+          cookies: {
+            _session_id: ".+",
+          },
+        },
+      };
+
+      const context = createMockContext({
+        cookies: [
+          createMockCookie({
+            name: "karte_session_id",
+            value: "session|abc123",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeUndefined();
+    });
+
     it("should skip when cookie name does not match", () => {
       const signature: Signature = {
         name: "PHP",
@@ -437,6 +465,58 @@ describe("applySignature", () => {
 
       const result = applySignature(context, signature);
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe("scope filtering", () => {
+    it("should skip third-party response matches in first-party scope", () => {
+      const signature: Signature = {
+        name: "PHP",
+        rule: {
+          confidence: "high",
+          headers: {
+            "x-powered-by": "php/?(\\d+\\.\\d+\\.\\d+)?",
+          },
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "x-powered-by": "PHP/8.3.0" },
+            host: "third-party.example",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature, { scope: "first-party" });
+      expect(result).toBeUndefined();
+    });
+
+    it("should include third-party response matches in all scope", () => {
+      const signature: Signature = {
+        name: "PHP",
+        rule: {
+          confidence: "high",
+          headers: {
+            "x-powered-by": "php/?(\\d+\\.\\d+\\.\\d+)?",
+          },
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "x-powered-by": "PHP/8.3.0" },
+            host: "third-party.example",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature, { scope: "all" });
+      expect(result).toBeDefined();
     });
   });
 
