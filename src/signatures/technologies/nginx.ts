@@ -9,6 +9,7 @@ export const nginxSignature: Signature = {
     confidence: "high",
     headers: {
       server: "^nginx/?(\\d+\\.\\d+\\.\\d+)?",
+      "X-Fastcgi-Cache": "",
     },
   },
 };
