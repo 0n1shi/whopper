@@ -4,6 +4,7 @@ import { nginxSignature } from "./technologies/nginx.js";
 import { nextjsSignature } from "./technologies/nextjs.js";
 import { awsElbSignature } from "./technologies/awselb.js";
 import { amazonCloudFrontSignature } from "./technologies/amazon_cloudfront.js";
+import { cloudflareSignature } from "./technologies/cloudflare.js";
 import { apacheHttpServerSignature } from "./technologies/apache.js";
 import { phpSignature } from "./technologies/php.js";
 import { jquerySignature } from "./technologies/jquery.js";
@@ -450,6 +451,7 @@ export const signatures: Signature[] = [
   astraSignature,
   awsElbSignature,
   amazonCloudFrontSignature,
+  cloudflareSignature,
   barbaJsSignature,
   breadcrumbNavXtSignature,
   browserUpdateOrgSignature,
