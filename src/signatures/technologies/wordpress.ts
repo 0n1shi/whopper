@@ -7,6 +7,7 @@ export const wordpressSignature: Signature = {
   description:
     "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
   cpe: "cpe:/a:wordpress:wordpress",
+  runtime: "server",
   rule: {
     confidence: "high",
     headers: {

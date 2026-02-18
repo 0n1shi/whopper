@@ -44,8 +44,9 @@ Commands:
 
 This command will analyze the specified URL and output the detected technologies.
 
-By default, detection is scoped to first-party resources (`--scope first-party`).
-Use `--scope all` if you want to include third-party resources such as CDNs and embedded services.
+Detection uses smart filtering by default:
+- Client-side third-party resources (for example CDN-hosted JS/CSS libraries) are included.
+- Third-party server-side hints (for example response headers and cookies) are excluded.
 
 ## ✨ Features
 

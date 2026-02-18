@@ -1,4 +1,5 @@
 export type Confidence = "high" | "medium" | "low";
+export type Runtime = "client" | "server";
 
 export type Regex = string;
 
@@ -15,6 +16,7 @@ export type Signature = {
   name: string;
   description?: string;
   cpe?: string;
+  runtime?: Runtime;
   rule?: Rule;
   impliedSoftwares?: string[];
 };

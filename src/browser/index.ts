@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import chalk from "chalk";
 import type { Context, Response } from "./types.js";
 import {
   sleep,
@@ -7,6 +8,28 @@ import {
   isFirstPartyHost,
 } from "./utils.js";
 import { logger } from "../logger/index.js";
+
+function colorizeStatusCode(statusCode: number): string {
+  const code = String(statusCode);
+
+  if (statusCode >= 100 && statusCode < 200) {
+    return chalk.cyan(code);
+  }
+  if (statusCode >= 200 && statusCode < 300) {
+    return chalk.green(code);
+  }
+  if (statusCode >= 300 && statusCode < 400) {
+    return chalk.blue(code);
+  }
+  if (statusCode >= 400 && statusCode < 500) {
+    return chalk.yellow(code);
+  }
+  if (statusCode >= 500 && statusCode < 600) {
+    return chalk.red(code);
+  }
+
+  return chalk.gray(code);
+}
 
 export async function openPage(
   url: string,
@@ -28,14 +51,17 @@ export async function openPage(
   page.on("response", async (response) => {
     const responseUrl = response.url();
     const responseHost = getHostFromUrl(responseUrl) ?? "";
-    logger.debug(`Received response: ${responseUrl} - ${response.status()}`);
+    const statusCode = response.status();
+    logger.debug(
+      `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
+    );
     const res: Response = {
       url: responseUrl,
       host: responseHost,
       isFirstParty: responseHost
         ? isFirstPartyHost(pageHost, responseHost)
         : false,
-      status: response.status(),
+      status: statusCode,
       headers: response.headers(),
     };
 

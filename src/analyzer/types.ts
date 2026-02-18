@@ -1,7 +1,6 @@
 import type { Confidence } from "../signatures/_types.js";
 
 type EvidenceType = "header" | "body" | "cookie" | "script" | "url";
-export type DetectionScope = "all" | "first-party";
 
 export type Evidence = {
   type: EvidenceType;
@@ -15,8 +14,4 @@ export type Evidence = {
 export type Detection = {
   name: string;
   evidences?: Evidence[];
-};
-
-export type AnalyzeOptions = {
-  scope?: DetectionScope;
 };

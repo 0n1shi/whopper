@@ -38,6 +38,20 @@ describe("signatures validation", () => {
     });
   });
 
+  describe("runtime values", () => {
+    it("all runtime values should be valid when present", () => {
+      const validRuntimes = ["client", "server"];
+      for (const sig of signatures) {
+        if (sig.runtime) {
+          expect(
+            validRuntimes,
+            `Invalid runtime "${sig.runtime}" in ${sig.name}`,
+          ).toContain(sig.runtime);
+        }
+      }
+    });
+  });
+
   describe("regex patterns", () => {
     const testRegex = (pattern: string, sigName: string, field: string) => {
       try {

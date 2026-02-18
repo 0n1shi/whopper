@@ -123,13 +123,6 @@ describe("detectCommand", () => {
       expect(jsonOpt).toBeDefined();
     });
 
-    it("should have scope option with default first-party", () => {
-      const command = detectCommand();
-      const options = command.options;
-      const scopeOpt = options.find((o) => o.long === "--scope");
-      expect(scopeOpt).toBeDefined();
-      expect(scopeOpt?.defaultValue).toBe("first-party");
-    });
   });
 
   describe("action execution", () => {
@@ -177,24 +170,22 @@ describe("detectCommand", () => {
       expect(mockContext.browser.close).toHaveBeenCalled();
     });
 
-    it("should analyze in first-party scope by default", async () => {
+    it("should analyze using smart default behavior", async () => {
       await runCommand();
 
       expect(analyze).toHaveBeenCalledWith(
         mockContext,
         expect.any(Array),
-        { scope: "first-party" },
       );
+      expect(analyze).toHaveBeenCalledTimes(1);
+      expect(vi.mocked(analyze).mock.calls[0]?.length).toBe(2);
     });
 
-    it("should analyze in all scope when --scope all is set", async () => {
+    it("should reject removed --scope option", async () => {
       await runCommand(["--scope", "all"]);
 
-      expect(analyze).toHaveBeenCalledWith(
-        mockContext,
-        expect.any(Array),
-        { scope: "all" },
-      );
+      expect(openPage).not.toHaveBeenCalled();
+      expect(analyze).not.toHaveBeenCalled();
     });
   });
 

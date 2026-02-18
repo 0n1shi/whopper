@@ -40,7 +40,6 @@ describe("CLI E2E Tests", () => {
         expect(stdout).toContain("--json");
         expect(stdout).toContain("--evidence");
         expect(stdout).toContain("--debug");
-        expect(stdout).toContain("--scope");
       });
     });
 

@@ -468,33 +468,57 @@ describe("applySignature", () => {
     });
   });
 
-  describe("scope filtering", () => {
-    it("should skip third-party response matches in first-party scope", () => {
+  describe("smart filtering", () => {
+    it("should include third-party URL matches", () => {
       const signature: Signature = {
-        name: "PHP",
+        name: "Swiper",
         rule: {
           confidence: "high",
-          headers: {
-            "x-powered-by": "php/?(\\d+\\.\\d+\\.\\d+)?",
-          },
+          urls: ["swiper[@.-](\\d+\\.\\d+\\.\\d+)?"],
         },
       };
 
       const context = createMockContext({
         responses: [
           createMockResponse({
-            headers: { "x-powered-by": "PHP/8.3.0" },
-            host: "third-party.example",
+            url: "https://cdn.example.com/swiper@8.4.7/swiper-bundle.min.css",
+            host: "cdn.example.com",
             isFirstParty: false,
           }),
         ],
       });
 
-      const result = applySignature(context, signature, { scope: "first-party" });
+      const result = applySignature(context, signature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.[0]?.type).toBe("url");
+      expect(result?.evidences?.[0]?.version).toBe("8.4.7");
+    });
+
+    it("should skip third-party URL matches for server runtime signatures", () => {
+      const signature: Signature = {
+        name: "ServerFramework",
+        runtime: "server",
+        rule: {
+          confidence: "high",
+          urls: ["framework-(\\d+\\.\\d+\\.\\d+)\\.js"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://cdn.example.com/framework-1.2.3.js",
+            host: "cdn.example.com",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
       expect(result).toBeUndefined();
     });
 
-    it("should include third-party response matches in all scope", () => {
+    it("should skip third-party header matches", () => {
       const signature: Signature = {
         name: "PHP",
         rule: {
@@ -515,8 +539,135 @@ describe("applySignature", () => {
         ],
       });
 
-      const result = applySignature(context, signature, { scope: "all" });
+      const result = applySignature(context, signature);
+      expect(result).toBeUndefined();
+    });
+
+    it("should skip third-party cookie matches", () => {
+      const signature: Signature = {
+        name: "Ruby on Rails",
+        rule: {
+          confidence: "high",
+          cookies: {
+            _session_id: ".+",
+          },
+        },
+      };
+
+      const context = createMockContext({
+        cookies: [
+          createMockCookie({
+            name: "_session_id",
+            value: "abc123",
+            host: "third-party.example",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeUndefined();
+    });
+
+    it("should skip third-party HTML body matches", () => {
+      const signature: Signature = {
+        name: "WordPress",
+        rule: {
+          confidence: "high",
+          bodies: ["wp-content"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "text/html; charset=utf-8" },
+            body: "<html><body>/wp-content/</body></html>",
+            host: "third-party.example",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeUndefined();
+    });
+
+    it("should include third-party CSS body matches", () => {
+      const signature: Signature = {
+        name: "Swiper",
+        rule: {
+          confidence: "high",
+          bodies: ["Swiper (\\d+\\.\\d+\\.\\d+)?"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "text/css; charset=utf-8" },
+            body: "/** Swiper 8.4.7 */",
+            host: "cdn.example.com",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
       expect(result).toBeDefined();
+      expect(result?.evidences?.[0]?.type).toBe("body");
+      expect(result?.evidences?.[0]?.version).toBe("8.4.7");
+    });
+
+    it("should include third-party JavaScript body matches", () => {
+      const signature: Signature = {
+        name: "Swiper",
+        rule: {
+          confidence: "high",
+          bodies: ["Swiper (\\d+\\.\\d+\\.\\d+)?"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "application/javascript; charset=utf-8" },
+            body: "/*! Swiper 8.4.7 */",
+            host: "cdn.example.com",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.[0]?.type).toBe("body");
+      expect(result?.evidences?.[0]?.version).toBe("8.4.7");
+    });
+
+    it("should skip third-party JavaScript body matches for server runtime signatures", () => {
+      const signature: Signature = {
+        name: "WordPress",
+        runtime: "server",
+        rule: {
+          confidence: "high",
+          bodies: ["wp-content"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "application/javascript; charset=utf-8" },
+            body: "var config = { path: '/wp-content/plugins/foo.js' };",
+            host: "www.googletagmanager.com",
+            isFirstParty: false,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeUndefined();
     });
   });
 

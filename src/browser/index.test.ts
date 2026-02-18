@@ -330,7 +330,9 @@ describe("openPage", () => {
         body: '{"data": "test"}',
       });
       expect(logger.debug).toHaveBeenCalledWith(
-        "Received response: https://example.com/api/data - 200",
+        expect.stringMatching(
+          /^Received response \[.*200.*\] https:\/\/example\.com\/api\/data$/,
+        ),
       );
     });
 

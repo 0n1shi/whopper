@@ -198,7 +198,7 @@ describe("analyze", () => {
     expect(result[0]?.name).toBe("Nginx");
   });
 
-  it("should honor first-party scope filtering", () => {
+  it("should apply smart filtering for third-party responses", () => {
     const context = createMockContext({
       responses: [
         {
@@ -207,6 +207,14 @@ describe("analyze", () => {
           isFirstParty: false,
           status: 200,
           headers: { "x-powered-by": "PHP/8.3" },
+        },
+        {
+          url: "https://cdn.example.com/swiper@8.4.7/swiper-bundle.min.css",
+          host: "cdn.example.com",
+          isFirstParty: false,
+          status: 200,
+          headers: { "content-type": "text/css; charset=utf-8" },
+          body: "/** Swiper 8.4.7 */",
         },
       ],
     });
@@ -219,14 +227,17 @@ describe("analyze", () => {
           headers: { "x-powered-by": "PHP/(\\d+\\.\\d+)" },
         },
       },
+      {
+        name: "Swiper",
+        rule: {
+          confidence: "high",
+          urls: ["swiper[@.-](\\d+\\.\\d+\\.\\d+)?"],
+        },
+      },
     ];
 
-    const allResult = analyze(context, signatures, { scope: "all" });
-    const firstPartyResult = analyze(context, signatures, {
-      scope: "first-party",
-    });
-
-    expect(allResult).toHaveLength(1);
-    expect(firstPartyResult).toEqual([]);
+    const result = analyze(context, signatures);
+    expect(result).toHaveLength(1);
+    expect(result[0]?.name).toBe("Swiper");
   });
 });

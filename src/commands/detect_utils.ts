@@ -170,7 +170,11 @@ export function printDetectCommandOutputAsText(
       continue;
     }
     for (const evidence of detection.evidences || []) {
-      console.log(`    [${evidence.type}] ${evidence.value}`);
+      const evidenceValue =
+        evidence.type === "body" && evidence.sourceUrl
+          ? evidence.sourceUrl
+          : evidence.value;
+      console.log(`    [${evidence.type}] ${evidenceValue}`);
     }
     if (detection.impliedBy) {
       console.log(`    [implied] ${detection.impliedBy}`);

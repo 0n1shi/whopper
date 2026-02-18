@@ -10,8 +10,8 @@ export const LogLevel = {
 export type LogLevelName = keyof typeof LogLevel;
 
 export const LogLevelLabels: { [key in LogLevelName]: string } = {
-  DEBUG: chalk.green("DEBUG"),
-  INFO: chalk.blue("INFO"),
+  DEBUG: chalk.blue("DEBUG"),
+  INFO: chalk.green("INFO"),
   WARN: chalk.yellow("WARN"),
   ERROR: chalk.red("ERROR"),
 };

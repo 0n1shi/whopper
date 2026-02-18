@@ -435,6 +435,32 @@ describe("printDetectCommandOutputAsText", () => {
     expect(allOutput).toContain("Server: nginx");
   });
 
+  it("should print sourceUrl for body evidences", () => {
+    const output = {
+      detectedSoftwares: [
+        {
+          name: "WordPress",
+          confidence: "high" as const,
+          evidences: [
+            {
+              type: "body" as const,
+              value: "<!doctype html>...",
+              version: undefined,
+              confidence: "high" as const,
+              sourceUrl: "https://example.com/index.html",
+            },
+          ],
+        },
+      ],
+    };
+
+    printDetectCommandOutputAsText(output, true);
+
+    const allOutput = consoleLogSpy.mock.calls.map((c: unknown[]) => c[0]).join("\n");
+    expect(allOutput).toContain("[body] https://example.com/index.html");
+    expect(allOutput).not.toContain("<!doctype html>...");
+  });
+
   it("should not print evidences when showEvidence is false", () => {
     const output = {
       detectedSoftwares: [
