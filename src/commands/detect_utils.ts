@@ -21,48 +21,54 @@ export function makeDetectCommandOutput(
   detections: Detection[],
   signatures: Signature[],
 ): DetectCommandOutput {
-  // Handle directly detected softwares
-  const detectedSoftwares = detections.map((detection) => {
+  // Handle directly detected softwares (one entry per version)
+  const detectedSoftwares = detections.flatMap((detection) => {
     const signature = signatures.find(
       (signature) => signature.name === detection.name,
     )!;
-    const detectedSoftware: DetectedSoftware = {
-      name: detection.name,
-      confidence: maxConfidence(
-        detection.evidences?.map((e) => e.confidence) || [],
-      ),
-    };
-    if (signature.description) {
-      detectedSoftware.description = signature.description;
+    const evidences = detection.evidences || [];
+
+    // Group evidences by version
+    const versionGroups = new Map<string | undefined, typeof evidences>();
+    for (const evidence of evidences) {
+      const key = evidence.version;
+      if (!versionGroups.has(key)) {
+        versionGroups.set(key, []);
+      }
+      versionGroups.get(key)!.push(evidence);
     }
-    const evidences = detection.evidences;
-    if (evidences && evidences.length > 0) {
-      detectedSoftware.evidences = evidences;
+
+    // If no evidences, create a single entry
+    if (versionGroups.size === 0) {
+      const ds: DetectedSoftware = {
+        name: detection.name,
+        confidence: maxConfidence([]),
+      };
+      if (signature.description) {
+        ds.description = signature.description;
+      }
+      return [ds];
     }
-    const versions = [
-      ...new Set(
-        evidences
-          ?.map((evidence) => evidence.version)
-          .filter((v): v is string => v !== undefined),
-      ),
-    ];
-    if (versions && versions.length > 0) {
-      detectedSoftware.versions = versions;
-    }
-    const cpes = signature.cpe
-      ? [
-          ...new Set(
-            evidences
-              ?.map((evidence) => evidence.version)
-              .filter((v): v is string => v !== undefined)
-              .map((version) => signature.cpe + ":" + version),
-          ),
-        ]
-      : undefined;
-    if (cpes && cpes.length > 0) {
-      detectedSoftware.cpes = cpes;
-    }
-    return detectedSoftware;
+
+    return [...versionGroups.entries()].map(([version, versionEvidences]) => {
+      const ds: DetectedSoftware = {
+        name: detection.name,
+        confidence: maxConfidence(versionEvidences.map((e) => e.confidence)),
+      };
+      if (signature.description) {
+        ds.description = signature.description;
+      }
+      if (versionEvidences.length > 0) {
+        ds.evidences = versionEvidences;
+      }
+      if (version) {
+        ds.version = version;
+        if (signature.cpe) {
+          ds.cpe = signature.cpe + ":" + version;
+        }
+      }
+      return ds;
+    });
   });
 
   // Handle implied softwares
@@ -91,13 +97,14 @@ export function makeDetectCommandOutput(
     });
   });
 
-  const mergedByName = new Map<string, DetectedSoftware>();
+  const mergedByKey = new Map<string, DetectedSoftware>();
   const allSoftwares = [...detectedSoftwares, ...impliedSoftwares];
 
   for (const software of allSoftwares) {
-    const existing = mergedByName.get(software.name);
+    const key = software.name + "|" + (software.version || "");
+    const existing = mergedByKey.get(key);
     if (!existing) {
-      mergedByName.set(software.name, software);
+      mergedByKey.set(key, software);
       continue;
     }
 
@@ -117,18 +124,11 @@ export function makeDetectCommandOutput(
       merged.description = description;
     }
 
-    const versions = [
-      ...new Set([...(existing.versions || []), ...(software.versions || [])]),
-    ];
-    if (versions.length > 0) {
-      merged.versions = versions;
+    if (existing.version) {
+      merged.version = existing.version;
     }
-
-    const cpes = [
-      ...new Set([...(existing.cpes || []), ...(software.cpes || [])]),
-    ];
-    if (cpes.length > 0) {
-      merged.cpes = cpes;
+    if (existing.cpe) {
+      merged.cpe = existing.cpe;
     }
 
     const evidences = [
@@ -143,11 +143,11 @@ export function makeDetectCommandOutput(
       merged.impliedBy = uniqueImpliedBy.join(", ");
     }
 
-    mergedByName.set(software.name, merged);
+    mergedByKey.set(key, merged);
   }
 
   return {
-    detectedSoftwares: [...mergedByName.values()],
+    detectedSoftwares: [...mergedByKey.values()],
   };
 }
 
@@ -158,11 +158,8 @@ export function printDetectCommandOutputAsText(
   console.log();
   for (const detection of output.detectedSoftwares) {
     let message = `* ${chalk.green(detection.name)}`;
-    const versions = [
-      ...new Set(detection.evidences?.map((e) => e.version).filter((v) => v)),
-    ];
-    if (versions.length > 0) {
-      message += ` ${versions.join(", ")}`;
+    if (detection.version) {
+      message += ` ${detection.version}`;
     }
     console.log(message);
 

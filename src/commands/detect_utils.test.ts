@@ -59,7 +59,7 @@ describe("makeDetectCommandOutput", () => {
       expect(result.detectedSoftwares[0]!.name).toBe("nginx");
       expect(result.detectedSoftwares[0]!.description).toBe("Web server");
       expect(result.detectedSoftwares[0]!.confidence).toBe("high");
-      expect(result.detectedSoftwares[0]!.versions).toEqual(["1.20.0"]);
+      expect(result.detectedSoftwares[0]!.version).toBe("1.20.0");
     });
 
     it("should generate CPEs when signature has cpe", () => {
@@ -79,9 +79,9 @@ describe("makeDetectCommandOutput", () => {
 
       const result = makeDetectCommandOutput(detections, baseSignatures);
 
-      expect(result.detectedSoftwares[0]!.cpes).toEqual([
+      expect(result.detectedSoftwares[0]!.cpe).toBe(
         "cpe:2.3:a:nginx:nginx:1.20.0",
-      ]);
+      );
     });
 
     it("should not include cpes when signature has no cpe", () => {
@@ -101,20 +101,20 @@ describe("makeDetectCommandOutput", () => {
 
       const result = makeDetectCommandOutput(detections, baseSignatures);
 
-      expect(result.detectedSoftwares[0]!.cpes).toBeUndefined();
+      expect(result.detectedSoftwares[0]!.cpe).toBeUndefined();
     });
   });
 
   describe("confidence calculation", () => {
-    it("should use highest confidence from evidences", () => {
+    it("should use highest confidence from evidences with same version", () => {
       const detections: Detection[] = [
         {
           name: "nginx",
           evidences: [
             {
               type: "header",
-              value: "nginx",
-              version: undefined,
+              value: "nginx/1.20.0",
+              version: "1.20.0",
               confidence: "low",
             },
             {
@@ -129,7 +129,10 @@ describe("makeDetectCommandOutput", () => {
 
       const result = makeDetectCommandOutput(detections, baseSignatures);
 
-      expect(result.detectedSoftwares[0]!.confidence).toBe("high");
+      const nginx = result.detectedSoftwares.find(
+        (s) => s.version === "1.20.0",
+      );
+      expect(nginx!.confidence).toBe("high");
     });
   });
 
@@ -237,7 +240,7 @@ describe("makeDetectCommandOutput", () => {
 
       const result = makeDetectCommandOutput(detections, baseSignatures);
 
-      expect(result.detectedSoftwares[0]!.versions).toEqual(["1.20.0"]);
+      expect(result.detectedSoftwares[0]!.version).toBe("1.20.0");
     });
 
     it("should merge implied software from multiple sources", () => {
@@ -281,7 +284,7 @@ describe("makeDetectCommandOutput", () => {
       expect(js!.confidence).toBe("high"); // Should use highest confidence
     });
 
-    it("should merge versions and cpes when same software detected multiple ways", () => {
+    it("should create separate entries when same software has different versions", () => {
       const signatures: Signature[] = [
         { name: "nginx", cpe: "cpe:2.3:a:nginx:nginx" },
       ];
@@ -313,14 +316,22 @@ describe("makeDetectCommandOutput", () => {
 
       const result = makeDetectCommandOutput(detections, signatures);
 
-      const nginx = result.detectedSoftwares.find((s) => s.name === "nginx");
-      expect(nginx).toBeDefined();
-      expect(nginx!.versions).toContain("1.18.0");
-      expect(nginx!.versions).toContain("1.20.0");
-      expect(nginx!.cpes).toContain("cpe:2.3:a:nginx:nginx:1.18.0");
-      expect(nginx!.cpes).toContain("cpe:2.3:a:nginx:nginx:1.20.0");
-      expect(nginx!.confidence).toBe("high");
-      expect(nginx!.evidences).toHaveLength(2);
+      const nginxEntries = result.detectedSoftwares.filter(
+        (s) => s.name === "nginx",
+      );
+      expect(nginxEntries).toHaveLength(2);
+
+      const v1180 = nginxEntries.find((s) => s.version === "1.18.0");
+      expect(v1180).toBeDefined();
+      expect(v1180!.cpe).toBe("cpe:2.3:a:nginx:nginx:1.18.0");
+      expect(v1180!.confidence).toBe("medium");
+      expect(v1180!.evidences).toHaveLength(1);
+
+      const v1200 = nginxEntries.find((s) => s.version === "1.20.0");
+      expect(v1200).toBeDefined();
+      expect(v1200!.cpe).toBe("cpe:2.3:a:nginx:nginx:1.20.0");
+      expect(v1200!.confidence).toBe("high");
+      expect(v1200!.evidences).toHaveLength(1);
     });
 
     it("should merge description from existing or new software", () => {
@@ -386,11 +397,12 @@ describe("printDetectCommandOutputAsText", () => {
     expect(allOutput).toContain("nginx");
   });
 
-  it("should print versions when available", () => {
+  it("should print version when available", () => {
     const output = {
       detectedSoftwares: [
         {
           name: "nginx",
+          version: "1.20.0",
           confidence: "high" as const,
           evidences: [
             {
@@ -538,7 +550,7 @@ describe("printDetectCommandOutputAsJSON", () => {
         {
           name: "nginx",
           description: "Web server",
-          versions: ["1.20.0"],
+          version: "1.20.0",
           confidence: "high" as const,
         },
       ],
@@ -549,6 +561,6 @@ describe("printDetectCommandOutputAsJSON", () => {
     const jsonOutput = JSON.parse(consoleLogSpy.mock.calls[0][0]);
     expect(jsonOutput.detectedSoftwares[0].name).toBe("nginx");
     expect(jsonOutput.detectedSoftwares[0].description).toBe("Web server");
-    expect(jsonOutput.detectedSoftwares[0].versions).toEqual(["1.20.0"]);
+    expect(jsonOutput.detectedSoftwares[0].version).toBe("1.20.0");
   });
 });
