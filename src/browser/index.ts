@@ -96,6 +96,14 @@ export async function openPage(
     );
   }
 
+  // Remove redirect responses (they represent intermediate hops, not the final page)
+  for (let i = responses.length - 1; i >= 0; i--) {
+    const status = responses[i]?.status;
+    if (status !== undefined && status >= 300 && status < 400) {
+      responses.splice(i, 1);
+    }
+  }
+
   // Recalculate isFirstParty for all responses based on the final host
   for (const res of responses) {
     res.isFirstParty = res.host
