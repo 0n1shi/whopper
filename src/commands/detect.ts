@@ -25,6 +25,7 @@ export const detectCommand = (): Command => {
     .option("-d, --debug", "Enable debug logging", false)
     .option("-e, --evidence", "Show evidence for detections", false)
     .option("-j, --json", "Output results in JSON format", false)
+    .option("-u, --user-agent <string>", "Custom User-Agent string")
     .action(
       async (
         url: string,
@@ -33,6 +34,7 @@ export const detectCommand = (): Command => {
           debug: boolean;
           evidence: boolean;
           json: boolean;
+          userAgent?: string;
         },
       ) => {
         if (options.debug) {
@@ -51,6 +53,7 @@ export const detectCommand = (): Command => {
             url,
             options.timeout,
             getJavascriptVariableNames(signatures),
+            options.userAgent,
           );
           const detections = analyze(context, signatures);
           if (detections.length === 0) {

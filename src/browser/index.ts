@@ -35,6 +35,7 @@ export async function openPage(
   url: string,
   timeoutMs: number,
   javascriptVariableNames: string[],
+  userAgent?: string,
 ): Promise<Context> {
   const pageHost = getHostFromUrl(url);
   if (!pageHost) {
@@ -44,6 +45,7 @@ export async function openPage(
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
+    ...(userAgent ? { userAgent } : {}),
   });
   const page = await context.newPage();
 
