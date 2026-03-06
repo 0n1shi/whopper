@@ -1,13 +1,13 @@
-import { chromium } from "playwright";
 import chalk from "chalk";
+import { chromium } from "playwright";
+import { logger } from "../logger/index.js";
 import type { Context, Response } from "./types.js";
 import {
-  sleep,
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
+  sleep,
 } from "./utils.js";
-import { logger } from "../logger/index.js";
 
 function colorizeStatusCode(statusCode: number): string {
   const code = String(statusCode);
@@ -58,9 +58,7 @@ export async function openPage(
     const res: Response = {
       url: responseUrl,
       host: responseHost,
-      isFirstParty: responseHost
-        ? isFirstPartyHost(pageHost, responseHost)
-        : false,
+      isFirstParty: false,
       status: statusCode,
       headers: response.headers(),
     };
@@ -90,6 +88,21 @@ export async function openPage(
     logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
   }
 
+  // Use the final URL (after redirects) to determine first-party scope
+  const finalHost = getHostFromUrl(page.url()) ?? pageHost;
+  if (finalHost !== pageHost) {
+    logger.debug(
+      `Redirect detected: using final host ${chalk.cyan(finalHost)} for first-party scope`,
+    );
+  }
+
+  // Recalculate isFirstParty for all responses based on the final host
+  for (const res of responses) {
+    res.isFirstParty = res.host
+      ? isFirstPartyHost(finalHost, res.host)
+      : false;
+  }
+
   let cookies: Context["cookies"] = [];
   let javascriptVariables: Record<string, unknown> = {};
 
@@ -98,7 +111,7 @@ export async function openPage(
       const cookieHost = cookie.domain.replace(/^\./, "").toLowerCase();
       return {
         host: cookieHost,
-        isFirstParty: isFirstPartyHost(pageHost, cookieHost),
+        isFirstParty: isFirstPartyHost(finalHost, cookieHost),
         name: cookie.name,
         value: cookie.value,
         domain: cookie.domain,

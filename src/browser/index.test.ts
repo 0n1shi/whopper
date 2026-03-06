@@ -6,6 +6,7 @@ vi.mock("playwright", () => {
   const mockPage = {
     on: vi.fn(),
     goto: vi.fn(),
+    url: vi.fn(() => "https://example.com"),
     context: vi.fn(),
     evaluate: vi.fn(),
     close: vi.fn(),
@@ -55,6 +56,7 @@ describe("openPage", () => {
   let mockPage: {
     on: ReturnType<typeof vi.fn>;
     goto: ReturnType<typeof vi.fn>;
+    url: ReturnType<typeof vi.fn>;
     context: ReturnType<typeof vi.fn>;
     evaluate: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
@@ -75,6 +77,7 @@ describe("openPage", () => {
     mockPage = {
       on: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
+      url: vi.fn(() => "https://example.com"),
       context: vi.fn(),
       evaluate: vi.fn(() => Promise.resolve({})),
       close: vi.fn(),
