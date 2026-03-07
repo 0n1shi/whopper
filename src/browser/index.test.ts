@@ -114,6 +114,15 @@ describe("openPage", () => {
       });
     });
 
+    it("should pass custom userAgent to browser context", async () => {
+      await openPage("https://example.com", 10000, [], "MyCustomAgent/1.0");
+
+      expect(mockBrowser.newContext).toHaveBeenCalledWith({
+        ignoreHTTPSErrors: true,
+        userAgent: "MyCustomAgent/1.0",
+      });
+    });
+
     it("should navigate to the specified URL", async () => {
       await openPage("https://example.com", 10000, []);
 

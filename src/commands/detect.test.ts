@@ -123,6 +123,13 @@ describe("detectCommand", () => {
       expect(jsonOpt).toBeDefined();
     });
 
+    it("should have user-agent option", () => {
+      const command = detectCommand();
+      const options = command.options;
+      const uaOpt = options.find((o) => o.long === "--user-agent");
+      expect(uaOpt).toBeDefined();
+    });
+
   });
 
   describe("action execution", () => {
@@ -133,6 +140,7 @@ describe("detectCommand", () => {
         "https://example.com",
         10000,
         expect.any(Array),
+        undefined,
       );
     });
 
@@ -143,6 +151,18 @@ describe("detectCommand", () => {
         "https://example.com",
         5000,
         expect.any(Array),
+        undefined,
+      );
+    });
+
+    it("should pass custom user-agent when provided", async () => {
+      await runCommand(["--user-agent", "MyAgent/1.0"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        "MyAgent/1.0",
       );
     });
 
