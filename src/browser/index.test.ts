@@ -58,6 +58,8 @@ describe("openPage", () => {
     context: ReturnType<typeof vi.fn>;
     evaluate: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
+    url: ReturnType<typeof vi.fn>;
+    mainFrame: ReturnType<typeof vi.fn>;
   };
   let mockBrowserContext: {
     newPage: ReturnType<typeof vi.fn>;
@@ -72,12 +74,15 @@ describe("openPage", () => {
     vi.clearAllMocks();
 
     // Get references to mocked objects
+    const mainFrame = {};
     mockPage = {
       on: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
       context: vi.fn(),
       evaluate: vi.fn(() => Promise.resolve({})),
       close: vi.fn(),
+      url: vi.fn(() => "https://example.com"),
+      mainFrame: vi.fn(() => mainFrame),
     };
 
     mockBrowserContext = {
@@ -303,23 +308,29 @@ describe("openPage", () => {
     });
 
     it("should capture responses with body", async () => {
-      let capturedCallback: (response: unknown) => Promise<void>;
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
 
       mockPage.on.mockImplementation(
-        (event: string, callback: (response: unknown) => Promise<void>) => {
+        (event: string, callback: (...args: unknown[]) => void) => {
           if (event === "response") {
-            capturedCallback = callback;
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
           }
         },
       );
 
+      const mockRequest = {};
       mockPage.goto.mockImplementation(async () => {
-        // Simulate a response being received during page load
-        await capturedCallback({
+        // Simulate request then response during page load
+        capturedRequestCallback(mockRequest);
+        await capturedResponseCallback({
           url: () => "https://example.com/api/data",
           status: () => 200,
           headers: () => ({ "content-type": "application/json" }),
           text: () => Promise.resolve('{"data": "test"}'),
+          request: () => mockRequest,
         });
       });
 
@@ -346,22 +357,28 @@ describe("openPage", () => {
     });
 
     it("should capture responses without body when text() fails", async () => {
-      let capturedCallback: (response: unknown) => Promise<void>;
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
 
       mockPage.on.mockImplementation(
-        (event: string, callback: (response: unknown) => Promise<void>) => {
+        (event: string, callback: (...args: unknown[]) => void) => {
           if (event === "response") {
-            capturedCallback = callback;
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
           }
         },
       );
 
+      const mockRequest = {};
       mockPage.goto.mockImplementation(async () => {
-        await capturedCallback({
+        capturedRequestCallback(mockRequest);
+        await capturedResponseCallback({
           url: () => "https://example.com/binary",
           status: () => 200,
           headers: () => ({ "content-type": "application/octet-stream" }),
           text: () => Promise.reject(new Error("Cannot read binary")),
+          request: () => mockRequest,
         });
       });
 
@@ -383,22 +400,28 @@ describe("openPage", () => {
     });
 
     it("should mark third-party responses as non first-party", async () => {
-      let capturedCallback: (response: unknown) => Promise<void>;
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
 
       mockPage.on.mockImplementation(
-        (event: string, callback: (response: unknown) => Promise<void>) => {
+        (event: string, callback: (...args: unknown[]) => void) => {
           if (event === "response") {
-            capturedCallback = callback;
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
           }
         },
       );
 
+      const mockRequest = {};
       mockPage.goto.mockImplementation(async () => {
-        await capturedCallback({
+        capturedRequestCallback(mockRequest);
+        await capturedResponseCallback({
           url: () => "https://cdn.example.net/app.js",
           status: () => 200,
           headers: () => ({ "content-type": "text/javascript" }),
           text: () => Promise.resolve("console.log('ok')"),
+          request: () => mockRequest,
         });
       });
 

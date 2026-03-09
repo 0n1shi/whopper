@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium, type Request as PlaywrightRequest } from "playwright";
 import chalk from "chalk";
 import type { Context, Response } from "./types.js";
 import {
@@ -50,7 +50,24 @@ export async function openPage(
   const page = await context.newPage();
 
   const responses: Response[] = [];
+  let navigationGeneration = 0;
+  const requestGenerations = new WeakMap<PlaywrightRequest, number>();
+
+  // Discard responses from previous navigations (JS/meta redirects)
+  page.on("framenavigated", (frame) => {
+    if (frame === page.mainFrame()) {
+      navigationGeneration++;
+      responses.length = 0;
+    }
+  });
+
+  // Record generation at request time (synchronous, no race condition)
+  page.on("request", (request) => {
+    requestGenerations.set(request, navigationGeneration);
+  });
+
   page.on("response", async (response) => {
+    const gen = requestGenerations.get(response.request()) ?? -1;
     const responseUrl = response.url();
     const responseHost = getHostFromUrl(responseUrl) ?? "";
     const statusCode = response.status();
@@ -60,9 +77,7 @@ export async function openPage(
     const res: Response = {
       url: responseUrl,
       host: responseHost,
-      isFirstParty: responseHost
-        ? isFirstPartyHost(pageHost, responseHost)
-        : false,
+      isFirstParty: false,
       status: statusCode,
       headers: response.headers(),
     };
@@ -72,6 +87,7 @@ export async function openPage(
       res.body = body;
     }
 
+    if (gen !== navigationGeneration) return;
     responses.push(res);
   });
 
@@ -92,6 +108,28 @@ export async function openPage(
     logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
   }
 
+  // Use the final URL (after redirects) to determine first-party scope
+  const finalHost = getHostFromUrl(page.url()) ?? pageHost;
+  if (finalHost !== pageHost) {
+    logger.debug(
+      `Redirect detected: using final host ${chalk.cyan(finalHost)} for first-party scope`,
+    );
+  }
+
+  // Remove redirect responses (they have no content, only intermediate infrastructure headers)
+  const filtered = responses.filter(
+    (r) => r.status < 300 || r.status >= 400,
+  );
+  responses.length = 0;
+  responses.push(...filtered);
+
+  // Recalculate isFirstParty for all responses based on the final host
+  for (const res of responses) {
+    res.isFirstParty = res.host
+      ? isFirstPartyHost(finalHost, res.host)
+      : false;
+  }
+
   let cookies: Context["cookies"] = [];
   let javascriptVariables: Record<string, unknown> = {};
 
@@ -100,7 +138,7 @@ export async function openPage(
       const cookieHost = cookie.domain.replace(/^\./, "").toLowerCase();
       return {
         host: cookieHost,
-        isFirstParty: isFirstPartyHost(pageHost, cookieHost),
+        isFirstParty: isFirstPartyHost(finalHost, cookieHost),
         name: cookie.name,
         value: cookie.value,
         domain: cookie.domain,
