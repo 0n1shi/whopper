@@ -69,12 +69,10 @@ describe("openPage", () => {
     newContext: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
   };
+  const mainFrame = {};
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Get references to mocked objects
-    const mainFrame = {};
     mockPage = {
       on: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
@@ -435,6 +433,232 @@ describe("openPage", () => {
         host: "cdn.example.net",
         isFirstParty: false,
       });
+    });
+
+    it("should filter out 3xx redirect responses", async () => {
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === "response") {
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
+          }
+        },
+      );
+
+      const mockRequest1 = {};
+      const mockRequest2 = {};
+      mockPage.goto.mockImplementation(async () => {
+        capturedRequestCallback(mockRequest1);
+        await capturedResponseCallback({
+          url: () => "https://example.com/",
+          status: () => 301,
+          headers: () => ({ location: "https://example.com/new", server: "awselb/2.0" }),
+          text: () => Promise.resolve(""),
+          request: () => mockRequest1,
+        });
+        capturedRequestCallback(mockRequest2);
+        await capturedResponseCallback({
+          url: () => "https://example.com/new",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/html" }),
+          text: () => Promise.resolve("<html></html>"),
+          request: () => mockRequest2,
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toMatchObject({
+        url: "https://example.com/new",
+        status: 200,
+      });
+    });
+
+    it("should discard responses from previous navigation on JS redirect", async () => {
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
+      let capturedFramenavigatedCallback: (frame: unknown) => void;
+
+      // mainFrame is defined at describe scope
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === "response") {
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
+          } else if (event === "framenavigated") {
+            capturedFramenavigatedCallback = callback as (frame: unknown) => void;
+          }
+        },
+      );
+
+      const oldRequest = {};
+      const newRequest = {};
+      mockPage.goto.mockImplementation(async () => {
+        // First page loads a resource
+        capturedRequestCallback(oldRequest);
+        await capturedResponseCallback({
+          url: () => "https://example.com/old.js",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/javascript" }),
+          text: () => Promise.resolve("old"),
+          request: () => oldRequest,
+        });
+        // JS redirect causes navigation
+        capturedFramenavigatedCallback(mainFrame);
+        // New page loads a resource
+        capturedRequestCallback(newRequest);
+        await capturedResponseCallback({
+          url: () => "https://redirected.test/new.js",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/javascript" }),
+          text: () => Promise.resolve("new"),
+          request: () => newRequest,
+        });
+      });
+
+      mockPage.url.mockReturnValue("https://redirected.test");
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toMatchObject({
+        url: "https://redirected.test/new.js",
+      });
+    });
+
+    it("should discard late responses from previous navigation generation", async () => {
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
+      let capturedFramenavigatedCallback: (frame: unknown) => void;
+
+      // mainFrame is defined at describe scope
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === "response") {
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
+          } else if (event === "framenavigated") {
+            capturedFramenavigatedCallback = callback as (frame: unknown) => void;
+          }
+        },
+      );
+
+      const oldRequest = {};
+      const newRequest = {};
+      mockPage.goto.mockImplementation(async () => {
+        // Request starts on old page
+        capturedRequestCallback(oldRequest);
+        // JS redirect causes navigation before response arrives
+        capturedFramenavigatedCallback(mainFrame);
+        // New page loads
+        capturedRequestCallback(newRequest);
+        await capturedResponseCallback({
+          url: () => "https://redirected.test/page",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/html" }),
+          text: () => Promise.resolve("<html></html>"),
+          request: () => newRequest,
+        });
+        // Late response from old page arrives after navigation
+        await capturedResponseCallback({
+          url: () => "https://example.com/old.js",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/javascript" }),
+          text: () => Promise.resolve("old"),
+          request: () => oldRequest,
+        });
+      });
+
+      mockPage.url.mockReturnValue("https://redirected.test");
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toMatchObject({
+        url: "https://redirected.test/page",
+      });
+    });
+
+    it("should recalculate isFirstParty based on final host after redirect", async () => {
+      let capturedResponseCallback: (response: unknown) => Promise<void>;
+      let capturedRequestCallback: (request: unknown) => void;
+      let capturedFramenavigatedCallback: (frame: unknown) => void;
+
+      // mainFrame is defined at describe scope
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          if (event === "response") {
+            capturedResponseCallback = callback as (response: unknown) => Promise<void>;
+          } else if (event === "request") {
+            capturedRequestCallback = callback as (request: unknown) => void;
+          } else if (event === "framenavigated") {
+            capturedFramenavigatedCallback = callback as (frame: unknown) => void;
+          }
+        },
+      );
+
+      const req1 = {};
+      const req2 = {};
+      mockPage.goto.mockImplementation(async () => {
+        capturedFramenavigatedCallback(mainFrame);
+        capturedRequestCallback(req1);
+        await capturedResponseCallback({
+          url: () => "https://redirected.test/page",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/html" }),
+          text: () => Promise.resolve("<html></html>"),
+          request: () => req1,
+        });
+        capturedRequestCallback(req2);
+        await capturedResponseCallback({
+          url: () => "https://cdn.example.net/lib.js",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/javascript" }),
+          text: () => Promise.resolve("lib"),
+          request: () => req2,
+        });
+      });
+
+      // Final URL is different from initial URL
+      mockPage.url.mockReturnValue("https://redirected.test");
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      // redirected.test is first-party (final host), cdn.example.net is third-party
+      expect(result.responses[0]).toMatchObject({
+        host: "redirected.test",
+        isFirstParty: true,
+      });
+      expect(result.responses[1]).toMatchObject({
+        host: "cdn.example.net",
+        isFirstParty: false,
+      });
+      expect(logger.debug).toHaveBeenCalledWith(
+        expect.stringContaining("Redirect detected"),
+      );
     });
   });
 });
