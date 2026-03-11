@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import type { Confidence, Signature } from "../signatures/_types.js";
-import type { Detection } from "../analyzer/types.js";
+import type { Detection, Evidence } from "../analyzer/types.js";
 import type { DetectCommandOutput, DetectedSoftware } from "./detect_types.js";
 import { maxConfidence } from "../analyzer/utils.js";
 
@@ -17,6 +17,21 @@ export function colorizeConfidence(confidence: Confidence): string {
   }
 }
 
+function compareMaybeString(a?: string, b?: string): number {
+  return (a ?? "").localeCompare(b ?? "");
+}
+
+function compareEvidence(a: Evidence, b: Evidence): number {
+  return (
+    compareMaybeString(a.type, b.type) ||
+    compareMaybeString(a.value, b.value) ||
+    compareMaybeString(a.version, b.version) ||
+    compareMaybeString(a.confidence, b.confidence) ||
+    compareMaybeString(a.host, b.host) ||
+    compareMaybeString(a.sourceUrl, b.sourceUrl)
+  );
+}
+
 export function makeDetectCommandOutput(
   detections: Detection[],
   signatures: Signature[],
@@ -26,7 +41,7 @@ export function makeDetectCommandOutput(
     const signature = signatures.find(
       (signature) => signature.name === detection.name,
     )!;
-    const evidences = detection.evidences || [];
+    const evidences = [...(detection.evidences || [])].sort(compareEvidence);
 
     // Group evidences by version
     const versionGroups = new Map<string | undefined, typeof evidences>();
@@ -134,7 +149,7 @@ export function makeDetectCommandOutput(
     const evidences = [
       ...(existing.evidences || []),
       ...(software.evidences || []),
-    ];
+    ].sort(compareEvidence);
     if (evidences.length > 0) {
       merged.evidences = evidences;
     }
