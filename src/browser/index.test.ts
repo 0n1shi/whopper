@@ -227,6 +227,139 @@ describe("openPage", () => {
       );
     });
 
+    it("should always continue when policy is any", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+
+      await openPage("https://example.com", 10000, [], undefined, RedirectPolicy.Any);
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.net",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should continue for non-navigation requests", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => false,
+          frame: () => mockMainFrame,
+          url: () => "https://example.net/script.js",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should continue for non-main-frame navigation requests", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => ({ id: "iframe-1" }),
+          url: () => "https://example.net/embedded",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should continue when navigation target host cannot be parsed", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      // first top-level navigation
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+      // second top-level navigation with invalid URL should still continue
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "not-a-url",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(continueMock).toHaveBeenCalledTimes(2);
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
     it("should allow same-site redirect for subdomains", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
