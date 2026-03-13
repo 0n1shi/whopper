@@ -1,11 +1,13 @@
 import { chromium } from "playwright";
 import chalk from "chalk";
+import { RedirectPolicy } from "./types.js";
 import type { Context, Response } from "./types.js";
 import {
   sleep,
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
+  isRedirectAllowed,
 } from "./utils.js";
 import { logger } from "../logger/index.js";
 
@@ -36,6 +38,7 @@ export async function openPage(
   timeoutMs: number,
   javascriptVariableNames: string[],
   userAgent?: string,
+  redirectPolicy: RedirectPolicy = RedirectPolicy.Any,
 ): Promise<Context> {
   const pageHost = getHostFromUrl(url);
   if (!pageHost) {
@@ -48,6 +51,42 @@ export async function openPage(
     ...(userAgent ? { userAgent } : {}),
   });
   const page = await context.newPage();
+  let isFirstNavigationRequest = true;
+
+  await page.route("**/*", async (route) => {
+    const request = route.request();
+    if (
+      redirectPolicy === RedirectPolicy.Any ||
+      !request.isNavigationRequest() ||
+      request.frame() !== page.mainFrame()
+    ) {
+      await route.continue();
+      return;
+    }
+
+    if (isFirstNavigationRequest) {
+      isFirstNavigationRequest = false;
+      await route.continue();
+      return;
+    }
+
+    const targetUrl = request.url();
+    const targetHost = getHostFromUrl(targetUrl);
+    if (!targetHost) {
+      await route.continue();
+      return;
+    }
+
+    if (isRedirectAllowed(pageHost, targetHost, redirectPolicy)) {
+      await route.continue();
+      return;
+    }
+
+    logger.warn(
+      `Blocked redirect by policy ${redirectPolicy}: ${targetUrl}`,
+    );
+    await route.abort("blockedbyclient");
+  });
 
   const responses: Response[] = [];
   page.on("response", async (response) => {

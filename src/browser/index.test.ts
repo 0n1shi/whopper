@@ -1,10 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { openPage } from "./index.js";
+import { RedirectPolicy } from "./types.js";
 
 // Mock playwright
 vi.mock("playwright", () => {
   const mockPage = {
     on: vi.fn(),
+    route: vi.fn(),
+    mainFrame: vi.fn(),
     goto: vi.fn(),
     context: vi.fn(),
     evaluate: vi.fn(),
@@ -54,6 +57,8 @@ import { sleep } from "./utils.js";
 describe("openPage", () => {
   let mockPage: {
     on: ReturnType<typeof vi.fn>;
+    route: ReturnType<typeof vi.fn>;
+    mainFrame: ReturnType<typeof vi.fn>;
     goto: ReturnType<typeof vi.fn>;
     context: ReturnType<typeof vi.fn>;
     evaluate: ReturnType<typeof vi.fn>;
@@ -67,6 +72,7 @@ describe("openPage", () => {
     newContext: ReturnType<typeof vi.fn>;
     close: ReturnType<typeof vi.fn>;
   };
+  let mockMainFrame: { id: string };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -74,6 +80,8 @@ describe("openPage", () => {
     // Get references to mocked objects
     mockPage = {
       on: vi.fn(),
+      route: vi.fn(),
+      mainFrame: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
       context: vi.fn(),
       evaluate: vi.fn(() => Promise.resolve({})),
@@ -90,7 +98,9 @@ describe("openPage", () => {
       close: vi.fn(),
     };
 
+    mockMainFrame = { id: "main-frame" };
     mockPage.context.mockReturnValue(mockBrowserContext);
+    mockPage.mainFrame.mockReturnValue(mockMainFrame);
 
     vi.mocked(chromium.launch).mockResolvedValue(mockBrowser as never);
   });
@@ -157,6 +167,152 @@ describe("openPage", () => {
       expect(result).toHaveProperty("cookies");
       expect(result).toHaveProperty("timeoutMs", 5000);
       expect(result).toHaveProperty("timeoutOccurred", false);
+    });
+  });
+
+  describe("redirect policy", () => {
+    it("should register route handler for request interception", async () => {
+      await openPage("https://example.com", 10000, []);
+
+      expect(mockPage.route).toHaveBeenCalledWith("**/*", expect.any(Function));
+    });
+
+    it("should block cross-host redirect when policy is same-host", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      // Initial navigation should always be allowed
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      // JS-driven navigation to different host should be blocked
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://www.example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
+      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Blocked redirect by policy same-host"),
+      );
+    });
+
+    it("should allow same-site redirect for subdomains", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://app.example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameSite,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://app.example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://cdn.example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(continueMock).toHaveBeenCalledTimes(2);
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should block cross-site redirect when policy is same-site", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameSite,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.net",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
+      expect(continueMock).toHaveBeenCalledTimes(1);
     });
   });
 
