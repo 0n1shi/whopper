@@ -1,9 +1,11 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { RedirectPolicy } from "./types.js";
 import {
-  sleep,
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
+  isRedirectAllowed,
+  sleep,
 } from "./utils.js";
 
 describe("sleep", () => {
@@ -135,5 +137,37 @@ describe("URL and host utilities", () => {
 
   it("should identify different domain as third-party", () => {
     expect(isFirstPartyHost("example.com", "example.net")).toBe(false);
+  });
+
+  it("should allow any redirect policy", () => {
+    expect(
+      isRedirectAllowed("example.com", "example.net", RedirectPolicy.Any),
+    ).toBe(true);
+  });
+
+  it("should allow same-host redirect only for exact host match", () => {
+    expect(
+      isRedirectAllowed("example.com", "example.com", RedirectPolicy.SameHost),
+    ).toBe(true);
+    expect(
+      isRedirectAllowed(
+        "example.com",
+        "www.example.com",
+        RedirectPolicy.SameHost,
+      ),
+    ).toBe(false);
+  });
+
+  it("should allow same-site redirect for subdomains", () => {
+    expect(
+      isRedirectAllowed(
+        "app.example.com",
+        "cdn.example.com",
+        RedirectPolicy.SameSite,
+      ),
+    ).toBe(true);
+    expect(
+      isRedirectAllowed("example.com", "example.net", RedirectPolicy.SameSite),
+    ).toBe(false);
   });
 });

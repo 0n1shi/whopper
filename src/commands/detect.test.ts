@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { detectCommand } from "./detect.js";
+import { RedirectPolicy } from "../browser/types.js";
 
 // Mock dependencies
 vi.mock("../browser/index.js", () => ({
@@ -130,6 +131,15 @@ describe("detectCommand", () => {
       expect(uaOpt).toBeDefined();
     });
 
+    it("should have redirect-policy option with default any", () => {
+      const command = detectCommand();
+      const options = command.options;
+      const redirectPolicyOpt = options.find(
+        (o) => o.long === "--redirect-policy",
+      );
+      expect(redirectPolicyOpt).toBeDefined();
+      expect(redirectPolicyOpt?.defaultValue).toBe(RedirectPolicy.Any);
+    });
   });
 
   describe("action execution", () => {
@@ -141,6 +151,7 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         undefined,
+        RedirectPolicy.Any,
       );
     });
 
@@ -152,6 +163,7 @@ describe("detectCommand", () => {
         5000,
         expect.any(Array),
         undefined,
+        RedirectPolicy.Any,
       );
     });
 
@@ -163,6 +175,19 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         "MyAgent/1.0",
+        RedirectPolicy.Any,
+      );
+    });
+
+    it("should pass redirect policy when provided", async () => {
+      await runCommand(["--redirect-policy", "same-host"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        undefined,
+        RedirectPolicy.SameHost,
       );
     });
 

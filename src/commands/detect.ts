@@ -1,5 +1,6 @@
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import { openPage } from "../browser/index.js";
+import { RedirectPolicy } from "../browser/types.js";
 import { analyze } from "../analyzer/index.js";
 import { signatures } from "../signatures/index.js";
 import { logger, setLogLevel } from "../logger/index.js";
@@ -26,6 +27,18 @@ export const detectCommand = (): Command => {
     .option("-e, --evidence", "Show evidence for detections", false)
     .option("-j, --json", "Output results in JSON format", false)
     .option("-u, --user-agent <string>", "Custom User-Agent string")
+    .addOption(
+      new Option(
+        "-r, --redirect-policy <policy>",
+        "Redirect policy: 'any', 'same-site', or 'same-host'",
+      )
+        .choices([
+          RedirectPolicy.Any,
+          RedirectPolicy.SameSite,
+          RedirectPolicy.SameHost,
+        ])
+        .default(RedirectPolicy.Any),
+    )
     .action(
       async (
         url: string,
@@ -35,6 +48,7 @@ export const detectCommand = (): Command => {
           evidence: boolean;
           json: boolean;
           userAgent?: string;
+          redirectPolicy: RedirectPolicy;
         },
       ) => {
         if (options.debug) {
@@ -54,6 +68,7 @@ export const detectCommand = (): Command => {
             options.timeout,
             getJavascriptVariableNames(signatures),
             options.userAgent,
+            options.redirectPolicy,
           );
           const detections = analyze(context, signatures);
           if (detections.length === 0) {
