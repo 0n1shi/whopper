@@ -365,6 +365,104 @@ describe("makeDetectCommandOutput", () => {
       expect(result.detectedSoftwares[0]!.confidence).toBe("low");
     });
   });
+
+  describe("evidence ordering", () => {
+    it("should sort evidences by explicit key order", () => {
+      const detections: Detection[] = [
+        {
+          name: "nginx",
+          evidences: [
+            {
+              type: "header",
+              value: "B",
+              version: undefined,
+              confidence: "high",
+              host: "b.example.com",
+              sourceUrl: "https://b.example.com/app.js",
+            },
+            {
+              type: "body",
+              value: "Z",
+              version: undefined,
+              confidence: "high",
+              host: "z.example.com",
+              sourceUrl: "https://z.example.com/index.html",
+            },
+            {
+              type: "header",
+              value: "A",
+              version: undefined,
+              confidence: "high",
+              host: "a.example.com",
+              sourceUrl: "https://a.example.com/app.js",
+            },
+            {
+              type: "header",
+              value: "B",
+              version: undefined,
+              confidence: "low",
+              host: "a.example.com",
+              sourceUrl: "https://a.example.com/app.js",
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const evidences = result.detectedSoftwares[0]!.evidences!;
+
+      expect(
+        evidences.map((e) => `${e.type}|${e.value}|${e.host}|${e.sourceUrl}|${e.confidence}`),
+      ).toEqual([
+        "body|Z|z.example.com|https://z.example.com/index.html|high",
+        "header|A|a.example.com|https://a.example.com/app.js|high",
+        "header|B|b.example.com|https://b.example.com/app.js|high",
+        "header|B|a.example.com|https://a.example.com/app.js|low",
+      ]);
+    });
+
+    it("should keep merged evidences in stable order", () => {
+      const detections: Detection[] = [
+        {
+          name: "nginx",
+          evidences: [
+            {
+              type: "header",
+              value: "Server: nginx/1.20.0",
+              version: "1.20.0",
+              confidence: "high",
+              host: "b.example.com",
+              sourceUrl: "https://b.example.com",
+            },
+          ],
+        },
+        {
+          name: "nginx",
+          evidences: [
+            {
+              type: "header",
+              value: "Server: nginx/1.20.0",
+              version: "1.20.0",
+              confidence: "high",
+              host: "a.example.com",
+              sourceUrl: "https://a.example.com",
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const nginx = result.detectedSoftwares.find(
+        (s) => s.name === "nginx" && s.version === "1.20.0",
+      );
+
+      expect(nginx).toBeDefined();
+      expect(nginx!.evidences!.map((e) => e.host)).toEqual([
+        "a.example.com",
+        "b.example.com",
+      ]);
+    });
+  });
 });
 
 describe("printDetectCommandOutputAsText", () => {
