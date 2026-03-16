@@ -220,7 +220,7 @@ describe("openPage", () => {
       );
     });
 
-    it("should always continue when policy is any", async () => {
+    it("should allow any redirect and use fetch/fulfill when policy is any", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -230,8 +230,11 @@ describe("openPage", () => {
 
       await openPage("https://example.com", 10000, [], undefined, RedirectPolicy.Any);
 
+      const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
           isNavigationRequest: () => true,
@@ -240,9 +243,12 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
 
-      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(fulfillMock).toHaveBeenCalledWith({ response: mockResponse });
       expect(abortMock).not.toHaveBeenCalled();
     });
 

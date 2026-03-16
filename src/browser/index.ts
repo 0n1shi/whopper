@@ -1,15 +1,15 @@
-import { chromium } from "playwright";
 import chalk from "chalk";
-import { RedirectPolicy } from "./types.js";
+import { chromium } from "playwright";
+import { logger } from "../logger/index.js";
 import type { Context, Response } from "./types.js";
+import { RedirectPolicy } from "./types.js";
 import {
-  sleep,
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
   isRedirectAllowed,
+  sleep,
 } from "./utils.js";
-import { logger } from "../logger/index.js";
 
 function colorizeStatusCode(statusCode: number): string {
   const code = String(statusCode);
@@ -53,11 +53,11 @@ export async function openPage(
   const page = await context.newPage();
 
   let blockedByRedirectPolicy = false;
+  let lastNavigationUrl = url;
 
   await page.route("**/*", async (route) => {
     const request = route.request();
     if (
-      redirectPolicy === RedirectPolicy.Any ||
       !request.isNavigationRequest() ||
       request.frame() !== page.mainFrame()
     ) {
@@ -72,7 +72,10 @@ export async function openPage(
       return;
     }
 
-    if (!isRedirectAllowed(pageHost, targetHost, redirectPolicy)) {
+    if (
+      redirectPolicy !== RedirectPolicy.Any &&
+      !isRedirectAllowed(pageHost, targetHost, redirectPolicy)
+    ) {
       logger.warn(
         `Blocked redirect by policy ${redirectPolicy}: ${targetUrl}`,
       );
@@ -80,6 +83,14 @@ export async function openPage(
       await route.abort("blockedbyclient");
       return;
     }
+
+    // Log client-side redirects (JS / meta refresh)
+    if (targetUrl !== lastNavigationUrl) {
+      logger.info(
+        `Following redirect: ${lastNavigationUrl} -> ${targetUrl}`,
+      );
+    }
+    lastNavigationUrl = targetUrl;
 
     // Fetch without following redirects to inspect 3xx responses
     let response;
@@ -104,6 +115,7 @@ export async function openPage(
         }
         const redirectHost = getHostFromUrl(redirectUrl);
         if (
+          redirectPolicy !== RedirectPolicy.Any &&
           redirectHost &&
           !isRedirectAllowed(pageHost, redirectHost, redirectPolicy)
         ) {
@@ -114,6 +126,8 @@ export async function openPage(
           await route.abort("blockedbyclient");
           return;
         }
+        logger.info(`Following redirect: ${targetUrl} -> ${redirectUrl}`);
+        lastNavigationUrl = redirectUrl;
       }
     }
 
