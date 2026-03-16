@@ -51,7 +51,8 @@ export async function openPage(
     ...(userAgent ? { userAgent } : {}),
   });
   const page = await context.newPage();
-  let isFirstNavigationRequest = true;
+
+  let blockedByRedirectPolicy = false;
 
   await page.route("**/*", async (route) => {
     const request = route.request();
@@ -64,12 +65,6 @@ export async function openPage(
       return;
     }
 
-    if (isFirstNavigationRequest) {
-      isFirstNavigationRequest = false;
-      await route.continue();
-      return;
-    }
-
     const targetUrl = request.url();
     const targetHost = getHostFromUrl(targetUrl);
     if (!targetHost) {
@@ -77,15 +72,52 @@ export async function openPage(
       return;
     }
 
-    if (isRedirectAllowed(pageHost, targetHost, redirectPolicy)) {
-      await route.continue();
+    if (!isRedirectAllowed(pageHost, targetHost, redirectPolicy)) {
+      logger.warn(
+        `Blocked redirect by policy ${redirectPolicy}: ${targetUrl}`,
+      );
+      blockedByRedirectPolicy = true;
+      await route.abort("blockedbyclient");
       return;
     }
 
-    logger.warn(
-      `Blocked redirect by policy ${redirectPolicy}: ${targetUrl}`,
-    );
-    await route.abort("blockedbyclient");
+    // Fetch without following redirects to inspect 3xx responses
+    let response;
+    try {
+      response = await route.fetch({ maxRedirects: 0 });
+    } catch {
+      await route.abort("failed");
+      return;
+    }
+
+    const status = response.status();
+
+    if (status >= 300 && status < 400) {
+      const location = response.headers()["location"];
+      if (location) {
+        let redirectUrl: string;
+        try {
+          redirectUrl = new URL(location, targetUrl).href;
+        } catch {
+          await route.fulfill({ response });
+          return;
+        }
+        const redirectHost = getHostFromUrl(redirectUrl);
+        if (
+          redirectHost &&
+          !isRedirectAllowed(pageHost, redirectHost, redirectPolicy)
+        ) {
+          logger.warn(
+            `Blocked redirect by policy ${redirectPolicy}: ${redirectUrl}`,
+          );
+          blockedByRedirectPolicy = true;
+          await route.abort("blockedbyclient");
+          return;
+        }
+      }
+    }
+
+    await route.fulfill({ response });
   });
 
   const responses: Response[] = [];
@@ -127,6 +159,8 @@ export async function openPage(
   } else if (result === "timeout") {
     timeoutOccurred = true;
     logger.warn(`Timeout of ${timeoutMs}ms exceeded while loading ${url}`);
+  } else if (blockedByRedirectPolicy) {
+    // Already logged by the route handler as "Blocked redirect by policy"
   } else {
     logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
   }

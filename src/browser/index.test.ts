@@ -177,7 +177,7 @@ describe("openPage", () => {
       expect(mockPage.route).toHaveBeenCalledWith("**/*", expect.any(Function));
     });
 
-    it("should block cross-host redirect when policy is same-host", async () => {
+    it("should block first cross-host navigation when policy is same-host", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -198,18 +198,8 @@ describe("openPage", () => {
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
-      // Initial navigation should always be allowed
-      await routeHandler({
-        request: () => ({
-          isNavigationRequest: () => true,
-          frame: () => mockMainFrame,
-          url: () => "https://example.com",
-        }),
-        continue: continueMock,
-        abort: abortMock,
-      });
-
-      // JS-driven navigation to different host should be blocked
+      const fetchMock = vi.fn();
+      const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
           isNavigationRequest: () => true,
@@ -218,10 +208,13 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
 
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
-      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(continueMock).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining("Blocked redirect by policy same-host"),
       );
@@ -333,8 +326,11 @@ describe("openPage", () => {
         RedirectPolicy.SameHost,
       );
 
+      const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
       // first top-level navigation
       await routeHandler({
         request: () => ({
@@ -344,6 +340,8 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
       // second top-level navigation with invalid URL should still continue
       await routeHandler({
@@ -354,9 +352,13 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
 
-      expect(continueMock).toHaveBeenCalledTimes(2);
+      // First call uses fetch+fulfill (same host, allowed), second uses continue (unparseable URL)
+      expect(fulfillMock).toHaveBeenCalledTimes(1);
+      expect(continueMock).toHaveBeenCalledTimes(1);
       expect(abortMock).not.toHaveBeenCalled();
     });
 
@@ -379,8 +381,11 @@ describe("openPage", () => {
         RedirectPolicy.SameSite,
       );
 
+      const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
           isNavigationRequest: () => true,
@@ -389,6 +394,8 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
       await routeHandler({
         request: () => ({
@@ -398,13 +405,15 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
 
-      expect(continueMock).toHaveBeenCalledTimes(2);
+      expect(fulfillMock).toHaveBeenCalledTimes(2);
       expect(abortMock).not.toHaveBeenCalled();
     });
 
-    it("should block cross-site redirect when policy is same-site", async () => {
+    it("should block first cross-site navigation when policy is same-site", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -425,15 +434,8 @@ describe("openPage", () => {
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
-      await routeHandler({
-        request: () => ({
-          isNavigationRequest: () => true,
-          frame: () => mockMainFrame,
-          url: () => "https://example.com",
-        }),
-        continue: continueMock,
-        abort: abortMock,
-      });
+      const fetchMock = vi.fn();
+      const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
           isNavigationRequest: () => true,
@@ -442,10 +444,235 @@ describe("openPage", () => {
         }),
         continue: continueMock,
         abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
       });
 
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
-      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(continueMock).not.toHaveBeenCalled();
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("should block HTTP 301 redirect to cross-host when policy is same-host", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://www.example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const mockResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/" }),
+      };
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://www.example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
+      expect(fulfillMock).not.toHaveBeenCalled();
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Blocked redirect by policy same-host: https://example.com/"),
+      );
+    });
+
+    it("should allow HTTP 301 redirect to same host", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const mockResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/top" }),
+      };
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(fulfillMock).toHaveBeenCalledWith({ response: mockResponse });
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should fulfill response when Location header is malformed", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const mockResponse = {
+        status: () => 301,
+        headers: () => ({ location: "://broken" }),
+      };
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(fulfillMock).toHaveBeenCalledWith({ response: mockResponse });
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should block HTTP 302 redirect to cross-site when policy is same-site", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameSite,
+      );
+
+      const mockResponse = {
+        status: () => 302,
+        headers: () => ({ location: "https://other.example/login" }),
+      };
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
+      expect(fulfillMock).not.toHaveBeenCalled();
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Blocked redirect by policy same-site"),
+      );
+    });
+
+    it("should abort when route.fetch() throws an error", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.reject(new Error("net::ERR_CONNECTION_REFUSED")));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(abortMock).toHaveBeenCalledWith("failed");
+      expect(fulfillMock).not.toHaveBeenCalled();
     });
   });
 
@@ -478,6 +705,43 @@ describe("openPage", () => {
       expect(logger.error).toHaveBeenCalledWith(
         expect.stringContaining("Connection refused"),
       );
+    });
+
+    it("should not log error when navigation is blocked by redirect policy", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      mockPage.goto.mockImplementation(async () => {
+        // Simulate the route handler blocking a cross-host redirect
+        await routeHandler({
+          request: () => ({
+            isNavigationRequest: () => true,
+            frame: () => mockMainFrame,
+            url: () => "https://other.example",
+          }),
+          continue: vi.fn(() => Promise.resolve()),
+          abort: vi.fn(() => Promise.resolve()),
+          fetch: vi.fn(),
+          fulfill: vi.fn(() => Promise.resolve()),
+        });
+        throw new Error("page.goto: net::ERR_BLOCKED_BY_CLIENT");
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      expect(logger.error).not.toHaveBeenCalled();
     });
 
     it("should handle cookie/JS extraction failure gracefully", async () => {
