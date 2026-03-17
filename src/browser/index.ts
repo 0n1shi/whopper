@@ -11,6 +11,8 @@ import {
   sleep,
 } from "./utils.js";
 
+const MAX_REDIRECT_HOPS = 20;
+
 function colorizeStatusCode(statusCode: number): string {
   const code = String(statusCode);
 
@@ -54,6 +56,8 @@ export async function openPage(
 
   let blockedByRedirectPolicy = false;
   let lastNavigationUrl = url;
+  let inspectedUrls = new Set<string>();
+  let reentryCount = 0;
 
   await page.route("**/*", async (route) => {
     const request = route.request();
@@ -68,6 +72,21 @@ export async function openPage(
     const targetUrl = request.url();
     const targetHost = getHostFromUrl(targetUrl);
     if (!targetHost) {
+      await route.continue();
+      return;
+    }
+
+    // Skip URLs already inspected by the pre-inspection loop to prevent
+    // infinite re-entry: fulfill(301) may cause the browser to re-invoke
+    // this handler, and without this guard a circular redirect chain
+    // would loop indefinitely outside the MAX_REDIRECT_HOPS limit.
+    if (inspectedUrls.has(targetUrl)) {
+      reentryCount++;
+      if (reentryCount > MAX_REDIRECT_HOPS) {
+        logger.warn("Too many redirect re-entries, aborting");
+        await route.abort("failed");
+        return;
+      }
       await route.continue();
       return;
     }
@@ -92,7 +111,13 @@ export async function openPage(
     }
     lastNavigationUrl = targetUrl;
 
-    // Fetch without following redirects to inspect 3xx responses
+    // New set per navigation so previous chains don't interfere,
+    // but re-entry from the same chain still hits the guard above.
+    inspectedUrls = new Set<string>();
+    reentryCount = 0;
+
+    // Fetch without following redirects so we can inspect each hop
+    let currentUrl = targetUrl;
     let response;
     try {
       response = await route.fetch({ maxRedirects: 0 });
@@ -101,37 +126,50 @@ export async function openPage(
       return;
     }
 
-    const status = response.status();
-
-    if (status >= 300 && status < 400) {
+    // Pre-inspect the 3xx chain to log each hop and enforce the redirect
+    // policy before the browser sees any response. After inspection we
+    // fulfill with the *first* response so the browser follows the real
+    // chain itself, preserving Set-Cookie headers, origin, and URL state.
+    const firstResponse = response;
+    for (let hop = 0; hop < MAX_REDIRECT_HOPS && response.status() >= 300 && response.status() < 400; hop++) {
       const location = response.headers()["location"];
-      if (location) {
-        let redirectUrl: string;
-        try {
-          redirectUrl = new URL(location, targetUrl).href;
-        } catch {
-          await route.fulfill({ response });
-          return;
-        }
-        const redirectHost = getHostFromUrl(redirectUrl);
-        if (
-          redirectPolicy !== RedirectPolicy.Any &&
-          redirectHost &&
-          !isRedirectAllowed(pageHost, redirectHost, redirectPolicy)
-        ) {
-          logger.warn(
-            `Blocked redirect by policy ${redirectPolicy}: ${redirectUrl}`,
-          );
-          blockedByRedirectPolicy = true;
-          await route.abort("blockedbyclient");
-          return;
-        }
-        logger.info(`Following redirect: ${targetUrl} -> ${redirectUrl}`);
-        lastNavigationUrl = redirectUrl;
+      if (!location) break;
+
+      let redirectUrl: string;
+      try {
+        redirectUrl = new URL(location, currentUrl).href;
+      } catch {
+        break;
+      }
+
+      const redirectHost = getHostFromUrl(redirectUrl);
+      if (
+        redirectPolicy !== RedirectPolicy.Any &&
+        redirectHost &&
+        !isRedirectAllowed(pageHost, redirectHost, redirectPolicy)
+      ) {
+        logger.warn(
+          `Blocked redirect by policy ${redirectPolicy}: ${redirectUrl}`,
+        );
+        blockedByRedirectPolicy = true;
+        await route.abort("blockedbyclient");
+        return;
+      }
+
+      logger.info(`Following redirect: ${currentUrl} -> ${redirectUrl}`);
+      lastNavigationUrl = redirectUrl;
+      currentUrl = redirectUrl;
+      inspectedUrls.add(redirectUrl);
+
+      try {
+        response = await route.fetch({ url: redirectUrl, maxRedirects: 0 });
+      } catch {
+        await route.abort("failed");
+        return;
       }
     }
 
-    await route.fulfill({ response });
+    await route.fulfill({ response: firstResponse });
   });
 
   const responses: Response[] = [];

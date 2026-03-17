@@ -680,6 +680,244 @@ describe("openPage", () => {
       expect(abortMock).toHaveBeenCalledWith("failed");
       expect(fulfillMock).not.toHaveBeenCalled();
     });
+
+    it("should continue for already-inspected URLs on route re-entry", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      // First call: 301 chain example.com -> example.com/page
+      const mockRedirectResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/page" }),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({}),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mockRedirectResponse)
+        .mockResolvedValueOnce(mock200Response);
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      // Simulate browser re-entry for the inspected redirect target
+      const continueMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com/page",
+        }),
+        continue: continueMock,
+        abort: vi.fn(),
+        fetch: vi.fn(),
+        fulfill: vi.fn(),
+      });
+
+      expect(continueMock).toHaveBeenCalled();
+    });
+
+    it("should abort after too many re-entries for inspected URLs", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      // First call: build a chain so inspectedUrls is populated
+      const mockRedirectResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/page" }),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({}),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mockRedirectResponse)
+        .mockResolvedValueOnce(mock200Response);
+
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: vi.fn(() => Promise.resolve()),
+      });
+
+      // Simulate re-entries exceeding MAX_REDIRECT_HOPS (20)
+      for (let i = 0; i < 20; i++) {
+        await routeHandler({
+          request: () => ({
+            isNavigationRequest: () => true,
+            frame: () => mockMainFrame,
+            url: () => "https://example.com/page",
+          }),
+          continue: vi.fn(() => Promise.resolve()),
+          abort: vi.fn(() => Promise.resolve()),
+          fetch: vi.fn(),
+          fulfill: vi.fn(),
+        });
+      }
+
+      // The 21st re-entry should abort
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com/page",
+        }),
+        continue: vi.fn(() => Promise.resolve()),
+        abort: abortMock,
+        fetch: vi.fn(),
+        fulfill: vi.fn(),
+      });
+
+      expect(abortMock).toHaveBeenCalledWith("failed");
+    });
+
+    it("should abort when redirect chain fetch fails mid-chain", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      const mockRedirectResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/page" }),
+      };
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mockRedirectResponse)
+        .mockRejectedValueOnce(new Error("net::ERR_CONNECTION_RESET"));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(abortMock).toHaveBeenCalledWith("failed");
+      expect(fulfillMock).not.toHaveBeenCalled();
+    });
+
+    it("should break loop when Location URL cannot be parsed", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      await openPage(
+        "https://example.com",
+        10000,
+        [],
+        undefined,
+        RedirectPolicy.SameHost,
+      );
+
+      // Location with an invalid base URL combination that triggers URL parse error
+      const mockResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://[invalid" }),
+      };
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.resolve(mockResponse));
+      const fulfillMock = vi.fn(() => Promise.resolve());
+
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
+      expect(fulfillMock).toHaveBeenCalledWith({ response: mockResponse });
+      expect(abortMock).not.toHaveBeenCalled();
+    });
   });
 
   describe("timeout handling", () => {
