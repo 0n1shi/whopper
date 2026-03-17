@@ -26,6 +26,11 @@ export const detectCommand = (): Command => {
     .option("-e, --evidence", "Show evidence for detections", false)
     .option("-j, --json", "Output results in JSON format", false)
     .option("-u, --user-agent <string>", "Custom User-Agent string")
+    .option(
+      "-b, --block-cross-domain-redirect",
+      "Block redirects to a different host",
+      false,
+    )
     .action(
       async (
         url: string,
@@ -35,6 +40,7 @@ export const detectCommand = (): Command => {
           evidence: boolean;
           json: boolean;
           userAgent?: string;
+          blockCrossDomainRedirect: boolean;
         },
       ) => {
         if (options.debug) {
@@ -54,6 +60,7 @@ export const detectCommand = (): Command => {
             options.timeout,
             getJavascriptVariableNames(signatures),
             options.userAgent,
+            options.blockCrossDomainRedirect,
           );
           const detections = analyze(context, signatures);
           if (detections.length === 0) {

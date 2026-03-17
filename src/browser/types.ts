@@ -1,7 +1,6 @@
 import type { Browser, Page } from "playwright";
 
 export type Headers = Record<string, string>;
-
 export type Cookie = {
   name: string;
   value: string;

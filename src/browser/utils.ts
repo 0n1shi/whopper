@@ -61,6 +61,13 @@ export function isFirstPartyHost(
   return toRegistrableDomain(base) === toRegistrableDomain(candidate);
 }
 
+export function isSameHost(
+  sourceHost: string,
+  targetHost: string,
+): boolean {
+  return normalizeHostname(sourceHost) === normalizeHostname(targetHost);
+}
+
 /**
  * Extracts JavaScript variables from a window-like object.
  * Used inside page.evaluate() to extract values from the browser context.

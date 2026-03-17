@@ -130,6 +130,15 @@ describe("detectCommand", () => {
       expect(uaOpt).toBeDefined();
     });
 
+    it("should have block-cross-domain-redirect option with default false", () => {
+      const command = detectCommand();
+      const options = command.options;
+      const blockOpt = options.find(
+        (o) => o.long === "--block-cross-domain-redirect",
+      );
+      expect(blockOpt).toBeDefined();
+      expect(blockOpt?.defaultValue).toBe(false);
+    });
   });
 
   describe("action execution", () => {
@@ -141,6 +150,7 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         undefined,
+        false,
       );
     });
 
@@ -152,6 +162,7 @@ describe("detectCommand", () => {
         5000,
         expect.any(Array),
         undefined,
+        false,
       );
     });
 
@@ -163,6 +174,19 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         "MyAgent/1.0",
+        false,
+      );
+    });
+
+    it("should pass block-cross-domain-redirect when provided", async () => {
+      await runCommand(["--block-cross-domain-redirect"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        undefined,
+        true,
       );
     });
 

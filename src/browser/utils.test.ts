@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  sleep,
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
+  isSameHost,
+  sleep,
 } from "./utils.js";
 
 describe("sleep", () => {
@@ -135,5 +136,14 @@ describe("URL and host utilities", () => {
 
   it("should identify different domain as third-party", () => {
     expect(isFirstPartyHost("example.com", "example.net")).toBe(false);
+  });
+
+  it("should return true for exact host match", () => {
+    expect(isSameHost("example.com", "example.com")).toBe(true);
+  });
+
+  it("should return false for different hosts", () => {
+    expect(isSameHost("example.com", "www.example.com")).toBe(false);
+    expect(isSameHost("example.com", "example.net")).toBe(false);
   });
 });
