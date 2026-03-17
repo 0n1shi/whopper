@@ -57,6 +57,7 @@ export async function openPage(
   let lastNavigationUrl = url;
   let inspectedUrls = new Set<string>();
   let reentryCount = 0;
+  const preInspectedUrls = new Set<string>();
 
   await page.route("**/*", async (route) => {
     const request = route.request();
@@ -129,8 +130,28 @@ export async function openPage(
     // policy before the browser sees any response. After inspection we
     // fulfill with the *first* response so the browser follows the real
     // chain itself, preserving Set-Cookie headers, origin, and URL state.
+    // URLs captured here are added to preInspectedUrls so that the
+    // page.on("response") listener can skip them and avoid duplicates.
     const firstResponse = response;
     for (let hop = 0; hop < MAX_REDIRECT_HOPS && response.status() >= 300 && response.status() < 400; hop++) {
+      // Capture intermediate 3xx responses so their headers (e.g. server,
+      // x-powered-by) are available for analysis even though the browser
+      // never sees these responses directly.
+      const hopHost = getHostFromUrl(currentUrl) ?? "";
+      preInspectedUrls.add(currentUrl);
+      const hopBody = await response.text().catch(() => null);
+      const hopResponse: Response = {
+        url: currentUrl,
+        host: hopHost,
+        isFirstParty: hopHost ? isFirstPartyHost(pageHost, hopHost) : false,
+        status: response.status(),
+        headers: response.headers(),
+      };
+      if (hopBody) {
+        hopResponse.body = hopBody;
+      }
+      responses.push(hopResponse);
+
       const location = response.headers()["location"];
       if (!location) break;
 
@@ -174,8 +195,18 @@ export async function openPage(
   const responses: Response[] = [];
   page.on("response", async (response) => {
     const responseUrl = response.url();
-    const responseHost = getHostFromUrl(responseUrl) ?? "";
     const statusCode = response.status();
+
+    // Skip responses already captured by the pre-inspection loop to
+    // avoid duplicates.
+    if (preInspectedUrls.has(responseUrl) && statusCode >= 300 && statusCode < 400) {
+      logger.debug(
+        `Skipping already captured response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
+      );
+      return;
+    }
+
+    const responseHost = getHostFromUrl(responseUrl) ?? "";
     logger.debug(
       `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
     );

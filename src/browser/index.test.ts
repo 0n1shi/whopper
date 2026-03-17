@@ -440,6 +440,7 @@ describe("openPage", () => {
       const mockResponse = {
         status: () => 301,
         headers: () => ({ location: "https://example.com/" }),
+        text: () => Promise.resolve(null),
       };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -487,6 +488,7 @@ describe("openPage", () => {
       const mockResponse = {
         status: () => 301,
         headers: () => ({ location: "https://example.com/top" }),
+        text: () => Promise.resolve(null),
       };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -531,6 +533,7 @@ describe("openPage", () => {
       const mockResponse = {
         status: () => 301,
         headers: () => ({ location: "://broken" }),
+        text: () => Promise.resolve(null),
       };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -575,6 +578,7 @@ describe("openPage", () => {
       const mockResponse = {
         status: () => 302,
         headers: () => ({ location: "https://other.example/login" }),
+        text: () => Promise.resolve(null),
       };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -663,6 +667,7 @@ describe("openPage", () => {
       const mockRedirectResponse = {
         status: () => 301,
         headers: () => ({ location: "https://example.com/page" }),
+        text: () => Promise.resolve(null),
       };
       const mock200Response = {
         status: () => 200,
@@ -730,6 +735,7 @@ describe("openPage", () => {
       const mockRedirectResponse = {
         status: () => 301,
         headers: () => ({ location: "https://example.com/page" }),
+        text: () => Promise.resolve(null),
       };
       const mock200Response = {
         status: () => 200,
@@ -806,6 +812,7 @@ describe("openPage", () => {
       const mockRedirectResponse = {
         status: () => 301,
         headers: () => ({ location: "https://example.com/page" }),
+        text: () => Promise.resolve(null),
       };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -855,6 +862,7 @@ describe("openPage", () => {
       const mockResponse = {
         status: () => 301,
         headers: () => ({ location: "https://[invalid" }),
+        text: () => Promise.resolve(null),
       };
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -876,6 +884,331 @@ describe("openPage", () => {
       expect(fetchMock).toHaveBeenCalledWith({ maxRedirects: 0 });
       expect(fulfillMock).toHaveBeenCalledWith({ response: mockResponse });
       expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should capture 3xx response headers and body into responses array", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const mock301Response = {
+        status: () => 301,
+        headers: () => ({
+          location: "https://example.com/new",
+          server: "awselb/2.0",
+        }),
+        text: () =>
+          Promise.resolve("<html><body>Moved Permanently</body></html>"),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({ server: "nginx" }),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mock301Response)
+        .mockResolvedValueOnce(mock200Response);
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toEqual({
+        url: "https://example.com",
+        host: "example.com",
+        isFirstParty: true,
+        status: 301,
+        headers: { location: "https://example.com/new", server: "awselb/2.0" },
+        body: "<html><body>Moved Permanently</body></html>",
+      });
+    });
+
+    it("should capture multi-hop 3xx chain into responses array", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const mock301Response = {
+        status: () => 301,
+        headers: () => ({
+          location: "https://example.com/step2",
+          server: "awselb/2.0",
+        }),
+        text: () => Promise.resolve(null),
+      };
+      const mock302Response = {
+        status: () => 302,
+        headers: () => ({
+          location: "https://example.com/final",
+          server: "cloudflare",
+        }),
+        text: () =>
+          Promise.resolve("<html><body>Found</body></html>"),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({ server: "nginx" }),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mock301Response)
+        .mockResolvedValueOnce(mock302Response)
+        .mockResolvedValueOnce(mock200Response);
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(result.responses).toHaveLength(2);
+      expect(result.responses[0]).toMatchObject({
+        url: "https://example.com",
+        status: 301,
+        headers: expect.objectContaining({ server: "awselb/2.0" }),
+      });
+      expect(result.responses[1]).toMatchObject({
+        url: "https://example.com/step2",
+        status: 302,
+        headers: expect.objectContaining({ server: "cloudflare" }),
+        body: "<html><body>Found</body></html>",
+      });
+    });
+
+    it("should not duplicate 3xx responses in page.on response listener", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      let responseListener: (response: unknown) => Promise<void> =
+        async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      mockPage.on.mockImplementation(
+        (event: string, handler: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            responseListener = handler;
+          }
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const mock301Response = {
+        status: () => 301,
+        headers: () => ({
+          location: "https://example.com/new",
+          server: "awselb/2.0",
+        }),
+        text: () => Promise.resolve(null),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({}),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mock301Response)
+        .mockResolvedValueOnce(mock200Response);
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: vi.fn(() => Promise.resolve()),
+      });
+
+      // Simulate browser re-delivering the same 3xx response via
+      // page.on("response") — it should be skipped as a duplicate.
+      await responseListener({
+        url: () => "https://example.com",
+        status: () => 301,
+        headers: () => ({
+          location: "https://example.com/new",
+          server: "awselb/2.0",
+        }),
+        text: () => Promise.resolve(null),
+      });
+
+      const matching301 = result.responses.filter(
+        (r) => r.url === "https://example.com" && r.status === 301,
+      );
+      expect(matching301).toHaveLength(1);
+    });
+
+    it("should omit body from 3xx response when body is empty", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const mock301Response = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/new" }),
+        text: () => Promise.resolve(null),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({}),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mock301Response)
+        .mockResolvedValueOnce(mock200Response);
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: vi.fn(() => Promise.resolve()),
+      });
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).not.toHaveProperty("body");
+    });
+
+    it("should capture 3xx response without Location header", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      // 3xx response without a Location header — the loop should capture it
+      // and then break.
+      const mock301Response = {
+        status: () => 301,
+        headers: () => ({ server: "awselb/2.0" }),
+        text: () => Promise.resolve(null),
+      };
+      const fetchMock = vi.fn().mockResolvedValueOnce(mock301Response);
+      const fulfillMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toMatchObject({
+        url: "https://example.com",
+        status: 301,
+        headers: { server: "awselb/2.0" },
+      });
+      // Only the initial fetch should have been called (no redirect to follow)
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(fulfillMock).toHaveBeenCalled();
+    });
+
+    it("should handle 3xx response where URL has no extractable host", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const mock301Response = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/new" }),
+        text: () => Promise.resolve(null),
+      };
+      const mock200Response = {
+        status: () => 200,
+        headers: () => ({}),
+      };
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mock301Response)
+        .mockResolvedValueOnce(mock200Response);
+      const fulfillMock = vi.fn(() => Promise.resolve());
+
+      // Use a data: URL that getHostFromUrl returns null for
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(),
+        abort: vi.fn(),
+        fetch: fetchMock,
+        fulfill: fulfillMock,
+      });
+
+      // The 3xx response should still be captured
+      expect(result.responses).toHaveLength(1);
+      expect(result.responses[0]).toMatchObject({
+        status: 301,
+        host: "example.com",
+        isFirstParty: true,
+      });
     });
   });
 
