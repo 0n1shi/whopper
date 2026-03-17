@@ -1,18 +1,6 @@
 import type { Browser, Page } from "playwright";
 
 export type Headers = Record<string, string>;
-export const RedirectPolicy = {
-  /** Follow all redirects (default) */
-  Any: "any",
-  /** Allow redirects within the same registrable domain (e.g. *.example.com) */
-  SameSite: "same-site",
-  /** Allow redirects only to the exact same host (e.g. example.com) */
-  SameHost: "same-host",
-} as const;
-
-export type RedirectPolicy =
-  (typeof RedirectPolicy)[keyof typeof RedirectPolicy];
-
 export type Cookie = {
   name: string;
   value: string;

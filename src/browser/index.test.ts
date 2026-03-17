@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { openPage } from "./index.js";
-import { RedirectPolicy } from "./types.js";
 
 // Mock playwright
 vi.mock("playwright", () => {
@@ -177,7 +176,7 @@ describe("openPage", () => {
       expect(mockPage.route).toHaveBeenCalledWith("**/*", expect.any(Function));
     });
 
-    it("should block first cross-host navigation when policy is same-host", async () => {
+    it("should block cross-domain navigation when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -193,7 +192,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const continueMock = vi.fn(() => Promise.resolve());
@@ -216,11 +215,11 @@ describe("openPage", () => {
       expect(continueMock).not.toHaveBeenCalled();
       expect(fetchMock).not.toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Blocked redirect by policy same-host"),
+        expect.stringContaining("Blocked cross-domain redirect"),
       );
     });
 
-    it("should allow any redirect and use fetch/fulfill when policy is any", async () => {
+    it("should allow any redirect when blocking is disabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -228,7 +227,7 @@ describe("openPage", () => {
         },
       );
 
-      await openPage("https://example.com", 10000, [], undefined, RedirectPolicy.Any);
+      await openPage("https://example.com", 10000, [], undefined, false);
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
@@ -265,7 +264,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const continueMock = vi.fn(() => Promise.resolve());
@@ -297,7 +296,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const continueMock = vi.fn(() => Promise.resolve());
@@ -329,7 +328,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
@@ -368,7 +367,7 @@ describe("openPage", () => {
       expect(abortMock).not.toHaveBeenCalled();
     });
 
-    it("should allow same-site redirect for subdomains", async () => {
+    it("should block subdomain redirect when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -384,7 +383,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameSite,
+        true,
       );
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
@@ -415,51 +414,11 @@ describe("openPage", () => {
         fulfill: fulfillMock,
       });
 
-      expect(fulfillMock).toHaveBeenCalledTimes(2);
-      expect(abortMock).not.toHaveBeenCalled();
-    });
-
-    it("should block first cross-site navigation when policy is same-site", async () => {
-      let routeHandler: (route: unknown) => Promise<void> = async () => {};
-      mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
-          routeHandler = handler;
-        },
-      );
-      vi.mocked(sleep).mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
-      );
-
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        RedirectPolicy.SameSite,
-      );
-
-      const continueMock = vi.fn(() => Promise.resolve());
-      const abortMock = vi.fn(() => Promise.resolve());
-      const fetchMock = vi.fn();
-      const fulfillMock = vi.fn(() => Promise.resolve());
-      await routeHandler({
-        request: () => ({
-          isNavigationRequest: () => true,
-          frame: () => mockMainFrame,
-          url: () => "https://example.net",
-        }),
-        continue: continueMock,
-        abort: abortMock,
-        fetch: fetchMock,
-        fulfill: fulfillMock,
-      });
-
+      expect(fulfillMock).toHaveBeenCalledTimes(1);
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
-      expect(continueMock).not.toHaveBeenCalled();
-      expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it("should block HTTP 301 redirect to cross-host when policy is same-host", async () => {
+    it("should block HTTP 301 redirect to cross-domain when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -475,7 +434,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const mockResponse = {
@@ -502,7 +461,7 @@ describe("openPage", () => {
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
       expect(fulfillMock).not.toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Blocked redirect by policy same-host: https://example.com/"),
+        expect.stringContaining("Blocked cross-domain redirect: https://example.com/"),
       );
     });
 
@@ -522,7 +481,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const mockResponse = {
@@ -566,7 +525,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const mockResponse = {
@@ -594,7 +553,7 @@ describe("openPage", () => {
       expect(abortMock).not.toHaveBeenCalled();
     });
 
-    it("should block HTTP 302 redirect to cross-site when policy is same-site", async () => {
+    it("should block HTTP 302 redirect to cross-domain when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
@@ -610,7 +569,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameSite,
+        true,
       );
 
       const mockResponse = {
@@ -637,7 +596,7 @@ describe("openPage", () => {
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
       expect(fulfillMock).not.toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Blocked redirect by policy same-site"),
+        expect.stringContaining("Blocked cross-domain redirect"),
       );
     });
 
@@ -657,7 +616,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const continueMock = vi.fn(() => Promise.resolve());
@@ -697,7 +656,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       // First call: 301 chain example.com -> example.com/page
@@ -764,7 +723,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       // First call: build a chain so inspectedUrls is populated
@@ -841,7 +800,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       const mockRedirectResponse = {
@@ -889,7 +848,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       // Location with an invalid base URL combination that triggers URL parse error
@@ -982,7 +941,7 @@ describe("openPage", () => {
         10000,
         [],
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
 
       expect(logger.error).not.toHaveBeenCalled();

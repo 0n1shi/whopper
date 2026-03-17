@@ -1,5 +1,3 @@
-import { RedirectPolicy } from "./types.js";
-
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -63,19 +61,11 @@ export function isFirstPartyHost(
   return toRegistrableDomain(base) === toRegistrableDomain(candidate);
 }
 
-export function isRedirectAllowed(
+export function isSameHost(
   sourceHost: string,
   targetHost: string,
-  policy: RedirectPolicy,
 ): boolean {
-  if (policy === RedirectPolicy.Any) {
-    return true;
-  }
-  if (policy === RedirectPolicy.SameHost) {
-    return normalizeHostname(sourceHost) === normalizeHostname(targetHost);
-  }
-
-  return isFirstPartyHost(sourceHost, targetHost);
+  return normalizeHostname(sourceHost) === normalizeHostname(targetHost);
 }
 
 /**

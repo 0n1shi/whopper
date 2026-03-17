@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { RedirectPolicy } from "./types.js";
 import {
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
-  isRedirectAllowed,
+  isSameHost,
   sleep,
 } from "./utils.js";
 
@@ -139,35 +138,12 @@ describe("URL and host utilities", () => {
     expect(isFirstPartyHost("example.com", "example.net")).toBe(false);
   });
 
-  it("should allow any redirect policy", () => {
-    expect(
-      isRedirectAllowed("example.com", "example.net", RedirectPolicy.Any),
-    ).toBe(true);
+  it("should return true for exact host match", () => {
+    expect(isSameHost("example.com", "example.com")).toBe(true);
   });
 
-  it("should allow same-host redirect only for exact host match", () => {
-    expect(
-      isRedirectAllowed("example.com", "example.com", RedirectPolicy.SameHost),
-    ).toBe(true);
-    expect(
-      isRedirectAllowed(
-        "example.com",
-        "www.example.com",
-        RedirectPolicy.SameHost,
-      ),
-    ).toBe(false);
-  });
-
-  it("should allow same-site redirect for subdomains", () => {
-    expect(
-      isRedirectAllowed(
-        "app.example.com",
-        "cdn.example.com",
-        RedirectPolicy.SameSite,
-      ),
-    ).toBe(true);
-    expect(
-      isRedirectAllowed("example.com", "example.net", RedirectPolicy.SameSite),
-    ).toBe(false);
+  it("should return false for different hosts", () => {
+    expect(isSameHost("example.com", "www.example.com")).toBe(false);
+    expect(isSameHost("example.com", "example.net")).toBe(false);
   });
 });

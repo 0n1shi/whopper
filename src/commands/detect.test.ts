@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { detectCommand } from "./detect.js";
-import { RedirectPolicy } from "../browser/types.js";
 
 // Mock dependencies
 vi.mock("../browser/index.js", () => ({
@@ -131,14 +130,14 @@ describe("detectCommand", () => {
       expect(uaOpt).toBeDefined();
     });
 
-    it("should have redirect-policy option with default any", () => {
+    it("should have block-cross-domain-redirect option with default false", () => {
       const command = detectCommand();
       const options = command.options;
-      const redirectPolicyOpt = options.find(
-        (o) => o.long === "--redirect-policy",
+      const blockOpt = options.find(
+        (o) => o.long === "--block-cross-domain-redirect",
       );
-      expect(redirectPolicyOpt).toBeDefined();
-      expect(redirectPolicyOpt?.defaultValue).toBe(RedirectPolicy.Any);
+      expect(blockOpt).toBeDefined();
+      expect(blockOpt?.defaultValue).toBe(false);
     });
   });
 
@@ -151,7 +150,7 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         undefined,
-        RedirectPolicy.Any,
+        false,
       );
     });
 
@@ -163,7 +162,7 @@ describe("detectCommand", () => {
         5000,
         expect.any(Array),
         undefined,
-        RedirectPolicy.Any,
+        false,
       );
     });
 
@@ -175,19 +174,19 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         "MyAgent/1.0",
-        RedirectPolicy.Any,
+        false,
       );
     });
 
-    it("should pass redirect policy when provided", async () => {
-      await runCommand(["--redirect-policy", "same-host"]);
+    it("should pass block-cross-domain-redirect when provided", async () => {
+      await runCommand(["--block-cross-domain-redirect"]);
 
       expect(openPage).toHaveBeenCalledWith(
         "https://example.com",
         10000,
         expect.any(Array),
         undefined,
-        RedirectPolicy.SameHost,
+        true,
       );
     });
 

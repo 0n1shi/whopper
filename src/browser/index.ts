@@ -2,12 +2,11 @@ import chalk from "chalk";
 import { chromium } from "playwright";
 import { logger } from "../logger/index.js";
 import type { Context, Response } from "./types.js";
-import { RedirectPolicy } from "./types.js";
 import {
   extractJsVariables,
   getHostFromUrl,
   isFirstPartyHost,
-  isRedirectAllowed,
+  isSameHost,
   sleep,
 } from "./utils.js";
 
@@ -40,7 +39,7 @@ export async function openPage(
   timeoutMs: number,
   javascriptVariableNames: string[],
   userAgent?: string,
-  redirectPolicy: RedirectPolicy = RedirectPolicy.Any,
+  blockCrossDomainRedirect: boolean = false,
 ): Promise<Context> {
   const pageHost = getHostFromUrl(url);
   if (!pageHost) {
@@ -92,11 +91,11 @@ export async function openPage(
     }
 
     if (
-      redirectPolicy !== RedirectPolicy.Any &&
-      !isRedirectAllowed(pageHost, targetHost, redirectPolicy)
+      blockCrossDomainRedirect &&
+      !isSameHost(pageHost, targetHost)
     ) {
       logger.warn(
-        `Blocked redirect by policy ${redirectPolicy}: ${targetUrl}`,
+        `Blocked cross-domain redirect: ${targetUrl}`,
       );
       blockedByRedirectPolicy = true;
       await route.abort("blockedbyclient");
@@ -144,12 +143,12 @@ export async function openPage(
 
       const redirectHost = getHostFromUrl(redirectUrl);
       if (
-        redirectPolicy !== RedirectPolicy.Any &&
+        blockCrossDomainRedirect &&
         redirectHost &&
-        !isRedirectAllowed(pageHost, redirectHost, redirectPolicy)
+        !isSameHost(pageHost, redirectHost)
       ) {
         logger.warn(
-          `Blocked redirect by policy ${redirectPolicy}: ${redirectUrl}`,
+          `Blocked cross-domain redirect: ${redirectUrl}`,
         );
         blockedByRedirectPolicy = true;
         await route.abort("blockedbyclient");
