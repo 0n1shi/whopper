@@ -249,6 +249,34 @@ describe("detectCommand", () => {
       );
     });
 
+    it("should warn on empty header name", async () => {
+      await runCommand(["-H", ": value"]);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Invalid header name"),
+      );
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ extraHTTPHeaders: undefined }),
+      );
+    });
+
+    it("should warn on header name with spaces", async () => {
+      await runCommand(["-H", "X Foo: bar"]);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Invalid header name"),
+      );
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ extraHTTPHeaders: undefined }),
+      );
+    });
+
     it("should enable debug logging when --debug flag is set", async () => {
       await runCommand(["--debug"]);
 

@@ -12,6 +12,8 @@ import {
   printDetectCommandOutputAsText,
 } from "./detect_utils.js";
 
+const HTTP_TOKEN = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+
 export const detectCommand = (): Command => {
   return new Command("detect")
     .argument("<url>", "URL of the website to analyze")
@@ -71,7 +73,12 @@ export const detectCommand = (): Command => {
               logger.warn(`Invalid header (missing ':'): ${h}`);
               continue;
             }
-            extraHTTPHeaders[h.slice(0, idx).trim()] = h.slice(idx + 1).trim();
+            const name = h.slice(0, idx).trim();
+            if (!HTTP_TOKEN.test(name)) {
+              logger.warn(`Invalid header name: ${h}`);
+              continue;
+            }
+            extraHTTPHeaders[name] = h.slice(idx + 1).trim();
           }
 
           context = await openPage(
