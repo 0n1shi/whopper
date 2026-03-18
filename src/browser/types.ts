@@ -14,6 +14,12 @@ export type Cookie = {
   sameSite: "Strict" | "Lax" | "None";
 };
 
+export type UrlEntry = {
+  url: string;
+  status?: number;
+  error?: string;
+};
+
 export type Response = {
   url: string;
   host: string;
@@ -26,6 +32,7 @@ export type Response = {
 export type Context = {
   browser: Browser;
   page: Page;
+  urls: UrlEntry[];
   responses: Response[];
   javascriptVariables: Record<string, unknown>;
   cookies: Cookie[];

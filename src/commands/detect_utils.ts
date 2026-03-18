@@ -2,6 +2,7 @@ import chalk from "chalk";
 import type { Confidence, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "../analyzer/types.js";
 import type { DetectCommandOutput, DetectedSoftware } from "./detect_types.js";
+import type { UrlEntry } from "../browser/types.js";
 import { maxConfidence } from "../analyzer/utils.js";
 
 export function colorizeConfidence(confidence: Confidence): string {
@@ -33,6 +34,7 @@ function compareEvidence(a: Evidence, b: Evidence): number {
 }
 
 export function makeDetectCommandOutput(
+  urls: UrlEntry[],
   detections: Detection[],
   signatures: Signature[],
 ): DetectCommandOutput {
@@ -162,6 +164,7 @@ export function makeDetectCommandOutput(
   }
 
   return {
+    urls,
     detectedSoftwares: [...mergedByKey.values()],
   };
 }

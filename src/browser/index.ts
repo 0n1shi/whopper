@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { chromium } from "playwright";
 import { logger } from "../logger/index.js";
-import type { Context, Response } from "./types.js";
+import type { Context, Response, UrlEntry } from "./types.js";
 import {
   extractJsVariables,
   getHostFromUrl,
@@ -99,6 +99,7 @@ export async function openPage(
         `Blocked cross-domain redirect: ${targetUrl}`,
       );
       blockedByRedirectPolicy = true;
+      urls.push({ url: targetUrl, error: "Blocked cross-domain redirect" });
       await route.abort("blockedbyclient");
       return;
     }
@@ -121,7 +122,9 @@ export async function openPage(
     let response;
     try {
       response = await route.fetch({ maxRedirects: 0 });
-    } catch {
+    } catch (e) {
+      const message = (e instanceof Error ? e.message : String(e)).split("\n")[0] ?? "";
+      urls.push({ url: targetUrl, error: message });
       await route.abort("failed");
       return;
     }
@@ -151,6 +154,7 @@ export async function openPage(
         hopResponse.body = hopBody;
       }
       responses.push(hopResponse);
+      urls.push({ url: currentUrl, status: response.status() });
 
       const location = response.headers()["location"];
       if (!location) break;
@@ -172,6 +176,7 @@ export async function openPage(
           `Blocked cross-domain redirect: ${redirectUrl}`,
         );
         blockedByRedirectPolicy = true;
+        urls.push({ url: redirectUrl, error: "Blocked cross-domain redirect" });
         await route.abort("blockedbyclient");
         return;
       }
@@ -183,7 +188,9 @@ export async function openPage(
 
       try {
         response = await route.fetch({ url: redirectUrl, maxRedirects: 0 });
-      } catch {
+      } catch (e) {
+        const message = (e instanceof Error ? e.message : String(e)).split("\n")[0] ?? "";
+        urls.push({ url: redirectUrl, error: message });
         await route.abort("failed");
         return;
       }
@@ -192,6 +199,7 @@ export async function openPage(
     await route.fulfill({ response: firstResponse });
   });
 
+  const urls: UrlEntry[] = [];
   const responses: Response[] = [];
   page.on("response", async (response) => {
     const responseUrl = response.url();
@@ -210,6 +218,11 @@ export async function openPage(
     logger.debug(
       `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
     );
+    const request = response.request();
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+      urls.push({ url: responseUrl, status: statusCode });
+    }
+
     const res: Response = {
       url: responseUrl,
       host: responseHost,
@@ -244,7 +257,15 @@ export async function openPage(
   } else if (blockedByRedirectPolicy) {
     // Already logged by the route handler as "Blocked redirect by policy"
   } else {
-    logger.error(`Error loading page ${url}: ${result.split("\n")[0]}`);
+    const errorMessage = `Error loading page ${url}: ${result.split("\n")[0]}`;
+    logger.error(errorMessage);
+    // Fallback: record the error only when the route handler never ran
+    // (e.g. DNS failure on the initial URL). If the route handler already
+    // captured entries (e.g. a 302 hop followed by a fetch error), the
+    // error is already in urls via the route.fetch catch block.
+    if (urls.length === 0) {
+      urls.push({ url, error: errorMessage });
+    }
   }
 
   let cookies: Context["cookies"] = [];
@@ -287,6 +308,7 @@ export async function openPage(
   return {
     browser,
     page,
+    urls,
     responses,
     javascriptVariables,
     cookies,

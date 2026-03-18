@@ -1409,6 +1409,10 @@ describe("openPage", () => {
           status: () => 200,
           headers: () => ({ "content-type": "application/json" }),
           text: () => Promise.resolve('{"data": "test"}'),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
         });
       });
 
@@ -1451,6 +1455,10 @@ describe("openPage", () => {
           status: () => 200,
           headers: () => ({ "content-type": "application/octet-stream" }),
           text: () => Promise.reject(new Error("Cannot read binary")),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
         });
       });
 
@@ -1488,6 +1496,10 @@ describe("openPage", () => {
           status: () => 200,
           headers: () => ({ "content-type": "text/javascript" }),
           text: () => Promise.resolve("console.log('ok')"),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
         });
       });
 
@@ -1501,6 +1513,77 @@ describe("openPage", () => {
         host: "cdn.example.net",
         isFirstParty: false,
       });
+    });
+
+    it("should record navigation response in urls", async () => {
+      const mockMainFrame = { id: "main" };
+      mockPage.mainFrame.mockReturnValue(mockMainFrame);
+
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        await capturedCallback({
+          url: () => "https://example.com/",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/html" }),
+          text: () => Promise.resolve("<html></html>"),
+          request: () => ({
+            isNavigationRequest: () => true,
+            frame: () => mockMainFrame,
+          }),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.urls).toEqual([
+        { url: "https://example.com/", status: 200 },
+      ]);
+    });
+
+    it("should not record non-navigation response in urls", async () => {
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        await capturedCallback({
+          url: () => "https://example.com/style.css",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/css" }),
+          text: () => Promise.resolve("body {}"),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.urls).toEqual([]);
     });
   });
 });
