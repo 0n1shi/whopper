@@ -26,6 +26,13 @@ export const detectCommand = (): Command => {
     .option("-e, --evidence", "Show evidence for detections", false)
     .option("-j, --json", "Output results in JSON format", false)
     .option("-u, --user-agent <string>", "Custom User-Agent string")
+    .option("-l, --locale <locale>", "Browser locale (e.g. ja-JP, en-US)")
+    .option(
+      "-H, --header <header>",
+      "Extra HTTP header (e.g. -H \"X-Custom: value\"), can be specified multiple times",
+      (value: string, prev: string[]) => [...prev, value],
+      [] as string[],
+    )
     .option(
       "-b, --block-cross-domain-redirect",
       "Block redirects to a different host",
@@ -40,6 +47,8 @@ export const detectCommand = (): Command => {
           evidence: boolean;
           json: boolean;
           userAgent?: string;
+          locale?: string;
+          header: string[];
           blockCrossDomainRedirect: boolean;
         },
       ) => {
@@ -55,12 +64,28 @@ export const detectCommand = (): Command => {
 
         let context: Awaited<ReturnType<typeof openPage>> | null = null;
         try {
+          const extraHTTPHeaders: Record<string, string> = {};
+          for (const h of options.header) {
+            const idx = h.indexOf(":");
+            if (idx === -1) {
+              logger.warn(`Invalid header (missing ':'): ${h}`);
+              continue;
+            }
+            extraHTTPHeaders[h.slice(0, idx).trim()] = h.slice(idx + 1).trim();
+          }
+
           context = await openPage(
             url,
             options.timeout,
             getJavascriptVariableNames(signatures),
-            options.userAgent,
-            options.blockCrossDomainRedirect,
+            {
+              userAgent: options.userAgent,
+              locale: options.locale,
+              extraHTTPHeaders: Object.keys(extraHTTPHeaders).length > 0
+                ? extraHTTPHeaders
+                : undefined,
+              blockCrossDomainRedirect: options.blockCrossDomainRedirect,
+            },
           );
           const detections = analyze(context, signatures);
           if (detections.length === 0) {

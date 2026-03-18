@@ -23,6 +23,13 @@ export type Response = {
   body?: string;
 };
 
+export type OpenPageOptions = {
+  userAgent?: string | undefined;
+  locale?: string | undefined;
+  extraHTTPHeaders?: Record<string, string> | undefined;
+  blockCrossDomainRedirect?: boolean | undefined;
+};
+
 export type Context = {
   browser: Browser;
   page: Page;
