@@ -39,6 +39,7 @@ describe("detectCommand", () => {
   let mockContext: {
     browser: { close: ReturnType<typeof vi.fn> };
     page: { close: ReturnType<typeof vi.fn> };
+    urls: never[];
     responses: never[];
     javascriptVariables: Record<string, unknown>;
     cookies: never[];
@@ -53,6 +54,7 @@ describe("detectCommand", () => {
     mockContext = {
       browser: { close: vi.fn() },
       page: { close: vi.fn() },
+      urls: [],
       responses: [],
       javascriptVariables: {},
       cookies: [],
@@ -302,6 +304,7 @@ describe("detectCommand", () => {
     it("should print text output by default", async () => {
       vi.mocked(analyze).mockReturnValue([{ name: "nginx" }]);
       vi.mocked(makeDetectCommandOutput).mockReturnValue({
+        urls: [],
         detectedSoftwares: [{ name: "nginx", confidence: "high" }],
       });
 
@@ -314,6 +317,7 @@ describe("detectCommand", () => {
     it("should print JSON output when --json flag is set", async () => {
       vi.mocked(analyze).mockReturnValue([{ name: "nginx" }]);
       vi.mocked(makeDetectCommandOutput).mockReturnValue({
+        urls: [],
         detectedSoftwares: [{ name: "nginx", confidence: "high" }],
       });
 
@@ -326,6 +330,7 @@ describe("detectCommand", () => {
     it("should pass evidence flag to text output", async () => {
       vi.mocked(analyze).mockReturnValue([{ name: "nginx" }]);
       vi.mocked(makeDetectCommandOutput).mockReturnValue({
+        urls: [],
         detectedSoftwares: [{ name: "nginx", confidence: "high" }],
       });
 

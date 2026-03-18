@@ -1,5 +1,6 @@
 import type { Evidence } from "../analyzer/types.js";
 import type { Confidence } from "../signatures/_types.js";
+import type { UrlEntry } from "../browser/types.js";
 
 export type DetectedSoftware = {
   name: string;
@@ -12,5 +13,6 @@ export type DetectedSoftware = {
 };
 
 export type DetectCommandOutput = {
+  urls: UrlEntry[];
   detectedSoftwares: DetectedSoftware[];
 };
