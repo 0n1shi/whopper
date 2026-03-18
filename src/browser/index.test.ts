@@ -124,11 +124,31 @@ describe("openPage", () => {
     });
 
     it("should pass custom userAgent to browser context", async () => {
-      await openPage("https://example.com", 10000, [], "MyCustomAgent/1.0");
+      await openPage("https://example.com", 10000, [], { userAgent: "MyCustomAgent/1.0" });
 
       expect(mockBrowser.newContext).toHaveBeenCalledWith({
         ignoreHTTPSErrors: true,
         userAgent: "MyCustomAgent/1.0",
+      });
+    });
+
+    it("should pass locale to browser context", async () => {
+      await openPage("https://example.com", 10000, [], { locale: "ja-JP" });
+
+      expect(mockBrowser.newContext).toHaveBeenCalledWith({
+        ignoreHTTPSErrors: true,
+        locale: "ja-JP",
+      });
+    });
+
+    it("should pass extraHTTPHeaders to browser context", async () => {
+      await openPage("https://example.com", 10000, [], {
+        extraHTTPHeaders: { "Accept-Language": "ja", "X-Custom": "value" },
+      });
+
+      expect(mockBrowser.newContext).toHaveBeenCalledWith({
+        ignoreHTTPSErrors: true,
+        extraHTTPHeaders: { "Accept-Language": "ja", "X-Custom": "value" },
       });
     });
 
@@ -187,13 +207,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -227,7 +243,7 @@ describe("openPage", () => {
         },
       );
 
-      await openPage("https://example.com", 10000, [], undefined, false);
+      await openPage("https://example.com", 10000, [], { blockCrossDomainRedirect: false });
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
@@ -259,13 +275,9 @@ describe("openPage", () => {
         },
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -291,13 +303,9 @@ describe("openPage", () => {
         },
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -323,13 +331,9 @@ describe("openPage", () => {
         },
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
@@ -378,13 +382,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://app.example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://app.example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
@@ -429,13 +429,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://www.example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://www.example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockResponse = {
         status: () => 301,
@@ -477,13 +473,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockResponse = {
         status: () => 301,
@@ -522,13 +514,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockResponse = {
         status: () => 301,
@@ -567,13 +555,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockResponse = {
         status: () => 302,
@@ -615,13 +599,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
@@ -687,13 +667,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       // First call: 301 chain example.com -> example.com/page
       const mockRedirectResponse = {
@@ -755,13 +731,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       // First call: build a chain so inspectedUrls is populated
       const mockRedirectResponse = {
@@ -833,13 +805,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       const mockRedirectResponse = {
         status: () => 301,
@@ -924,13 +892,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       // Location with an invalid base URL combination that triggers URL parse error
       const mockResponse = {
@@ -1376,13 +1340,9 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 100)),
       );
 
-      await openPage(
-        "https://example.com",
-        10000,
-        [],
-        undefined,
-        true,
-      );
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: true,
+      });
 
       expect(logger.error).not.toHaveBeenCalled();
     });

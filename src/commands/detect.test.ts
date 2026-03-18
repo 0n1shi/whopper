@@ -151,8 +151,12 @@ describe("detectCommand", () => {
         "https://example.com",
         10000,
         expect.any(Array),
-        undefined,
-        false,
+        {
+          userAgent: undefined,
+          locale: undefined,
+          extraHTTPHeaders: undefined,
+          blockCrossDomainRedirect: false,
+        },
       );
     });
 
@@ -163,8 +167,7 @@ describe("detectCommand", () => {
         "https://example.com",
         5000,
         expect.any(Array),
-        undefined,
-        false,
+        expect.objectContaining({ blockCrossDomainRedirect: false }),
       );
     });
 
@@ -175,8 +178,7 @@ describe("detectCommand", () => {
         "https://example.com",
         10000,
         expect.any(Array),
-        "MyAgent/1.0",
-        false,
+        expect.objectContaining({ userAgent: "MyAgent/1.0" }),
       );
     });
 
@@ -187,8 +189,91 @@ describe("detectCommand", () => {
         "https://example.com",
         10000,
         expect.any(Array),
-        undefined,
-        true,
+        expect.objectContaining({ blockCrossDomainRedirect: true }),
+      );
+    });
+
+    it("should pass locale when provided", async () => {
+      await runCommand(["--locale", "ja-JP"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ locale: "ja-JP" }),
+      );
+    });
+
+    it("should pass extra HTTP headers when provided", async () => {
+      await runCommand(["-H", "X-Custom: value", "-H", "Accept-Language: ja"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({
+          extraHTTPHeaders: {
+            "X-Custom": "value",
+            "Accept-Language": "ja",
+          },
+        }),
+      );
+    });
+
+    it("should handle header values containing colons", async () => {
+      await runCommand(["-H", "Authorization: Bearer token:with:colons"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({
+          extraHTTPHeaders: {
+            Authorization: "Bearer token:with:colons",
+          },
+        }),
+      );
+    });
+
+    it("should warn on invalid header format", async () => {
+      await runCommand(["-H", "InvalidHeader"]);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Invalid header"),
+      );
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ extraHTTPHeaders: undefined }),
+      );
+    });
+
+    it("should warn on empty header name", async () => {
+      await runCommand(["-H", ": value"]);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Invalid header name"),
+      );
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ extraHTTPHeaders: undefined }),
+      );
+    });
+
+    it("should warn on header name with spaces", async () => {
+      await runCommand(["-H", "X Foo: bar"]);
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("Invalid header name"),
+      );
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ extraHTTPHeaders: undefined }),
       );
     });
 

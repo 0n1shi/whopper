@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { chromium } from "playwright";
 import { logger } from "../logger/index.js";
-import type { Context, Response, UrlEntry } from "./types.js";
+import type { Context, OpenPageOptions, Response, UrlEntry } from "./types.js";
 import {
   extractJsVariables,
   getHostFromUrl,
@@ -38,9 +38,15 @@ export async function openPage(
   url: string,
   timeoutMs: number,
   javascriptVariableNames: string[],
-  userAgent?: string,
-  blockCrossDomainRedirect: boolean = false,
+  options: OpenPageOptions = {},
 ): Promise<Context> {
+  const {
+    userAgent,
+    locale,
+    extraHTTPHeaders,
+    blockCrossDomainRedirect = false,
+  } = options;
+
   const pageHost = getHostFromUrl(url);
   if (!pageHost) {
     throw new Error(`Invalid URL: ${url}`);
@@ -50,6 +56,8 @@ export async function openPage(
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     ...(userAgent ? { userAgent } : {}),
+    ...(locale ? { locale } : {}),
+    ...(extraHTTPHeaders ? { extraHTTPHeaders } : {}),
   });
   const page = await context.newPage();
 
