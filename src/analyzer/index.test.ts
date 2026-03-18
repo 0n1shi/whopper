@@ -11,6 +11,7 @@ function createMockContext(
   return {
     browser: {} as Context["browser"],
     page: {} as Context["page"],
+    urls: [],
     responses: [],
     cookies: [],
     javascriptVariables: {},

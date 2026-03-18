@@ -63,15 +63,18 @@ export const detectCommand = (): Command => {
             options.blockCrossDomainRedirect,
           );
           const detections = analyze(context, signatures);
+          const output = makeDetectCommandOutput(
+            context.urls,
+            detections,
+            signatures,
+          );
           if (detections.length === 0) {
             logger.info("No technologies detected.");
-          } else {
-            const output = makeDetectCommandOutput(detections, signatures);
-            if (options.json) {
-              printDetectCommandOutputAsJSON(output);
-            } else {
-              printDetectCommandOutputAsText(output, options.evidence);
-            }
+          }
+          if (options.json) {
+            printDetectCommandOutputAsJSON(output);
+          } else if (detections.length > 0) {
+            printDetectCommandOutputAsText(output, options.evidence);
           }
         } catch (error) {
           const message =

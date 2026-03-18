@@ -53,7 +53,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       expect(result.detectedSoftwares).toHaveLength(1);
       expect(result.detectedSoftwares[0]!.name).toBe("nginx");
@@ -77,7 +77,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       expect(result.detectedSoftwares[0]!.cpe).toBe(
         "cpe:2.3:a:nginx:nginx:1.20.0",
@@ -99,7 +99,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       expect(result.detectedSoftwares[0]!.cpe).toBeUndefined();
     });
@@ -127,7 +127,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       const nginx = result.detectedSoftwares.find(
         (s) => s.version === "1.20.0",
@@ -152,7 +152,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       const names = result.detectedSoftwares.map((s) => s.name);
       expect(names).toContain("WordPress");
@@ -175,7 +175,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       const php = result.detectedSoftwares.find((s) => s.name === "PHP");
       expect(php?.impliedBy).toBe("WordPress");
@@ -207,7 +207,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       const phpInstances = result.detectedSoftwares.filter(
         (s) => s.name === "PHP",
@@ -238,7 +238,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       expect(result.detectedSoftwares[0]!.version).toBe("1.20.0");
     });
@@ -275,7 +275,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, signatures);
+      const result = makeDetectCommandOutput([], detections, signatures);
 
       const js = result.detectedSoftwares.find((s) => s.name === "JavaScript");
       expect(js).toBeDefined();
@@ -314,7 +314,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, signatures);
+      const result = makeDetectCommandOutput([], detections, signatures);
 
       const nginxEntries = result.detectedSoftwares.filter(
         (s) => s.name === "nginx",
@@ -344,7 +344,7 @@ describe("makeDetectCommandOutput", () => {
         { name: "nginx" },
       ];
 
-      const result = makeDetectCommandOutput(detections, signatures);
+      const result = makeDetectCommandOutput([], detections, signatures);
 
       expect(result.detectedSoftwares).toHaveLength(1);
     });
@@ -352,14 +352,14 @@ describe("makeDetectCommandOutput", () => {
 
   describe("edge cases", () => {
     it("should handle empty detections", () => {
-      const result = makeDetectCommandOutput([], baseSignatures);
+      const result = makeDetectCommandOutput([], [], baseSignatures);
       expect(result.detectedSoftwares).toEqual([]);
     });
 
     it("should handle detections without evidences", () => {
       const detections: Detection[] = [{ name: "nginx" }];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       expect(result.detectedSoftwares).toHaveLength(1);
       expect(result.detectedSoftwares[0]!.confidence).toBe("low");
@@ -408,7 +408,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
       const evidences = result.detectedSoftwares[0]!.evidences!;
 
       expect(
@@ -451,7 +451,7 @@ describe("makeDetectCommandOutput", () => {
         },
       ];
 
-      const result = makeDetectCommandOutput(detections, baseSignatures);
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
       const nginx = result.detectedSoftwares.find(
         (s) => s.name === "nginx" && s.version === "1.20.0",
       );
@@ -478,6 +478,7 @@ describe("printDetectCommandOutputAsText", () => {
 
   it("should print software names", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "nginx",
@@ -497,6 +498,7 @@ describe("printDetectCommandOutputAsText", () => {
 
   it("should print version when available", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "nginx",
@@ -522,6 +524,7 @@ describe("printDetectCommandOutputAsText", () => {
 
   it("should print evidences when showEvidence is true", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "nginx",
@@ -547,6 +550,7 @@ describe("printDetectCommandOutputAsText", () => {
 
   it("should print sourceUrl for body evidences", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "WordPress",
@@ -573,6 +577,7 @@ describe("printDetectCommandOutputAsText", () => {
 
   it("should not print evidences when showEvidence is false", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "nginx",
@@ -597,6 +602,7 @@ describe("printDetectCommandOutputAsText", () => {
 
   it("should print impliedBy when present", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "PHP",
@@ -627,6 +633,7 @@ describe("printDetectCommandOutputAsJSON", () => {
 
   it("should print valid JSON", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "nginx",
@@ -644,6 +651,7 @@ describe("printDetectCommandOutputAsJSON", () => {
 
   it("should include all fields in JSON output", () => {
     const output = {
+      urls: [],
       detectedSoftwares: [
         {
           name: "nginx",

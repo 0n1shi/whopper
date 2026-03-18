@@ -644,6 +644,38 @@ describe("openPage", () => {
       expect(fulfillMock).not.toHaveBeenCalled();
     });
 
+    it("should record non-Error thrown by route.fetch() in urls", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi.fn(() => Promise.reject("string error"));
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(() => Promise.resolve()),
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: vi.fn(() => Promise.resolve()),
+      });
+
+      expect(result.urls).toEqual([
+        { url: "https://example.com", error: "string error" },
+      ]);
+    });
+
     it("should continue for already-inspected URLs on route re-entry", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
@@ -837,6 +869,48 @@ describe("openPage", () => {
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(abortMock).toHaveBeenCalledWith("failed");
       expect(fulfillMock).not.toHaveBeenCalled();
+    });
+
+    it("should record non-Error thrown by redirect chain fetch in urls", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const mockRedirectResponse = {
+        status: () => 301,
+        headers: () => ({ location: "https://example.com/page" }),
+        text: () => Promise.resolve(null),
+      };
+      const abortMock = vi.fn(() => Promise.resolve());
+      const fetchMock = vi
+        .fn()
+        .mockResolvedValueOnce(mockRedirectResponse)
+        .mockRejectedValueOnce("string error");
+
+      await routeHandler({
+        request: () => ({
+          isNavigationRequest: () => true,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com",
+        }),
+        continue: vi.fn(() => Promise.resolve()),
+        abort: abortMock,
+        fetch: fetchMock,
+        fulfill: vi.fn(() => Promise.resolve()),
+      });
+
+      expect(result.urls).toEqual([
+        { url: "https://example.com", status: 301 },
+        { url: "https://example.com/page", error: "string error" },
+      ]);
     });
 
     it("should break loop when Location URL cannot be parsed", async () => {
@@ -1243,6 +1317,39 @@ describe("openPage", () => {
       );
     });
 
+    it("should not duplicate error in urls when route handler already recorded entries", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+          routeHandler = handler;
+        },
+      );
+      mockPage.goto.mockImplementation(async () => {
+        // Route handler records a fetch error
+        await routeHandler({
+          request: () => ({
+            isNavigationRequest: () => true,
+            frame: () => mockMainFrame,
+            url: () => "https://example.com",
+          }),
+          continue: vi.fn(() => Promise.resolve()),
+          abort: vi.fn(() => Promise.resolve()),
+          fetch: vi.fn(() => Promise.reject(new Error("net::ERR_NAME_NOT_RESOLVED"))),
+          fulfill: vi.fn(() => Promise.resolve()),
+        });
+        throw new Error("page.goto: net::ERR_FAILED");
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      // Only the route handler's error should be in urls, not the page.goto error
+      expect(result.urls).toHaveLength(1);
+      expect(result.urls[0]!.error).toContain("net::ERR_NAME_NOT_RESOLVED");
+    });
+
     it("should not log error when navigation is blocked by redirect policy", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
@@ -1409,6 +1516,10 @@ describe("openPage", () => {
           status: () => 200,
           headers: () => ({ "content-type": "application/json" }),
           text: () => Promise.resolve('{"data": "test"}'),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
         });
       });
 
@@ -1451,6 +1562,10 @@ describe("openPage", () => {
           status: () => 200,
           headers: () => ({ "content-type": "application/octet-stream" }),
           text: () => Promise.reject(new Error("Cannot read binary")),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
         });
       });
 
@@ -1488,6 +1603,10 @@ describe("openPage", () => {
           status: () => 200,
           headers: () => ({ "content-type": "text/javascript" }),
           text: () => Promise.resolve("console.log('ok')"),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
         });
       });
 
@@ -1501,6 +1620,77 @@ describe("openPage", () => {
         host: "cdn.example.net",
         isFirstParty: false,
       });
+    });
+
+    it("should record navigation response in urls", async () => {
+      const mockMainFrame = { id: "main" };
+      mockPage.mainFrame.mockReturnValue(mockMainFrame);
+
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        await capturedCallback({
+          url: () => "https://example.com/",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/html" }),
+          text: () => Promise.resolve("<html></html>"),
+          request: () => ({
+            isNavigationRequest: () => true,
+            frame: () => mockMainFrame,
+          }),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.urls).toEqual([
+        { url: "https://example.com/", status: 200 },
+      ]);
+    });
+
+    it("should not record non-navigation response in urls", async () => {
+      let capturedCallback: (response: unknown) => Promise<void>;
+
+      mockPage.on.mockImplementation(
+        (event: string, callback: (response: unknown) => Promise<void>) => {
+          if (event === "response") {
+            capturedCallback = callback;
+          }
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        await capturedCallback({
+          url: () => "https://example.com/style.css",
+          status: () => 200,
+          headers: () => ({ "content-type": "text/css" }),
+          text: () => Promise.resolve("body {}"),
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
+        });
+      });
+
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.urls).toEqual([]);
     });
   });
 });
