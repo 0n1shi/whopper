@@ -8,9 +8,8 @@ export const jquerySignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "jquery",
-      "/jquery(?:-(\\d+\\.\\d+\\.\\d+))?[/.-]?",
-      "(\\d+\\.\\d+\\.\\d+)?/jquery[/.-]?",
+      "/jquery(?:-(\\d+\\.\\d+\\.\\d+))?(?:\\.slim)?(?:\\.min)?\\.js",
+      "(\\d+\\.\\d+\\.\\d+)/jquery(?:\\.slim)?(?:\\.min)?\\.js",
     ],
     javascriptVariables: {
       "$.fn.jquery": "(\\d+\\.\\d+\\.\\d+)",
