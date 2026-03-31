@@ -6,7 +6,7 @@ export const axiosSignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "/axios(@|/)([\\d.]+)(?:/[a-z]+)?/axios(?:\\.min)?\\.js",
+      "/axios(?:@|/)([\\d.]+)(?:/[a-z]+)?/axios(?:\\.min)?\\.js",
     ],
     javascriptVariables: {
       "axios.get": "",
