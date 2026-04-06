@@ -10,6 +10,8 @@ export type Rule = {
   urls?: Regex[];
   cookies?: Record<string, Regex>;
   javascriptVariables?: Record<string, Regex>;
+  // Variables that must all exist for script evidences to be kept.
+  // Skipped when non-script evidences already confirm the technology.
   requiredJavascriptVariables?: string[];
 };
 

@@ -199,8 +199,6 @@ export const applySignature = (
     }
   }
 
-  // Discard script evidences when required JavaScript variables are missing,
-  // unless other evidence types (URL, header, etc.) already confirm the technology.
   if (rule?.requiredJavascriptVariables) {
     const jsVars = context.javascriptVariables;
     const allPresent = rule.requiredJavascriptVariables.every(
