@@ -495,7 +495,7 @@ describe("applySignature", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should keep URL evidences even when requiredJavascriptVariables are missing", () => {
+    it("should keep script evidences when non-script evidences exist even if requiredJavascriptVariables are missing", () => {
       const signature: Signature = {
         name: "Lodash",
         rule: {
@@ -522,8 +522,9 @@ describe("applySignature", () => {
       const result = applySignature(context, signature);
 
       expect(result).toBeDefined();
-      expect(result?.evidences).toHaveLength(1);
-      expect(result?.evidences?.[0]?.type).toBe("url");
+      expect(result?.evidences).toHaveLength(2);
+      expect(result?.evidences?.some((e) => e.type === "url")).toBe(true);
+      expect(result?.evidences?.some((e) => e.type === "script" && e.version === "4.17.21")).toBe(true);
     });
 
     it("should skip when JavaScript variable value does not match pattern", () => {

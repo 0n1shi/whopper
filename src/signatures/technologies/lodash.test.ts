@@ -88,6 +88,24 @@ describe("lodashSignature", () => {
       expect(result).toBeUndefined();
     });
 
+    it("should detect Lodash with version when URL matches and only _.VERSION is present", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/js/lodash.min.js",
+          }),
+        ],
+        javascriptVariables: {
+          "_.VERSION": "4.17.21",
+        },
+      });
+
+      const result = applySignature(context, lodashSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.type === "url")).toBe(true);
+      expect(result?.evidences?.some((e) => e.type === "script" && e.version === "4.17.21")).toBe(true);
+    });
+
     it("should detect Lodash from templateSettings path", () => {
       const context = createMockContext({
         javascriptVariables: {

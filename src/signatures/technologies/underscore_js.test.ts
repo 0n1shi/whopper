@@ -78,6 +78,24 @@ describe("underscoreJsSignature", () => {
       expect(result?.evidences?.some((e) => e.version === "1.13.6")).toBe(true);
     });
 
+    it("should detect Underscore.js with version when URL matches and only _.VERSION is present", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/js/underscore.min.js",
+          }),
+        ],
+        javascriptVariables: {
+          "_.VERSION": "1.13.6",
+        },
+      });
+
+      const result = applySignature(context, underscoreJsSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.type === "url")).toBe(true);
+      expect(result?.evidences?.some((e) => e.type === "script" && e.version === "1.13.6")).toBe(true);
+    });
+
     it("should not detect Underscore.js when only _.VERSION is present", () => {
       const context = createMockContext({
         javascriptVariables: {
