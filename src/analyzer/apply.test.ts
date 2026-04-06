@@ -447,6 +447,85 @@ describe("applySignature", () => {
       expect(result).toBeUndefined();
     });
 
+    it("should detect when all requiredJavascriptVariables are present", () => {
+      const signature: Signature = {
+        name: "Lodash",
+        rule: {
+          confidence: "high",
+          javascriptVariables: {
+            "_.VERSION": "(.+)",
+          },
+          requiredJavascriptVariables: ["_.differenceBy"],
+        },
+      };
+
+      const context = createMockContext({
+        javascriptVariables: {
+          "_.VERSION": "4.17.21",
+          "_.differenceBy": "function",
+        },
+      });
+
+      const result = applySignature(context, signature);
+
+      expect(result).toBeDefined();
+      expect(result?.name).toBe("Lodash");
+      expect(result?.evidences?.[0]?.version).toBe("4.17.21");
+    });
+
+    it("should discard script evidences when requiredJavascriptVariables are missing", () => {
+      const signature: Signature = {
+        name: "Lodash",
+        rule: {
+          confidence: "high",
+          javascriptVariables: {
+            "_.VERSION": "(.+)",
+          },
+          requiredJavascriptVariables: ["_.differenceBy"],
+        },
+      };
+
+      const context = createMockContext({
+        javascriptVariables: {
+          "_.VERSION": "4.17.21",
+        },
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeUndefined();
+    });
+
+    it("should keep URL evidences even when requiredJavascriptVariables are missing", () => {
+      const signature: Signature = {
+        name: "Lodash",
+        rule: {
+          confidence: "high",
+          urls: ["lodash.*\\.js"],
+          javascriptVariables: {
+            "_.VERSION": "(.+)",
+          },
+          requiredJavascriptVariables: ["_.differenceBy"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/lodash.min.js",
+          }),
+        ],
+        javascriptVariables: {
+          "_.VERSION": "4.17.21",
+        },
+      });
+
+      const result = applySignature(context, signature);
+
+      expect(result).toBeDefined();
+      expect(result?.evidences).toHaveLength(1);
+      expect(result?.evidences?.[0]?.type).toBe("url");
+    });
+
     it("should skip when JavaScript variable value does not match pattern", () => {
       const signature: Signature = {
         name: "CustomLib",

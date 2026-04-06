@@ -10,6 +10,7 @@ export type Rule = {
   urls?: Regex[];
   cookies?: Record<string, Regex>;
   javascriptVariables?: Record<string, Regex>;
+  requiredJavascriptVariables?: string[];
 };
 
 export type Signature = {

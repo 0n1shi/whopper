@@ -11,5 +11,6 @@ export const underscoreJsSignature: Signature = {
       "_.VERSION": "^(.+)$",
       "_.restArguments": "",
     },
+    requiredJavascriptVariables: ["_.restArguments"],
   },
 };

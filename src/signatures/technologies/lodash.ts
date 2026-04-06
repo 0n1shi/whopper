@@ -13,5 +13,6 @@ export const lodashSignature: Signature = {
       "_.differenceBy": "",
       "_.templateSettings.imports._.templateSettings.imports._.VERSION": "(.+)",
     },
+    requiredJavascriptVariables: ["_.differenceBy"],
   },
 };

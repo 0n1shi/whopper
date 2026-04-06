@@ -65,7 +65,7 @@ export const applySignature = (
   context: Context,
   signature: Signature,
 ): Detection | undefined => {
-  const evidences: Evidence[] = [];
+  let evidences: Evidence[] = [];
   const rule = signature.rule;
   const runtime = resolveRuntime(signature);
   const allResponses = context.responses;
@@ -196,6 +196,16 @@ export const applySignature = (
         version: result.version,
         confidence: rule.confidence,
       });
+    }
+  }
+
+  if (rule?.requiredJavascriptVariables) {
+    const jsVars = context.javascriptVariables;
+    const allPresent = rule.requiredJavascriptVariables.every(
+      (name) => jsVars[name] !== undefined,
+    );
+    if (!allPresent) {
+      evidences = evidences.filter((e) => e.type !== "script");
     }
   }
 
