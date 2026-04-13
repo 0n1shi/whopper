@@ -11,13 +11,14 @@ import {
 } from "./utils.js";
 
 const MAX_REDIRECT_HOPS = 20;
-// ネットワークアイドル判定に用いる静穏期間（ms）。
-// Playwright 組み込みの `networkidle` は 500ms 固定で短すぎ、
-// スクリプト経由で後から発火する二次リクエスト（例: eir_common.js が
-// 読み込む bootstrap_for_eir.css など）の前に成立してしまい検出漏れが
-// 発生するため、より長い閾値で自前判定する。
+// Quiet period (ms) used for the custom network-idle decision.
+// Playwright's built-in `networkidle` has a fixed 500ms threshold, which
+// is too short: it fires before script-driven secondary requests (e.g. a
+// CSS file loaded from within an async script) have a chance to start,
+// causing technology-detection evidence to be dropped. We use a longer
+// threshold evaluated by our own tracking.
 const NETWORK_IDLE_THRESHOLD_MS = 2000;
-// アイドル判定ループのポーリング間隔（ms）。
+// Polling interval (ms) for the idle-decision loop.
 const NETWORK_IDLE_POLL_INTERVAL_MS = 200;
 
 function colorizeStatusCode(statusCode: number): string {
@@ -217,16 +218,18 @@ export async function openPage(
 
   const urls: UrlEntry[] = [];
   const responses: Response[] = [];
-  // 最後にネットワーク活動（リクエスト送信／レスポンス受信）が観測された時刻。
-  // 後続の自前アイドル判定で利用する。
+  // Timestamp of the most recent network activity (request sent or
+  // response received). Used by the custom idle-decision loop below.
   let lastNetworkActivityAt = Date.now();
-  // 現在未完了のリクエスト数。レスポンス本体が返ってくるまで待つため、
-  // リクエスト発行後にレスポンスが遅延しても途中で idle と判定しないよう
-  // in-flight なリクエスト数も idle 条件に含める。
+  // Number of requests currently in flight. We include this in the idle
+  // condition so that a request whose response takes longer than the
+  // quiet-period threshold cannot cause the loop to exit before the
+  // response is captured.
   let inFlightRequestCount = 0;
-  // レスポンスハンドラの非同期処理（特に response.text()）をループ終了後に
-  // 待ち合わせるための Promise 集合。ハンドラが本文取得中にループを抜ける
-  // レースを防ぐ。
+  // Pending response-handler promises. The response handler awaits
+  // `response.text()`, which can still be in progress when the idle loop
+  // decides to break; awaiting this set after the loop prevents those
+  // in-progress body reads from being dropped.
   const pendingResponseWork = new Set<Promise<void>>();
 
   page.on("request", () => {
@@ -290,9 +293,10 @@ export async function openPage(
 
   let timeoutOccurred = false;
   const navigationStartedAt = Date.now();
-  // `networkidle` は 500ms 固定でフレーキーなため、ここでは `load` まで
-  // （onload 発火まで）で goto を解決し、その後に自前のアイドル判定で
-  // 遅延スクリプトが発火させる二次リクエストを待機する。
+  // Playwright's built-in `networkidle` is flaky (500ms fixed threshold),
+  // so resolve goto at the `load` event (onload fired) and wait for
+  // secondary requests triggered by deferred scripts using our own
+  // idle-decision loop below.
   const goto = page.goto(url, { waitUntil: "load" });
 
   const result = await Promise.race([
@@ -300,16 +304,17 @@ export async function openPage(
     sleep(timeoutMs).then(() => "timeout"),
   ]);
 
-  // onload 後に発火する遅延スクリプトの二次リクエストを取りこぼさないよう、
-  // 全 in-flight リクエストが完了し、かつ一定時間ネットワーク活動が途絶える
-  // （もしくは全体タイムアウトに達する）まで待機する。
-  // in-flight を条件に含めることで、「リクエスト発行後にレスポンスが
-  // `NETWORK_IDLE_THRESHOLD_MS` 以上遅延する」ケースで途中で抜けてレスポンス
-  // を取りこぼすことを防ぐ。
-  // idle ループが「アイドル成立」で抜けたか「タイムアウト予算を使い切って」
-  // 抜けたかを区別するためのフラグ。後者の場合は呼び出し元に
-  // `timeoutOccurred: true` を返す必要がある（呼び出し元は完全キャプチャと
-  // 途中終了を区別して扱うため）。
+  // After onload, wait until all in-flight requests have finished and a
+  // quiet period of `NETWORK_IDLE_THRESHOLD_MS` has elapsed (or the
+  // overall timeout is reached) so that secondary requests triggered by
+  // deferred scripts are captured. Including in-flight count in the
+  // condition prevents the loop from exiting while a slow response
+  // (> NETWORK_IDLE_THRESHOLD_MS) is still pending.
+  //
+  // Tracks whether the loop exited because the network actually went
+  // idle, or because the overall timeout budget was exhausted. In the
+  // latter case we must return `timeoutOccurred: true` so callers can
+  // distinguish a full capture from a partial one.
   let idleWaitTimedOut = false;
   if (result === "loaded") {
     while (true) {
@@ -326,8 +331,9 @@ export async function openPage(
       const remainingBudget = timeoutMs - elapsed;
       await sleep(Math.min(NETWORK_IDLE_POLL_INTERVAL_MS, remainingBudget));
     }
-    // ループ終了時点でまだ走っているレスポンスハンドラ（response.text() の
-    // 待機中など）が残っていれば、取りこぼしを防ぐために完了を待つ。
+    // If any response handlers are still running at loop exit (e.g.
+    // waiting on `response.text()`), wait for them to finish so their
+    // captures are not dropped.
     if (pendingResponseWork.size > 0) {
       await Promise.allSettled(Array.from(pendingResponseWork));
     }

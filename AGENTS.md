@@ -80,6 +80,7 @@ export const exampleSignature: Signature = {
 - Version extraction regex: `(\\d+\\.\\d+\\.\\d+)`
 - Formatting: Prettier is the source of truth; run `npm run format` before PRs
 - Linting: ESLint with `@eslint/js` + `typescript-eslint` recommendations
+- Code comments (including inline comments, JSDoc, and TODO/FIXME) must be written in English, regardless of any global preference for Japanese. This project's source code is English-only; only chat with the user in Japanese.
 
 ## Testing
 
