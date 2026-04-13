@@ -306,11 +306,19 @@ export async function openPage(
   // in-flight を条件に含めることで、「リクエスト発行後にレスポンスが
   // `NETWORK_IDLE_THRESHOLD_MS` 以上遅延する」ケースで途中で抜けてレスポンス
   // を取りこぼすことを防ぐ。
+  // idle ループが「アイドル成立」で抜けたか「タイムアウト予算を使い切って」
+  // 抜けたかを区別するためのフラグ。後者の場合は呼び出し元に
+  // `timeoutOccurred: true` を返す必要がある（呼び出し元は完全キャプチャと
+  // 途中終了を区別して扱うため）。
+  let idleWaitTimedOut = false;
   if (result === "loaded") {
     while (true) {
       const now = Date.now();
       const elapsed = now - navigationStartedAt;
-      if (elapsed >= timeoutMs) break;
+      if (elapsed >= timeoutMs) {
+        idleWaitTimedOut = true;
+        break;
+      }
       const idleFor = now - lastNetworkActivityAt;
       if (inFlightRequestCount === 0 && idleFor >= NETWORK_IDLE_THRESHOLD_MS) {
         break;
@@ -327,7 +335,14 @@ export async function openPage(
 
   logger.info(`${responses.length} responses captured`);
   if (result === "loaded") {
-    logger.info("Page loaded successfully");
+    if (idleWaitTimedOut) {
+      timeoutOccurred = true;
+      logger.warn(
+        `Timeout of ${timeoutMs}ms exceeded while waiting for network idle after load on ${url}`,
+      );
+    } else {
+      logger.info("Page loaded successfully");
+    }
   } else if (result === "timeout") {
     timeoutOccurred = true;
     logger.warn(`Timeout of ${timeoutMs}ms exceeded while loading ${url}`);
