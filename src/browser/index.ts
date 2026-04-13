@@ -11,6 +11,14 @@ import {
 } from "./utils.js";
 
 const MAX_REDIRECT_HOPS = 20;
+// ネットワークアイドル判定に用いる静穏期間（ms）。
+// Playwright 組み込みの `networkidle` は 500ms 固定で短すぎ、
+// スクリプト経由で後から発火する二次リクエスト（例: eir_common.js が
+// 読み込む bootstrap_for_eir.css など）の前に成立してしまい検出漏れが
+// 発生するため、より長い閾値で自前判定する。
+const NETWORK_IDLE_THRESHOLD_MS = 2000;
+// アイドル判定ループのポーリング間隔（ms）。
+const NETWORK_IDLE_POLL_INTERVAL_MS = 200;
 
 function colorizeStatusCode(statusCode: number): string {
   const code = String(statusCode);
@@ -209,7 +217,14 @@ export async function openPage(
 
   const urls: UrlEntry[] = [];
   const responses: Response[] = [];
+  // 最後にネットワーク活動（リクエスト送信／レスポンス受信）が観測された時刻。
+  // 後続の自前アイドル判定で利用する。
+  let lastNetworkActivityAt = Date.now();
+  page.on("request", () => {
+    lastNetworkActivityAt = Date.now();
+  });
   page.on("response", async (response) => {
+    lastNetworkActivityAt = Date.now();
     const responseUrl = response.url();
     const statusCode = response.status();
 
@@ -250,13 +265,36 @@ export async function openPage(
   });
 
   let timeoutOccurred = false;
-  const goto = page.goto(url, { waitUntil: "networkidle" });
+  const navigationStartedAt = Date.now();
+  // `networkidle` は 500ms 固定でフレーキーなため、ここでは `load` まで
+  // （onload 発火まで）で goto を解決し、その後に自前のアイドル判定で
+  // 遅延スクリプトが発火させる二次リクエストを待機する。
+  const goto = page.goto(url, { waitUntil: "load" });
 
   const result = await Promise.race([
     goto.then(() => "loaded").catch((e) => e.message),
     sleep(timeoutMs).then(() => "timeout"),
   ]);
 
+  // onload 後に発火する遅延スクリプトの二次リクエストを取りこぼさないよう、
+  // 一定時間ネットワーク活動が途絶えるか、全体タイムアウトに達するまで待機する。
+  if (result === "loaded") {
+    while (true) {
+      const now = Date.now();
+      const idleFor = now - lastNetworkActivityAt;
+      const elapsed = now - navigationStartedAt;
+      if (idleFor >= NETWORK_IDLE_THRESHOLD_MS) break;
+      if (elapsed >= timeoutMs) break;
+      const waitMs = Math.min(
+        NETWORK_IDLE_THRESHOLD_MS - idleFor,
+        timeoutMs - elapsed,
+        NETWORK_IDLE_POLL_INTERVAL_MS,
+      );
+      await sleep(waitMs);
+    }
+  }
+
+  logger.info(`${responses.length} responses captured`);
   if (result === "loaded") {
     logger.info("Page loaded successfully");
   } else if (result === "timeout") {

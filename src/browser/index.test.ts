@@ -156,7 +156,7 @@ describe("openPage", () => {
       await openPage("https://example.com", 10000, []);
 
       expect(mockPage.goto).toHaveBeenCalledWith("https://example.com", {
-        waitUntil: "networkidle",
+        waitUntil: "load",
       });
     });
 
