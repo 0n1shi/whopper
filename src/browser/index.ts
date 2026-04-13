@@ -220,48 +220,72 @@ export async function openPage(
   // 最後にネットワーク活動（リクエスト送信／レスポンス受信）が観測された時刻。
   // 後続の自前アイドル判定で利用する。
   let lastNetworkActivityAt = Date.now();
+  // 現在未完了のリクエスト数。レスポンス本体が返ってくるまで待つため、
+  // リクエスト発行後にレスポンスが遅延しても途中で idle と判定しないよう
+  // in-flight なリクエスト数も idle 条件に含める。
+  let inFlightRequestCount = 0;
+  // レスポンスハンドラの非同期処理（特に response.text()）をループ終了後に
+  // 待ち合わせるための Promise 集合。ハンドラが本文取得中にループを抜ける
+  // レースを防ぐ。
+  const pendingResponseWork = new Set<Promise<void>>();
+
   page.on("request", () => {
+    inFlightRequestCount++;
     lastNetworkActivityAt = Date.now();
   });
-  page.on("response", async (response) => {
+  page.on("requestfinished", () => {
+    inFlightRequestCount = Math.max(0, inFlightRequestCount - 1);
     lastNetworkActivityAt = Date.now();
-    const responseUrl = response.url();
-    const statusCode = response.status();
+  });
+  page.on("requestfailed", () => {
+    inFlightRequestCount = Math.max(0, inFlightRequestCount - 1);
+    lastNetworkActivityAt = Date.now();
+  });
+  page.on("response", (response) => {
+    lastNetworkActivityAt = Date.now();
+    const work = (async () => {
+      const responseUrl = response.url();
+      const statusCode = response.status();
 
-    // Skip responses already captured by the pre-inspection loop to
-    // avoid duplicates.
-    if (preInspectedUrls.has(responseUrl) && statusCode >= 300 && statusCode < 400) {
+      // Skip responses already captured by the pre-inspection loop to
+      // avoid duplicates.
+      if (preInspectedUrls.has(responseUrl) && statusCode >= 300 && statusCode < 400) {
+        logger.debug(
+          `Skipping already captured response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
+        );
+        return;
+      }
+
+      const responseHost = getHostFromUrl(responseUrl) ?? "";
       logger.debug(
-        `Skipping already captured response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
+        `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
       );
-      return;
-    }
+      const request = response.request();
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+        urls.push({ url: responseUrl, status: statusCode });
+      }
 
-    const responseHost = getHostFromUrl(responseUrl) ?? "";
-    logger.debug(
-      `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
-    );
-    const request = response.request();
-    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
-      urls.push({ url: responseUrl, status: statusCode });
-    }
+      const res: Response = {
+        url: responseUrl,
+        host: responseHost,
+        isFirstParty: responseHost
+          ? isFirstPartyHost(pageHost, responseHost)
+          : false,
+        status: statusCode,
+        headers: response.headers(),
+      };
 
-    const res: Response = {
-      url: responseUrl,
-      host: responseHost,
-      isFirstParty: responseHost
-        ? isFirstPartyHost(pageHost, responseHost)
-        : false,
-      status: statusCode,
-      headers: response.headers(),
-    };
+      const body = await response.text().catch(() => null);
+      if (body) {
+        res.body = body;
+      }
 
-    const body = await response.text().catch(() => null);
-    if (body) {
-      res.body = body;
-    }
-
-    responses.push(res);
+      responses.push(res);
+    })();
+    pendingResponseWork.add(work);
+    work.finally(() => {
+      pendingResponseWork.delete(work);
+    });
   });
 
   let timeoutOccurred = false;
@@ -277,20 +301,27 @@ export async function openPage(
   ]);
 
   // onload 後に発火する遅延スクリプトの二次リクエストを取りこぼさないよう、
-  // 一定時間ネットワーク活動が途絶えるか、全体タイムアウトに達するまで待機する。
+  // 全 in-flight リクエストが完了し、かつ一定時間ネットワーク活動が途絶える
+  // （もしくは全体タイムアウトに達する）まで待機する。
+  // in-flight を条件に含めることで、「リクエスト発行後にレスポンスが
+  // `NETWORK_IDLE_THRESHOLD_MS` 以上遅延する」ケースで途中で抜けてレスポンス
+  // を取りこぼすことを防ぐ。
   if (result === "loaded") {
     while (true) {
       const now = Date.now();
-      const idleFor = now - lastNetworkActivityAt;
       const elapsed = now - navigationStartedAt;
-      if (idleFor >= NETWORK_IDLE_THRESHOLD_MS) break;
       if (elapsed >= timeoutMs) break;
-      const waitMs = Math.min(
-        NETWORK_IDLE_THRESHOLD_MS - idleFor,
-        timeoutMs - elapsed,
-        NETWORK_IDLE_POLL_INTERVAL_MS,
-      );
-      await sleep(waitMs);
+      const idleFor = now - lastNetworkActivityAt;
+      if (inFlightRequestCount === 0 && idleFor >= NETWORK_IDLE_THRESHOLD_MS) {
+        break;
+      }
+      const remainingBudget = timeoutMs - elapsed;
+      await sleep(Math.min(NETWORK_IDLE_POLL_INTERVAL_MS, remainingBudget));
+    }
+    // ループ終了時点でまだ走っているレスポンスハンドラ（response.text() の
+    // 待機中など）が残っていれば、取りこぼしを防ぐために完了を待つ。
+    if (pendingResponseWork.size > 0) {
+      await Promise.allSettled(Array.from(pendingResponseWork));
     }
   }
 
