@@ -1267,6 +1267,157 @@ describe("openPage", () => {
     });
   });
 
+  describe("network idle tracking", () => {
+    it("should register request, requestfinished, and requestfailed listeners", async () => {
+      await openPage("https://example.com", 10000, []);
+
+      const registeredEvents = mockPage.on.mock.calls.map(
+        (call: unknown[]) => call[0],
+      );
+      expect(registeredEvents).toContain("request");
+      expect(registeredEvents).toContain("requestfinished");
+      expect(registeredEvents).toContain("requestfailed");
+      expect(registeredEvents).toContain("response");
+    });
+
+    it("should set timeoutOccurred when idle wait exhausts timeout budget", async () => {
+      mockPage.goto.mockResolvedValue(undefined);
+      // Use setTimeout(0) so sleep resolves via a macrotask (ensuring
+      // goto's microtask chain wins the race with "loaded"), while still
+      // being fast enough for the idle loop to spin through quickly.
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 0)),
+      );
+
+      // Very short timeout: the idle loop will exhaust the budget before
+      // the NETWORK_IDLE_THRESHOLD_MS (2000ms) quiet period is reached.
+      const result = await openPage("https://example.com", 10, []);
+
+      expect(result.timeoutOccurred).toBe(true);
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining("waiting for network idle after load"),
+      );
+    });
+
+    it("should wait for in-flight requests before declaring idle", async () => {
+      const listeners: Record<string, (...args: unknown[]) => void> = {};
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          listeners[event] = callback;
+        },
+      );
+
+      // During goto, fire a request event but NOT requestfinished,
+      // so the request stays in-flight.
+      mockPage.goto.mockImplementation(async () => {
+        listeners["request"]?.();
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 0)),
+      );
+
+      // With an in-flight request (count=1), the idle condition
+      // (inFlightRequestCount === 0) is never met, so the loop can
+      // only exit via timeout budget exhaustion.
+      const result = await openPage("https://example.com", 10, []);
+
+      expect(result.timeoutOccurred).toBe(true);
+    });
+
+    it("should exit idle loop after requestfinished fires", async () => {
+      const listeners: Record<string, (...args: unknown[]) => void> = {};
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          listeners[event] = callback;
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        listeners["request"]?.();
+        listeners["requestfinished"]?.();
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.timeoutOccurred).toBe(false);
+      expect(logger.info).toHaveBeenCalledWith("Page loaded successfully");
+    });
+
+    it("should exit idle loop after requestfailed fires", async () => {
+      const listeners: Record<string, (...args: unknown[]) => void> = {};
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          listeners[event] = callback;
+        },
+      );
+
+      mockPage.goto.mockImplementation(async () => {
+        listeners["request"]?.();
+        listeners["requestfailed"]?.();
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      expect(result.timeoutOccurred).toBe(false);
+      expect(logger.info).toHaveBeenCalledWith("Page loaded successfully");
+    });
+
+    it("should await pending response handlers after idle loop exits", async () => {
+      const listeners: Record<string, (...args: unknown[]) => void> = {};
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          listeners[event] = callback;
+        },
+      );
+
+      let resolveText!: (value: string) => void;
+      const textPromise = new Promise<string>((resolve) => {
+        resolveText = resolve;
+      });
+
+      // During goto, fire a response whose text() is intentionally slow.
+      mockPage.goto.mockImplementation(async () => {
+        listeners["response"]?.({
+          url: () => "https://example.com/slow.js",
+          status: () => 200,
+          headers: () => ({}),
+          text: () => textPromise,
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
+        });
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 0)),
+      );
+
+      // Short timeout: the idle loop exits via budget exhaustion while
+      // the response handler is still awaiting text().
+      const openPagePromise = openPage("https://example.com", 10, []);
+
+      // Resolve text() after the idle loop has exited but before
+      // Promise.allSettled gives up.
+      setTimeout(() => resolveText("slow content"), 50);
+
+      const result = await openPagePromise;
+
+      // The response should be captured because Promise.allSettled
+      // waited for the pending handler to finish.
+      const slowResponse = result.responses.find(
+        (r) => r.url === "https://example.com/slow.js",
+      );
+      expect(slowResponse).toBeDefined();
+      expect(slowResponse!.body).toBe("slow content");
+    });
+  });
+
   describe("error handling", () => {
     it("should log error when page load fails", async () => {
       mockPage.goto.mockRejectedValue(new Error("Connection refused"));
