@@ -40,6 +40,12 @@ export const detectCommand = (): Command => {
       "Block redirects to a different host",
       false,
     )
+    .option(
+      "--idle-timeout <ms>",
+      "Network idle threshold in milliseconds (default: 2000)",
+      (v: string) => Number(v),
+      2000,
+    )
     .action(
       async (
         url: string,
@@ -52,6 +58,7 @@ export const detectCommand = (): Command => {
           locale?: string;
           header: string[];
           blockCrossDomainRedirect: boolean;
+          idleTimeout: number;
         },
       ) => {
         if (options.debug) {
@@ -92,6 +99,7 @@ export const detectCommand = (): Command => {
                 ? extraHTTPHeaders
                 : undefined,
               blockCrossDomainRedirect: options.blockCrossDomainRedirect,
+              networkIdleThresholdMs: options.idleTimeout,
             },
           );
           const detections = analyze(context, signatures);

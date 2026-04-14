@@ -54,6 +54,7 @@ export async function openPage(
     locale,
     extraHTTPHeaders,
     blockCrossDomainRedirect = false,
+    networkIdleThresholdMs = NETWORK_IDLE_THRESHOLD_MS,
   } = options;
 
   const pageHost = getHostFromUrl(url);
@@ -305,11 +306,11 @@ export async function openPage(
   ]);
 
   // After onload, wait until all in-flight requests have finished and a
-  // quiet period of `NETWORK_IDLE_THRESHOLD_MS` has elapsed (or the
-  // overall timeout is reached) so that secondary requests triggered by
-  // deferred scripts are captured. Including in-flight count in the
-  // condition prevents the loop from exiting while a slow response
-  // (> NETWORK_IDLE_THRESHOLD_MS) is still pending.
+  // quiet period of `networkIdleThresholdMs` has elapsed (or the overall
+  // timeout is reached) so that secondary requests triggered by deferred
+  // scripts are captured. Including in-flight count in the condition
+  // prevents the loop from exiting while a slow response
+  // (> networkIdleThresholdMs) is still pending.
   //
   // Tracks whether the loop exited because the network actually went
   // idle, or because the overall timeout budget was exhausted. In the
@@ -325,7 +326,7 @@ export async function openPage(
         break;
       }
       const idleFor = now - lastNetworkActivityAt;
-      if (inFlightRequestCount === 0 && idleFor >= NETWORK_IDLE_THRESHOLD_MS) {
+      if (inFlightRequestCount === 0 && idleFor >= networkIdleThresholdMs) {
         break;
       }
       const remainingBudget = timeoutMs - elapsed;
