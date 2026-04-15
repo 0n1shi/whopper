@@ -42,6 +42,12 @@ export const detectCommand = (): Command => {
       false,
     )
     .option(
+      "--idle-timeout <ms>",
+      "Network idle threshold in milliseconds (default: 2000)",
+      (v: string) => Number(v),
+      2000,
+    )
+    .option(
       "-a, --active",
       "Enable active scanning (sends additional requests to technology-specific paths)",
       false,
@@ -58,6 +64,7 @@ export const detectCommand = (): Command => {
           locale?: string;
           header: string[];
           blockCrossDomainRedirect: boolean;
+          idleTimeout: number;
           active: boolean;
         },
       ) => {
@@ -99,6 +106,7 @@ export const detectCommand = (): Command => {
                 ? extraHTTPHeaders
                 : undefined,
               blockCrossDomainRedirect: options.blockCrossDomainRedirect,
+              networkIdleThresholdMs: options.idleTimeout,
             },
           );
           const detections = analyze(context, signatures);

@@ -34,6 +34,7 @@ export type OpenPageOptions = {
   locale?: string | undefined;
   extraHTTPHeaders?: Record<string, string> | undefined;
   blockCrossDomainRedirect?: boolean | undefined;
+  networkIdleThresholdMs?: number | undefined;
 };
 
 export type Context = {

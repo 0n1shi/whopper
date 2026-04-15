@@ -141,6 +141,14 @@ describe("detectCommand", () => {
       expect(blockOpt).toBeDefined();
       expect(blockOpt?.defaultValue).toBe(false);
     });
+
+    it("should have idle-timeout option with default 2000", () => {
+      const command = detectCommand();
+      const options = command.options;
+      const idleOpt = options.find((o) => o.long === "--idle-timeout");
+      expect(idleOpt).toBeDefined();
+      expect(idleOpt?.defaultValue).toBe(2000);
+    });
   });
 
   describe("action execution", () => {
@@ -156,6 +164,7 @@ describe("detectCommand", () => {
           locale: undefined,
           extraHTTPHeaders: undefined,
           blockCrossDomainRedirect: false,
+          networkIdleThresholdMs: 2000,
         },
       );
     });
@@ -190,6 +199,17 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         expect.objectContaining({ blockCrossDomainRedirect: true }),
+      );
+    });
+
+    it("should pass custom idle-timeout when provided", async () => {
+      await runCommand(["--idle-timeout", "500"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ networkIdleThresholdMs: 500 }),
       );
     });
 
