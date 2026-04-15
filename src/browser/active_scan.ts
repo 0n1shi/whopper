@@ -22,7 +22,7 @@ export async function fetchActiveRule(
   try {
     url = new URL(path, baseUrl).toString();
   } catch {
-    logger.warn(`Invalid active scan path: ${path}`);
+    logger.warn(`Invalid active scan baseUrl or path: baseUrl=${baseUrl}, path=${path}`);
     return null;
   }
 
