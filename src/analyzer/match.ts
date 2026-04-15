@@ -23,7 +23,7 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
 };
 
 export const truncateBodyForEvidence = (body: string): string =>
-  `${body.substring(0, 100)}...`;
+  body.length > 100 ? `${body.substring(0, 100)}...` : body;
 
 export const extractMatchSnippet = (
   value: string,

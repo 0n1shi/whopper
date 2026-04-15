@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { extractMatchSnippet, matchString } from "./match.js";
+import {
+  extractMatchSnippet,
+  matchString,
+  truncateBodyForEvidence,
+} from "./match.js";
 
 describe("matchString", () => {
   describe("basic matching", () => {
@@ -75,6 +79,19 @@ describe("extractMatchSnippet", () => {
     const value = `MATCH${"b".repeat(60)}`;
     expect(extractMatchSnippet(value, 0, 5, 10)).toBe(
       `MATCH${"b".repeat(10)}...`,
+    );
+  });
+});
+
+describe("truncateBodyForEvidence", () => {
+  it("appends ellipsis when the body exceeds 100 characters", () => {
+    const body = "a".repeat(120);
+    expect(truncateBodyForEvidence(body)).toBe(`${"a".repeat(100)}...`);
+  });
+
+  it("returns the body unchanged when it is 100 characters or shorter", () => {
+    expect(truncateBodyForEvidence("Magento/2.4 (Community)")).toBe(
+      "Magento/2.4 (Community)",
     );
   });
 });
