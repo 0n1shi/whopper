@@ -1368,7 +1368,7 @@ describe("openPage", () => {
       expect(logger.info).toHaveBeenCalledWith("Page loaded successfully");
     });
 
-    it("should await pending response handlers after idle loop exits", async () => {
+    it("should await pending response handlers within remaining timeout budget", async () => {
       const listeners: Record<string, (...args: unknown[]) => void> = {};
       mockPage.on.mockImplementation(
         (event: string, callback: (...args: unknown[]) => void) => {
@@ -1381,10 +1381,10 @@ describe("openPage", () => {
         resolveText = resolve;
       });
 
-      // During goto, fire a response whose text() is intentionally slow.
+      // During goto, fire a response whose text() resolves quickly.
       mockPage.goto.mockImplementation(async () => {
         listeners["response"]?.({
-          url: () => "https://example.com/slow.js",
+          url: () => "https://example.com/quick.js",
           status: () => 200,
           headers: () => ({}),
           text: () => textPromise,
@@ -1398,23 +1398,61 @@ describe("openPage", () => {
         () => new Promise((resolve) => setTimeout(resolve, 0)),
       );
 
-      // Short timeout: the idle loop exits via budget exhaustion while
-      // the response handler is still awaiting text().
-      const openPagePromise = openPage("https://example.com", 10, []);
-
-      // Resolve text() after the idle loop has exited but before
-      // Promise.allSettled gives up.
-      setTimeout(() => resolveText("slow content"), 50);
+      // Generous timeout; resolve text() after the idle loop has exited.
+      const openPagePromise = openPage("https://example.com", 5000, []);
+      setTimeout(() => resolveText("quick content"), 20);
 
       const result = await openPagePromise;
 
-      // The response should be captured because Promise.allSettled
-      // waited for the pending handler to finish.
-      const slowResponse = result.responses.find(
-        (r) => r.url === "https://example.com/slow.js",
+      // text() completes within the remaining budget, so the response
+      // should be captured.
+      const quickResponse = result.responses.find(
+        (r) => r.url === "https://example.com/quick.js",
       );
-      expect(slowResponse).toBeDefined();
-      expect(slowResponse!.body).toBe("slow content");
+      expect(quickResponse).toBeDefined();
+      expect(quickResponse!.body).toBe("quick content");
+    });
+
+    it("should not wait for pending response handlers beyond overall timeout", async () => {
+      const listeners: Record<string, (...args: unknown[]) => void> = {};
+      mockPage.on.mockImplementation(
+        (event: string, callback: (...args: unknown[]) => void) => {
+          listeners[event] = callback;
+        },
+      );
+
+      // Fire a response whose text() never resolves.
+      const neverResolves = new Promise<string>(() => {});
+      mockPage.goto.mockImplementation(async () => {
+        listeners["response"]?.({
+          url: () => "https://example.com/hang.js",
+          status: () => 200,
+          headers: () => ({}),
+          text: () => neverResolves,
+          request: () => ({
+            isNavigationRequest: () => false,
+            frame: () => null,
+          }),
+        });
+      });
+      vi.mocked(sleep).mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 0)),
+      );
+
+      // Even with a short timeout, openPage must return once the budget
+      // is exhausted rather than waiting on the hanging text() call.
+      const start = Date.now();
+      const result = await openPage("https://example.com", 50, []);
+      const elapsed = Date.now() - start;
+
+      // Must not wait significantly beyond the overall timeout
+      // (with generous slack for CI jitter).
+      expect(elapsed).toBeLessThan(2000);
+      // The hanging response is dropped (body never captured).
+      const hangResponse = result.responses.find(
+        (r) => r.url === "https://example.com/hang.js",
+      );
+      expect(hangResponse).toBeUndefined();
     });
   });
 

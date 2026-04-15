@@ -334,9 +334,21 @@ export async function openPage(
     }
     // If any response handlers are still running at loop exit (e.g.
     // waiting on `response.text()`), wait for them to finish so their
-    // captures are not dropped.
+    // captures are not dropped. However, do not wait beyond the overall
+    // timeout: race against the remaining budget so that when the budget
+    // is exhausted we drop any still-pending in-flight captures rather
+    // than letting the process block indefinitely on slow body reads.
     if (pendingResponseWork.size > 0) {
-      await Promise.allSettled(Array.from(pendingResponseWork));
+      const remainingBudget = Math.max(
+        0,
+        timeoutMs - (Date.now() - navigationStartedAt),
+      );
+      if (remainingBudget > 0) {
+        await Promise.race([
+          Promise.allSettled(Array.from(pendingResponseWork)),
+          sleep(remainingBudget),
+        ]);
+      }
     }
   }
 
