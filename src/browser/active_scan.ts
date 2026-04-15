@@ -29,7 +29,10 @@ export async function fetchActiveRule(
   const pageHost = getHostFromUrl(baseUrl) ?? "";
   logger.info(`Active scan request: ${url}`);
   try {
-    const res = await request.get(url, { timeout: timeoutMs });
+    const res = await request.get(url, {
+      timeout: timeoutMs,
+      maxRedirects: 0,
+    });
     const host = getHostFromUrl(url) ?? "";
     const body = await res.text().catch(() => "");
     return {
