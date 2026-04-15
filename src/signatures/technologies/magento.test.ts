@@ -3,6 +3,30 @@ import { matchString } from "../../analyzer/match.js";
 import { magentoSignature } from "./magento.js";
 
 describe("magentoSignature", () => {
+  describe("rule.headers", () => {
+    const cspRegex =
+      magentoSignature.rule?.headers?.["Content-Security-Policy"];
+    const cspReportOnlyRegex =
+      magentoSignature.rule?.headers?.["Content-Security-Policy-Report-Only"];
+
+    it("defines CSP header detection for both enforce and report-only variants", () => {
+      expect(cspRegex).toBeDefined();
+      expect(cspReportOnlyRegex).toBeDefined();
+    });
+
+    it("matches CSP values referencing widgets.magentocommerce.com", () => {
+      const csp =
+        "default-src 'self'; img-src widgets.magentocommerce.com data:";
+      expect(matchString(csp, cspRegex!).hit).toBe(true);
+      expect(matchString(csp, cspReportOnlyRegex!).hit).toBe(true);
+    });
+
+    it("does not match CSP values without the Magento widget CDN", () => {
+      const csp = "default-src 'self'; img-src cdn.example.com data:";
+      expect(matchString(csp, cspRegex!).hit).toBe(false);
+    });
+  });
+
   describe("activeRules", () => {
     it("defines a /magento_version probe", () => {
       expect(magentoSignature.activeRules).toHaveLength(1);
