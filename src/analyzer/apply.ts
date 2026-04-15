@@ -148,9 +148,13 @@ export const applySignature = (
           continue;
         }
 
+        const snippet =
+          result.index !== undefined && result.matchLength !== undefined
+            ? extractMatchSnippet(body, result.index, result.matchLength)
+            : truncateBodyForEvidence(body);
         evidences.push({
           type: "body",
-          value: truncateBodyForEvidence(body),
+          value: snippet,
           version: result.version,
           confidence: rule.confidence,
           host: response.host,

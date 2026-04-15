@@ -208,6 +208,35 @@ describe("applySignature", () => {
       expect(result?.evidences?.[0]?.version).toBe("3.6.0");
     });
 
+    it("should include a snippet around the match in body evidence value", () => {
+      const signature: Signature = {
+        name: "jQuery",
+        rule: {
+          confidence: "medium",
+          bodies: ["jquery[.-]([\\d.]+)(?:\\.min)?\\.js"],
+        },
+      };
+
+      const prefix = "a".repeat(200);
+      const suffix = "b".repeat(200);
+      const match = "jquery-3.6.0.min.js";
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "text/html" },
+            body: `${prefix}${match}${suffix}`,
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      const value = result?.evidences?.[0]?.value ?? "";
+      expect(value).toContain(match);
+      expect(value.startsWith("...")).toBe(true);
+      expect(value.endsWith("...")).toBe(true);
+      expect(value.length).toBeLessThan(200);
+    });
+
     it("should not match body when content-type is not text", () => {
       const signature: Signature = {
         name: "jQuery",
