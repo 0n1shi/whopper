@@ -187,6 +187,101 @@ describe("fetchActiveRule", () => {
     expect(res).toBeNull();
   });
 
+  it("follows a same-host redirect and returns the final response", async () => {
+    const calls: string[] = [];
+    const request = mockRequest((url) => {
+      calls.push(url);
+      if (url === "https://example.com/magento_version") {
+        return {
+          status: () => 302,
+          text: async () => "",
+          headers: () => ({ location: "/en/magento_version" }),
+        };
+      }
+      return {
+        status: () => 200,
+        text: async () => "Magento/2.4.6",
+        headers: () => ({}),
+      };
+    });
+
+    const res = await fetchActiveRule(
+      "https://example.com/",
+      "/magento_version",
+      request,
+      5000,
+    );
+
+    expect(calls).toEqual([
+      "https://example.com/magento_version",
+      "https://example.com/en/magento_version",
+    ]);
+    expect(res?.url).toBe("https://example.com/en/magento_version");
+    expect(res?.status).toBe(200);
+    expect(res?.body).toBe("Magento/2.4.6");
+  });
+
+  it("blocks redirects to a sibling subdomain even if same registrable domain", async () => {
+    const request = mockRequest((url) => {
+      if (url === "https://app.example.com/magento_version") {
+        return {
+          status: () => 302,
+          text: async () => "",
+          headers: () => ({ location: "https://cdn.example.com/magento_version" }),
+        };
+      }
+      throw new Error("should not follow cross-host redirect");
+    });
+
+    const res = await fetchActiveRule(
+      "https://app.example.com/",
+      "/magento_version",
+      request,
+      5000,
+    );
+
+    expect(res).toBeNull();
+  });
+
+  it("blocks redirects to a third-party host", async () => {
+    const request = mockRequest((url) => {
+      if (url === "https://example.com/magento_version") {
+        return {
+          status: () => 302,
+          text: async () => "",
+          headers: () => ({ location: "https://evil.example/magento_version" }),
+        };
+      }
+      throw new Error("should not follow cross-host redirect");
+    });
+
+    const res = await fetchActiveRule(
+      "https://example.com/",
+      "/magento_version",
+      request,
+      5000,
+    );
+
+    expect(res).toBeNull();
+  });
+
+  it("stops after exceeding the redirect hop limit", async () => {
+    const request = mockRequest(() => ({
+      status: () => 302,
+      text: async () => "",
+      headers: () => ({ location: "/loop" }),
+    }));
+
+    const res = await fetchActiveRule(
+      "https://example.com/",
+      "/magento_version",
+      request,
+      5000,
+    );
+
+    expect(res).toBeNull();
+  });
+
   it("returns response even on non-200 status (caller decides)", async () => {
     const request = mockRequest(() => ({
       status: () => 404,
