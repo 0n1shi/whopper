@@ -14,3 +14,6 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
 
   return { hit: false, version: undefined };
 };
+
+export const truncateBodyForEvidence = (body: string): string =>
+  `${body.substring(0, 100)}...`;

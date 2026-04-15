@@ -1,7 +1,7 @@
 import type { Context, Response } from "../browser/types.js";
 import type { Runtime, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
-import { matchString } from "./match.js";
+import { matchString, truncateBodyForEvidence } from "./match.js";
 
 function isFirstPartyResponse(response: Response): boolean {
   return response.isFirstParty ?? true;
@@ -142,7 +142,7 @@ export const applySignature = (
 
         evidences.push({
           type: "body",
-          value: `${body.substring(0, 100)}...`,
+          value: truncateBodyForEvidence(body),
           version: result.version,
           confidence: rule.confidence,
           host: response.host,
