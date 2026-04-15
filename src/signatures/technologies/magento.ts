@@ -27,5 +27,11 @@ export const magentoSignature: Signature = {
       VarienForm: "",
     },
   },
+  activeRules: [
+    {
+      path: "/magento_version",
+      bodyRegex: "^Magento/(\\S+)",
+    },
+  ],
   impliedSoftwares: [phpSignature.name, mysqlSignature.name],
 };

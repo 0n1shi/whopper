@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { signatures } from "./index.js";
+import { isRelativePath } from "../browser/active_scan.js";
+
+const VALID_CONFIDENCES = ["high", "medium", "low"];
 
 describe("signatures validation", () => {
   describe("required fields", () => {
@@ -26,11 +29,10 @@ describe("signatures validation", () => {
 
   describe("confidence values", () => {
     it("all rules should have valid confidence values", () => {
-      const validConfidences = ["high", "medium", "low"];
       for (const sig of signatures) {
         if (sig.rule) {
           expect(
-            validConfidences,
+            VALID_CONFIDENCES,
             `Invalid confidence "${sig.rule.confidence}" in ${sig.name}`,
           ).toContain(sig.rule.confidence);
         }
@@ -98,6 +100,34 @@ describe("signatures validation", () => {
         if (sig.rule?.cookies) {
           for (const [cookie, pattern] of Object.entries(sig.rule.cookies)) {
             testRegex(pattern, sig.name, `cookies.${cookie}`);
+          }
+        }
+      }
+    });
+
+    it("all activeRules bodyRegex patterns should be valid regex", () => {
+      for (const sig of signatures) {
+        if (sig.activeRules) {
+          for (const [i, rule] of sig.activeRules.entries()) {
+            testRegex(rule.bodyRegex, sig.name, `activeRules[${i}].bodyRegex`);
+          }
+        }
+      }
+    });
+
+    it("all activeRules paths should be relative", () => {
+      for (const sig of signatures) {
+        if (!sig.activeRules) continue;
+        for (const [i, rule] of sig.activeRules.entries()) {
+          expect(
+            isRelativePath(rule.path),
+            `${sig.name}.activeRules[${i}].path must be relative: "${rule.path}"`,
+          ).toBe(true);
+          if (rule.confidence) {
+            expect(
+              VALID_CONFIDENCES,
+              `Invalid confidence in ${sig.name}.activeRules[${i}]`,
+            ).toContain(rule.confidence);
           }
         }
       }
