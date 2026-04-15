@@ -11,6 +11,15 @@ import {
 } from "./utils.js";
 
 const MAX_REDIRECT_HOPS = 20;
+// Quiet period (ms) used for the custom network-idle decision.
+// Playwright's built-in `networkidle` has a fixed 500ms threshold, which
+// is too short: it fires before script-driven secondary requests (e.g. a
+// CSS file loaded from within an async script) have a chance to start,
+// causing technology-detection evidence to be dropped. We use a longer
+// threshold evaluated by our own tracking.
+const NETWORK_IDLE_THRESHOLD_MS = 2000;
+// Polling interval (ms) for the idle-decision loop.
+const NETWORK_IDLE_POLL_INTERVAL_MS = 200;
 
 function colorizeStatusCode(statusCode: number): string {
   const code = String(statusCode);
@@ -209,56 +218,137 @@ export async function openPage(
 
   const urls: UrlEntry[] = [];
   const responses: Response[] = [];
-  page.on("response", async (response) => {
-    const responseUrl = response.url();
-    const statusCode = response.status();
+  // Timestamp of the most recent network activity (request sent or
+  // response received). Used by the custom idle-decision loop below.
+  let lastNetworkActivityAt = Date.now();
+  // Number of requests currently in flight. We include this in the idle
+  // condition so that a request whose response takes longer than the
+  // quiet-period threshold cannot cause the loop to exit before the
+  // response is captured.
+  let inFlightRequestCount = 0;
+  // Pending response-handler promises. The response handler awaits
+  // `response.text()`, which can still be in progress when the idle loop
+  // decides to break; awaiting this set after the loop prevents those
+  // in-progress body reads from being dropped.
+  const pendingResponseWork = new Set<Promise<void>>();
 
-    // Skip responses already captured by the pre-inspection loop to
-    // avoid duplicates.
-    if (preInspectedUrls.has(responseUrl) && statusCode >= 300 && statusCode < 400) {
+  page.on("request", () => {
+    inFlightRequestCount++;
+    lastNetworkActivityAt = Date.now();
+  });
+  page.on("requestfinished", () => {
+    inFlightRequestCount = Math.max(0, inFlightRequestCount - 1);
+    lastNetworkActivityAt = Date.now();
+  });
+  page.on("requestfailed", () => {
+    inFlightRequestCount = Math.max(0, inFlightRequestCount - 1);
+    lastNetworkActivityAt = Date.now();
+  });
+  page.on("response", (response) => {
+    lastNetworkActivityAt = Date.now();
+    const work = (async () => {
+      const responseUrl = response.url();
+      const statusCode = response.status();
+
+      // Skip responses already captured by the pre-inspection loop to
+      // avoid duplicates.
+      if (preInspectedUrls.has(responseUrl) && statusCode >= 300 && statusCode < 400) {
+        logger.debug(
+          `Skipping already captured response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
+        );
+        return;
+      }
+
+      const responseHost = getHostFromUrl(responseUrl) ?? "";
       logger.debug(
-        `Skipping already captured response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
+        `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
       );
-      return;
-    }
+      const request = response.request();
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+        urls.push({ url: responseUrl, status: statusCode });
+      }
 
-    const responseHost = getHostFromUrl(responseUrl) ?? "";
-    logger.debug(
-      `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
-    );
-    const request = response.request();
-    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
-      urls.push({ url: responseUrl, status: statusCode });
-    }
+      const res: Response = {
+        url: responseUrl,
+        host: responseHost,
+        isFirstParty: responseHost
+          ? isFirstPartyHost(pageHost, responseHost)
+          : false,
+        status: statusCode,
+        headers: response.headers(),
+      };
 
-    const res: Response = {
-      url: responseUrl,
-      host: responseHost,
-      isFirstParty: responseHost
-        ? isFirstPartyHost(pageHost, responseHost)
-        : false,
-      status: statusCode,
-      headers: response.headers(),
-    };
+      const body = await response.text().catch(() => null);
+      if (body) {
+        res.body = body;
+      }
 
-    const body = await response.text().catch(() => null);
-    if (body) {
-      res.body = body;
-    }
-
-    responses.push(res);
+      responses.push(res);
+    })();
+    pendingResponseWork.add(work);
+    work.finally(() => {
+      pendingResponseWork.delete(work);
+    });
   });
 
   let timeoutOccurred = false;
-  const goto = page.goto(url, { waitUntil: "networkidle" });
+  const navigationStartedAt = Date.now();
+  // Playwright's built-in `networkidle` is flaky (500ms fixed threshold),
+  // so resolve goto at the `load` event (onload fired) and wait for
+  // secondary requests triggered by deferred scripts using our own
+  // idle-decision loop below.
+  const goto = page.goto(url, { waitUntil: "load" });
 
   const result = await Promise.race([
     goto.then(() => "loaded").catch((e) => e.message),
     sleep(timeoutMs).then(() => "timeout"),
   ]);
 
+  // After onload, wait until all in-flight requests have finished and a
+  // quiet period of `NETWORK_IDLE_THRESHOLD_MS` has elapsed (or the
+  // overall timeout is reached) so that secondary requests triggered by
+  // deferred scripts are captured. Including in-flight count in the
+  // condition prevents the loop from exiting while a slow response
+  // (> NETWORK_IDLE_THRESHOLD_MS) is still pending.
+  //
+  // Tracks whether the loop exited because the network actually went
+  // idle, or because the overall timeout budget was exhausted. In the
+  // latter case we must return `timeoutOccurred: true` so callers can
+  // distinguish a full capture from a partial one.
+  let idleWaitTimedOut = false;
   if (result === "loaded") {
-    logger.info("Page loaded successfully");
+    while (true) {
+      const now = Date.now();
+      const elapsed = now - navigationStartedAt;
+      if (elapsed >= timeoutMs) {
+        idleWaitTimedOut = true;
+        break;
+      }
+      const idleFor = now - lastNetworkActivityAt;
+      if (inFlightRequestCount === 0 && idleFor >= NETWORK_IDLE_THRESHOLD_MS) {
+        break;
+      }
+      const remainingBudget = timeoutMs - elapsed;
+      await sleep(Math.min(NETWORK_IDLE_POLL_INTERVAL_MS, remainingBudget));
+    }
+    // If any response handlers are still running at loop exit (e.g.
+    // waiting on `response.text()`), wait for them to finish so their
+    // captures are not dropped.
+    if (pendingResponseWork.size > 0) {
+      await Promise.allSettled(Array.from(pendingResponseWork));
+    }
+  }
+
+  logger.info(`${responses.length} responses captured`);
+  if (result === "loaded") {
+    if (idleWaitTimedOut) {
+      timeoutOccurred = true;
+      logger.warn(
+        `Timeout of ${timeoutMs}ms exceeded while waiting for network idle after load on ${url}`,
+      );
+    } else {
+      logger.info("Page loaded successfully");
+    }
   } else if (result === "timeout") {
     timeoutOccurred = true;
     logger.warn(`Timeout of ${timeoutMs}ms exceeded while loading ${url}`);
