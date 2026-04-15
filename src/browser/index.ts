@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { chromium } from "playwright";
+import { chromium, type Response as PlaywrightResponse } from "playwright";
 import { logger } from "../logger/index.js";
 import type { Context, OpenPageOptions, Response, UrlEntry } from "./types.js";
 import {
@@ -109,13 +109,8 @@ export async function openPage(
       return;
     }
 
-    if (
-      blockCrossDomainRedirect &&
-      !isSameHost(pageHost, targetHost)
-    ) {
-      logger.warn(
-        `Blocked cross-domain redirect: ${targetUrl}`,
-      );
+    if (blockCrossDomainRedirect && !isSameHost(pageHost, targetHost)) {
+      logger.warn(`Blocked cross-domain redirect: ${targetUrl}`);
       blockedByRedirectPolicy = true;
       urls.push({ url: targetUrl, error: "Blocked cross-domain redirect" });
       await route.abort("blockedbyclient");
@@ -124,9 +119,7 @@ export async function openPage(
 
     // Log client-side redirects (JS / meta refresh)
     if (targetUrl !== lastNavigationUrl) {
-      logger.info(
-        `Following redirect: ${lastNavigationUrl} -> ${targetUrl}`,
-      );
+      logger.info(`Following redirect: ${lastNavigationUrl} -> ${targetUrl}`);
     }
     lastNavigationUrl = targetUrl;
 
@@ -141,7 +134,8 @@ export async function openPage(
     try {
       response = await route.fetch({ maxRedirects: 0 });
     } catch (e) {
-      const message = (e instanceof Error ? e.message : String(e)).split("\n")[0] ?? "";
+      const message =
+        (e instanceof Error ? e.message : String(e)).split("\n")[0] ?? "";
       urls.push({ url: targetUrl, error: message });
       await route.abort("failed");
       return;
@@ -154,7 +148,13 @@ export async function openPage(
     // URLs captured here are added to preInspectedUrls so that the
     // page.on("response") listener can skip them and avoid duplicates.
     const firstResponse = response;
-    for (let hop = 0; hop < MAX_REDIRECT_HOPS && response.status() >= 300 && response.status() < 400; hop++) {
+    for (
+      let hop = 0;
+      hop < MAX_REDIRECT_HOPS &&
+      response.status() >= 300 &&
+      response.status() < 400;
+      hop++
+    ) {
       // Capture intermediate 3xx responses so their headers (e.g. server,
       // x-powered-by) are available for analysis even though the browser
       // never sees these responses directly.
@@ -190,9 +190,7 @@ export async function openPage(
         redirectHost &&
         !isSameHost(pageHost, redirectHost)
       ) {
-        logger.warn(
-          `Blocked cross-domain redirect: ${redirectUrl}`,
-        );
+        logger.warn(`Blocked cross-domain redirect: ${redirectUrl}`);
         blockedByRedirectPolicy = true;
         urls.push({ url: redirectUrl, error: "Blocked cross-domain redirect" });
         await route.abort("blockedbyclient");
@@ -207,7 +205,8 @@ export async function openPage(
       try {
         response = await route.fetch({ url: redirectUrl, maxRedirects: 0 });
       } catch (e) {
-        const message = (e instanceof Error ? e.message : String(e)).split("\n")[0] ?? "";
+        const message =
+          (e instanceof Error ? e.message : String(e)).split("\n")[0] ?? "";
         urls.push({ url: redirectUrl, error: message });
         await route.abort("failed");
         return;
@@ -233,19 +232,19 @@ export async function openPage(
   // in-progress body reads from being dropped.
   const pendingResponseWork = new Set<Promise<void>>();
 
-  page.on("request", () => {
+  const onRequest = () => {
     inFlightRequestCount++;
     lastNetworkActivityAt = Date.now();
-  });
-  page.on("requestfinished", () => {
+  };
+  const onRequestFinished = () => {
     inFlightRequestCount = Math.max(0, inFlightRequestCount - 1);
     lastNetworkActivityAt = Date.now();
-  });
-  page.on("requestfailed", () => {
+  };
+  const onRequestFailed = () => {
     inFlightRequestCount = Math.max(0, inFlightRequestCount - 1);
     lastNetworkActivityAt = Date.now();
-  });
-  page.on("response", (response) => {
+  };
+  const onResponse = (response: PlaywrightResponse) => {
     lastNetworkActivityAt = Date.now();
     const work = (async () => {
       const responseUrl = response.url();
@@ -253,7 +252,11 @@ export async function openPage(
 
       // Skip responses already captured by the pre-inspection loop to
       // avoid duplicates.
-      if (preInspectedUrls.has(responseUrl) && statusCode >= 300 && statusCode < 400) {
+      if (
+        preInspectedUrls.has(responseUrl) &&
+        statusCode >= 300 &&
+        statusCode < 400
+      ) {
         logger.debug(
           `Skipping already captured response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
         );
@@ -265,7 +268,10 @@ export async function openPage(
         `Received response [${colorizeStatusCode(statusCode)}] ${responseUrl}`,
       );
       const request = response.request();
-      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+      if (
+        request.isNavigationRequest() &&
+        request.frame() === page.mainFrame()
+      ) {
         urls.push({ url: responseUrl, status: statusCode });
       }
 
@@ -290,7 +296,11 @@ export async function openPage(
     work.finally(() => {
       pendingResponseWork.delete(work);
     });
-  });
+  };
+  page.on("request", onRequest);
+  page.on("requestfinished", onRequestFinished);
+  page.on("requestfailed", onRequestFailed);
+  page.on("response", onResponse);
 
   let timeoutOccurred = false;
   const navigationStartedAt = Date.now();
@@ -351,6 +361,15 @@ export async function openPage(
       }
     }
   }
+
+  // Detach network listeners so that the `responses` snapshot is frozen
+  // at this point. Subsequent activity from cookie/JS extraction (or any
+  // delayed in-flight responses) must not mutate the captured set, since
+  // those entries would not be awaited and could race with the return.
+  page.off("request", onRequest);
+  page.off("requestfinished", onRequestFinished);
+  page.off("requestfailed", onRequestFailed);
+  page.off("response", onResponse);
 
   logger.info(`${responses.length} responses captured`);
   if (result === "loaded") {

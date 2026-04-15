@@ -5,6 +5,7 @@ import { openPage } from "./index.js";
 vi.mock("playwright", () => {
   const mockPage = {
     on: vi.fn(),
+    off: vi.fn(),
     route: vi.fn(),
     mainFrame: vi.fn(),
     goto: vi.fn(),
@@ -56,6 +57,7 @@ import { sleep } from "./utils.js";
 describe("openPage", () => {
   let mockPage: {
     on: ReturnType<typeof vi.fn>;
+    off: ReturnType<typeof vi.fn>;
     route: ReturnType<typeof vi.fn>;
     mainFrame: ReturnType<typeof vi.fn>;
     goto: ReturnType<typeof vi.fn>;
@@ -79,6 +81,7 @@ describe("openPage", () => {
     // Get references to mocked objects
     mockPage = {
       on: vi.fn(),
+      off: vi.fn(),
       route: vi.fn(),
       mainFrame: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
@@ -124,7 +127,9 @@ describe("openPage", () => {
     });
 
     it("should pass custom userAgent to browser context", async () => {
-      await openPage("https://example.com", 10000, [], { userAgent: "MyCustomAgent/1.0" });
+      await openPage("https://example.com", 10000, [], {
+        userAgent: "MyCustomAgent/1.0",
+      });
 
       expect(mockBrowser.newContext).toHaveBeenCalledWith({
         ignoreHTTPSErrors: true,
@@ -199,7 +204,10 @@ describe("openPage", () => {
     it("should block cross-domain navigation when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -238,12 +246,17 @@ describe("openPage", () => {
     it("should allow any redirect when blocking is disabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
 
-      await openPage("https://example.com", 10000, [], { blockCrossDomainRedirect: false });
+      await openPage("https://example.com", 10000, [], {
+        blockCrossDomainRedirect: false,
+      });
 
       const mockResponse = { status: () => 200, headers: () => ({}) };
       const continueMock = vi.fn(() => Promise.resolve());
@@ -270,7 +283,10 @@ describe("openPage", () => {
     it("should continue for non-navigation requests", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -298,7 +314,10 @@ describe("openPage", () => {
     it("should continue for non-main-frame navigation requests", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -326,7 +345,10 @@ describe("openPage", () => {
     it("should continue when navigation target host cannot be parsed", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -374,7 +396,10 @@ describe("openPage", () => {
     it("should block subdomain redirect when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -421,7 +446,10 @@ describe("openPage", () => {
     it("should block HTTP 301 redirect to cross-domain when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -458,14 +486,19 @@ describe("openPage", () => {
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
       expect(fulfillMock).not.toHaveBeenCalled();
       expect(logger.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Blocked cross-domain redirect: https://example.com/"),
+        expect.stringContaining(
+          "Blocked cross-domain redirect: https://example.com/",
+        ),
       );
     });
 
     it("should allow HTTP 301 redirect to same host", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -506,7 +539,10 @@ describe("openPage", () => {
     it("should fulfill response when Location header is malformed", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -547,7 +583,10 @@ describe("openPage", () => {
     it("should block HTTP 302 redirect to cross-domain when blocking is enabled", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -591,7 +630,10 @@ describe("openPage", () => {
     it("should abort when route.fetch() throws an error", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -605,7 +647,9 @@ describe("openPage", () => {
 
       const continueMock = vi.fn(() => Promise.resolve());
       const abortMock = vi.fn(() => Promise.resolve());
-      const fetchMock = vi.fn(() => Promise.reject(new Error("net::ERR_CONNECTION_REFUSED")));
+      const fetchMock = vi.fn(() =>
+        Promise.reject(new Error("net::ERR_CONNECTION_REFUSED")),
+      );
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
@@ -627,7 +671,10 @@ describe("openPage", () => {
     it("should record non-Error thrown by route.fetch() in urls", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -659,7 +706,10 @@ describe("openPage", () => {
     it("should continue for already-inspected URLs on route re-entry", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -797,7 +847,10 @@ describe("openPage", () => {
     it("should abort when redirect chain fetch fails mid-chain", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -842,7 +895,10 @@ describe("openPage", () => {
     it("should record non-Error thrown by redirect chain fetch in urls", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -884,7 +940,10 @@ describe("openPage", () => {
     it("should break loop when Location URL cannot be parsed", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -927,7 +986,10 @@ describe("openPage", () => {
     it("should capture 3xx response headers and body into responses array", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -981,7 +1043,10 @@ describe("openPage", () => {
     it("should capture multi-hop 3xx chain into responses array", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -1005,8 +1070,7 @@ describe("openPage", () => {
           location: "https://example.com/final",
           server: "cloudflare",
         }),
-        text: () =>
-          Promise.resolve("<html><body>Found</body></html>"),
+        text: () => Promise.resolve("<html><body>Found</body></html>"),
       };
       const mock200Response = {
         status: () => 200,
@@ -1046,10 +1110,14 @@ describe("openPage", () => {
 
     it("should not duplicate 3xx responses in page.on response listener", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
-      let responseListener: (response: unknown) => Promise<void> =
-        async () => {};
+      let responseListener: (
+        response: unknown,
+      ) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -1115,7 +1183,10 @@ describe("openPage", () => {
     it("should omit body from 3xx response when body is empty", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -1157,7 +1228,10 @@ describe("openPage", () => {
     it("should capture 3xx response without Location header", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -1202,7 +1276,10 @@ describe("openPage", () => {
     it("should handle 3xx response where URL has no extractable host", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -1473,7 +1550,10 @@ describe("openPage", () => {
     it("should not duplicate error in urls when route handler already recorded entries", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
@@ -1487,7 +1567,9 @@ describe("openPage", () => {
           }),
           continue: vi.fn(() => Promise.resolve()),
           abort: vi.fn(() => Promise.resolve()),
-          fetch: vi.fn(() => Promise.reject(new Error("net::ERR_NAME_NOT_RESOLVED"))),
+          fetch: vi.fn(() =>
+            Promise.reject(new Error("net::ERR_NAME_NOT_RESOLVED")),
+          ),
           fulfill: vi.fn(() => Promise.resolve()),
         });
         throw new Error("page.goto: net::ERR_FAILED");
@@ -1506,7 +1588,10 @@ describe("openPage", () => {
     it("should not log error when navigation is blocked by redirect policy", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
-        async (_pattern: string, handler: (route: unknown) => Promise<void>) => {
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
           routeHandler = handler;
         },
       );
