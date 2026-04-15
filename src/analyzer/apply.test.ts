@@ -84,6 +84,33 @@ describe("applySignature", () => {
       });
     });
 
+    it("should truncate long header values around the match", () => {
+      const signature: Signature = {
+        name: "Magento",
+        rule: {
+          confidence: "high",
+          headers: {
+            "Content-Security-Policy": "widgets\\.magentocommerce\\.com",
+          },
+        },
+      };
+
+      const longCsp = `${"a".repeat(200)} widgets.magentocommerce.com ${"b".repeat(200)}`;
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-security-policy": longCsp },
+          }),
+        ],
+      });
+
+      const evidence = applySignature(context, signature)?.evidences?.[0];
+      expect(evidence?.type).toBe("header");
+      expect(evidence?.value).toMatch(
+        /^Content-Security-Policy: \.\.\.a{39} widgets\.magentocommerce\.com b{39}\.\.\.$/,
+      );
+    });
+
     it("should not detect when header does not match", () => {
       const signature: Signature = {
         name: "Nginx",

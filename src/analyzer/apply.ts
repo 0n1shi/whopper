@@ -1,7 +1,11 @@
 import type { Context, Response } from "../browser/types.js";
 import type { Runtime, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
-import { matchString, truncateBodyForEvidence } from "./match.js";
+import {
+  extractMatchSnippet,
+  matchString,
+  truncateBodyForEvidence,
+} from "./match.js";
 
 function isFirstPartyResponse(response: Response): boolean {
   return response.isFirstParty ?? true;
@@ -112,9 +116,13 @@ export const applySignature = (
         continue;
       }
 
+      const snippet =
+        result.index !== undefined && result.matchLength !== undefined
+          ? extractMatchSnippet(headerValue, result.index, result.matchLength)
+          : headerValue;
       evidences.push({
         type: "header",
-        value: `${header}: ${headerValue}`,
+        value: `${header}: ${snippet}`,
         version: result.version,
         confidence: rule.confidence,
         host: response.host,

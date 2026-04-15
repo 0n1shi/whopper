@@ -8,6 +8,10 @@ export const magentoSignature: Signature = {
   cpe: "cpe:/a:magento:magento",
   rule: {
     confidence: "high",
+    headers: {
+      "Content-Security-Policy": "widgets\\.magentocommerce\\.com",
+      "Content-Security-Policy-Report-Only": "widgets\\.magentocommerce\\.com",
+    },
     urls: ["js/mage", "static/_requirejs", "skin/frontend/"],
     bodies: [
       "data-requiremodule=\"[^\"]*(?:mage/|Magento_)",
