@@ -15,11 +15,18 @@ export type Rule = {
   requiredJavascriptVariables?: string[];
 };
 
+export type ActiveRule = {
+  path: string;
+  bodyRegex: Regex;
+  confidence?: Confidence;
+};
+
 export type Signature = {
   name: string;
   description?: string;
   cpe?: string;
   runtime?: Runtime;
   rule?: Rule;
+  activeRules?: ActiveRule[];
   impliedSoftwares?: string[];
 };

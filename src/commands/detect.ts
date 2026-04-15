@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { openPage } from "../browser/index.js";
 import { analyze } from "../analyzer/index.js";
 import { signatures } from "../signatures/index.js";
+import { applyActiveScans } from "./active_scan_runner.js";
 import { logger, setLogLevel } from "../logger/index.js";
 import { LogLevel } from "../logger/types.js";
 import chalk from "chalk";
@@ -46,6 +47,11 @@ export const detectCommand = (): Command => {
       (v: string) => Number(v),
       2000,
     )
+    .option(
+      "-a, --active",
+      "Enable active scanning (sends additional requests to technology-specific paths)",
+      false,
+    )
     .action(
       async (
         url: string,
@@ -59,6 +65,7 @@ export const detectCommand = (): Command => {
           header: string[];
           blockCrossDomainRedirect: boolean;
           idleTimeout: number;
+          active: boolean;
         },
       ) => {
         if (options.debug) {
@@ -103,6 +110,17 @@ export const detectCommand = (): Command => {
             },
           );
           const detections = analyze(context, signatures);
+
+          if (options.active && detections.length > 0) {
+            await applyActiveScans(
+              context.page.url(),
+              detections,
+              signatures,
+              context.page.context().request,
+              options.timeout,
+            );
+          }
+
           const output = makeDetectCommandOutput(
             context.urls,
             detections,
