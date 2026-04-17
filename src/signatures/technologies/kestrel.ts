@@ -1,5 +1,5 @@
 import type { Signature } from "../_types.js";
-import { microsoftAspSignature } from "./microsoft_asp.js";
+import { aspNetSignature } from "./asp_net.js";
 
 export const kestrelSignature: Signature = {
   name: "Kestrel",
@@ -10,5 +10,5 @@ export const kestrelSignature: Signature = {
       "Server": "^Kestrel",
     },
   },
-  impliedSoftwares: [microsoftAspSignature.name],
+  impliedSoftwares: [aspNetSignature.name],
 };

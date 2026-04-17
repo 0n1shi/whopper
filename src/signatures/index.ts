@@ -13,12 +13,12 @@ import { mysqlSignature } from "./technologies/mysql.js";
 import { corejsSignature } from "./technologies/corejs.js";
 import { jqueryCookieSignature } from "./technologies/jquery_cookie.js";
 import { slickSignature } from "./technologies/slick.js";
-import { yawsHttpServerSignature } from "./technologies/yaws.js";
+import { yawsSignature } from "./technologies/yaws.js";
 import { bootstrapSignature } from "./technologies/bootstrap.js";
 import { jqueryUiSignature } from "./technologies/jquery_ui.js";
 import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
 import { swiperSignature } from "./technologies/swiper.js";
-import { microsoftAspSignature } from "./technologies/microsoft_asp.js";
+import { aspNetSignature } from "./technologies/asp_net.js";
 import { microsoftIisSignature } from "./technologies/microsoft_iis.js";
 import { gsapSignature } from "./technologies/gsap.js";
 import { contactForm7Signature } from "./technologies/contact_form_7.js";
@@ -556,7 +556,7 @@ export const signatures: Signature[] = [
   perlSignature,
   pixiJsSignature,
   microsoftHttpApiSignature,
-  microsoftAspSignature,
+  aspNetSignature,
   microsoftIisSignature,
   modernizrSignature,
   mysqlSignature,
@@ -609,7 +609,7 @@ export const signatures: Signature[] = [
   yuiSignature,
   asciidoctorSignature,
   yoastSeoSignature,
-  yawsHttpServerSignature,
+  yawsSignature,
   mustacheSignature,
   zurbFoundationSignature,
   windowsServerSignature,

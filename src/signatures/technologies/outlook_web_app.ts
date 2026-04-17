@@ -1,5 +1,5 @@
 import type { Signature } from "../_types.js";
-import { microsoftAspSignature } from "./microsoft_asp.js";
+import { aspNetSignature } from "./asp_net.js";
 
 export const outlookWebAppSignature: Signature = {
   name: "Outlook Web App",
@@ -20,5 +20,5 @@ export const outlookWebAppSignature: Signature = {
       "IsOwaPremiumBrowser": "",
     },
   },
-  impliedSoftwares: [microsoftAspSignature.name],
+  impliedSoftwares: [aspNetSignature.name],
 };
