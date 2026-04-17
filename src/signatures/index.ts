@@ -18,7 +18,7 @@ import { bootstrapSignature } from "./technologies/bootstrap.js";
 import { jqueryUiSignature } from "./technologies/jquery_ui.js";
 import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
 import { swiperSignature } from "./technologies/swiper.js";
-import { microsoftAspSignature } from "./technologies/microsoft_asp.js";
+import { aspNetSignature } from "./technologies/asp_net.js";
 import { microsoftIisSignature } from "./technologies/microsoft_iis.js";
 import { gsapSignature } from "./technologies/gsap.js";
 import { contactForm7Signature } from "./technologies/contact_form_7.js";
@@ -556,7 +556,7 @@ export const signatures: Signature[] = [
   perlSignature,
   pixiJsSignature,
   microsoftHttpApiSignature,
-  microsoftAspSignature,
+  aspNetSignature,
   microsoftIisSignature,
   modernizrSignature,
   mysqlSignature,

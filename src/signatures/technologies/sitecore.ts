@@ -1,5 +1,5 @@
 import type { Signature } from "../_types.js";
-import { microsoftAspSignature } from "./microsoft_asp.js";
+import { aspNetSignature } from "./asp_net.js";
 
 export const sitecoreSignature: Signature = {
   name: "Sitecore",
@@ -22,5 +22,5 @@ export const sitecoreSignature: Signature = {
       "SitecoreUtilities": "",
     },
   },
-  impliedSoftwares: [microsoftAspSignature.name],
+  impliedSoftwares: [aspNetSignature.name],
 };

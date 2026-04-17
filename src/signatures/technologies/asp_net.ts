@@ -1,7 +1,7 @@
 import type { Signature } from "../_types.js";
 
-export const microsoftAspSignature: Signature = {
-  name: "Microsoft ASP",
+export const aspNetSignature: Signature = {
+  name: "ASP.NET",
   description:
     "ASP.NET is an open-source, server-side web-application framework designed for web development to produce dynamic web pages.",
   cpe: "cpe:/a:microsoft:asp.net",

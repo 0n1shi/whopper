@@ -1,5 +1,5 @@
 import type { Signature } from "../_types.js";
-import { microsoftAspSignature } from "./microsoft_asp.js";
+import { aspNetSignature } from "./asp_net.js";
 
 export const blazorSignature: Signature = {
   name: "Blazor",
@@ -11,5 +11,5 @@ export const blazorSignature: Signature = {
       "blazor\\.webassembly\\.js",
     ],
   },
-  impliedSoftwares: [microsoftAspSignature.name],
+  impliedSoftwares: [aspNetSignature.name],
 };
