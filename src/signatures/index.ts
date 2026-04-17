@@ -13,7 +13,7 @@ import { mysqlSignature } from "./technologies/mysql.js";
 import { corejsSignature } from "./technologies/corejs.js";
 import { jqueryCookieSignature } from "./technologies/jquery_cookie.js";
 import { slickSignature } from "./technologies/slick.js";
-import { yawsHttpServerSignature } from "./technologies/yaws.js";
+import { yawsSignature } from "./technologies/yaws.js";
 import { bootstrapSignature } from "./technologies/bootstrap.js";
 import { jqueryUiSignature } from "./technologies/jquery_ui.js";
 import { jqueryMigrateSignature } from "./technologies/jquery_migrate.js";
@@ -609,7 +609,7 @@ export const signatures: Signature[] = [
   yuiSignature,
   asciidoctorSignature,
   yoastSeoSignature,
-  yawsHttpServerSignature,
+  yawsSignature,
   mustacheSignature,
   zurbFoundationSignature,
   windowsServerSignature,
