@@ -7,7 +7,10 @@ export const styledComponentsSignature: Signature = {
     "Styled components is a CSS-in-JS styling framework that uses tagged template literals in JavaScript.",
   rule: {
     confidence: "high",
-    bodies: ["data-styled", "sc-component-id"],
+    bodies: [
+      "(?<![\\w-])data-styled(?![\\w-])",
+      "(?<![\\w-])sc-component-id(?![\\w-])",
+    ],
     javascriptVariables: {
       styled: "",
     },

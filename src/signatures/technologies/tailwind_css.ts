@@ -8,14 +8,11 @@ export const tailwindCssSignature: Signature = {
     bodies: [
       "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)",
       "href[^>]+tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css",
-      "rel[^>]+stylesheet",
       "href[^>]+tailwind",
     ],
-    urls: [
-      "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)",
-    ],
+    urls: ["\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)"],
     javascriptVariables: {
-      "tailwind": "",
+      tailwind: "",
     },
   },
 };

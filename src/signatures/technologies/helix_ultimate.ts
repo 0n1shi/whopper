@@ -7,8 +7,8 @@ export const helixUltimateSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "sp-header",
-      "helix-ultimate",
+      "(?<![\\w-])sp-header(?![\\w-])",
+      "(?<![\\w-])helix-ultimate(?![\\w-])",
     ],
   },
   impliedSoftwares: [joomlaSignature.name],
