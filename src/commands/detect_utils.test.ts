@@ -27,7 +27,7 @@ describe("colorizeConfidence", () => {
 
 describe("makeDetectCommandOutput", () => {
   const baseSignatures: Signature[] = [
-    { name: "nginx", description: "Web server", cpe: "cpe:2.3:a:nginx:nginx" },
+    { name: "nginx", description: "Web server", cpe: "cpe:2.3:a:f5:nginx" },
     { name: "jQuery", description: "JavaScript library" },
     { name: "PHP", description: "Programming language" },
     {
@@ -80,7 +80,7 @@ describe("makeDetectCommandOutput", () => {
       const result = makeDetectCommandOutput([], detections, baseSignatures);
 
       expect(result.detectedSoftwares[0]!.cpe).toBe(
-        "cpe:2.3:a:nginx:nginx:1.20.0",
+        "cpe:2.3:a:f5:nginx:1.20.0",
       );
     });
 
@@ -286,7 +286,7 @@ describe("makeDetectCommandOutput", () => {
 
     it("should create separate entries when same software has different versions", () => {
       const signatures: Signature[] = [
-        { name: "nginx", cpe: "cpe:2.3:a:nginx:nginx" },
+        { name: "nginx", cpe: "cpe:2.3:a:f5:nginx" },
       ];
 
       const detections: Detection[] = [
@@ -323,13 +323,13 @@ describe("makeDetectCommandOutput", () => {
 
       const v1180 = nginxEntries.find((s) => s.version === "1.18.0");
       expect(v1180).toBeDefined();
-      expect(v1180!.cpe).toBe("cpe:2.3:a:nginx:nginx:1.18.0");
+      expect(v1180!.cpe).toBe("cpe:2.3:a:f5:nginx:1.18.0");
       expect(v1180!.confidence).toBe("medium");
       expect(v1180!.evidences).toHaveLength(1);
 
       const v1200 = nginxEntries.find((s) => s.version === "1.20.0");
       expect(v1200).toBeDefined();
-      expect(v1200!.cpe).toBe("cpe:2.3:a:nginx:nginx:1.20.0");
+      expect(v1200!.cpe).toBe("cpe:2.3:a:f5:nginx:1.20.0");
       expect(v1200!.confidence).toBe("high");
       expect(v1200!.evidences).toHaveLength(1);
     });
