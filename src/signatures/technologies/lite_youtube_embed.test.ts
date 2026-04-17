@@ -46,7 +46,7 @@ describe("liteYoutubeEmbedSignature", () => {
       expect(result).toBeDefined();
     });
 
-    it("detects lite-youtube-embed from self-closing element", () => {
+    it("detects lite-youtube-embed from bare opening tag without attrs", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
