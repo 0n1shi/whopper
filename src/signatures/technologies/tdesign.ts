@@ -2,15 +2,14 @@ import type { Signature } from "../_types.js";
 
 export const tdesignSignature: Signature = {
   name: "TDesign",
-  description: "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
+  description:
+    "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
   rule: {
     confidence: "high",
     bodies: [
-      "t-button__text",
-      "t-layout",
+      "(?<![\\w-])t-button__text(?![\\w-])",
+      "(?<![\\w-])t-layout(?![\\w-])",
     ],
-    urls: [
-      "tdesign\\.gtimg\\.com/",
-    ],
+    urls: ["tdesign\\.gtimg\\.com/"],
   },
 };

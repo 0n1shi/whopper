@@ -8,7 +8,7 @@ export const neveSignature: Signature = {
   rule: {
     confidence: "high",
     urls: ["themes/neve\\S*\\.js(?:\\?ver=([0-9.]+))?"],
-    bodies: ["neve\\S*\\.css", "neve-theme"],
+    bodies: ["neve\\S*\\.css", "(?<![\\w-])neve-theme(?![\\w-])"],
   },
   impliedSoftwares: [wordpressSignature.name],
 };
