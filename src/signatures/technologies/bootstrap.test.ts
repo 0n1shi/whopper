@@ -121,6 +121,38 @@ describe("bootstrapSignature", () => {
         result?.evidences?.some((e) => e.version === "4.0.0-beta2"),
       ).toBe(true);
     });
+
+    it("captures pre-release version from bootstrap.min.js filename", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<script src="/js/bootstrap4.0.0-beta2.min.js"></script>',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some((e) => e.version === "4.0.0-beta2"),
+      ).toBe(true);
+    });
+
+    it("captures SemVer pre-release identifier containing a hyphen", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*! Bootstrap v4.0.0-rc-1 */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some((e) => e.version === "4.0.0-rc-1"),
+      ).toBe(true);
+    });
   });
 
   describe("javascript variable matching", () => {
@@ -128,6 +160,20 @@ describe("bootstrapSignature", () => {
       const context = createMockContext({
         javascriptVariables: {
           "bootstrap.Alert.VERSION": "4.0.0-beta.2",
+        },
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some((e) => e.version === "4.0.0-beta.2"),
+      ).toBe(true);
+    });
+
+    it("captures pre-release version from jQuery.fn.tooltip.Constructor.VERSION", () => {
+      const context = createMockContext({
+        javascriptVariables: {
+          "jQuery.fn.tooltip.Constructor.VERSION": "4.0.0-beta.2",
         },
       });
 
