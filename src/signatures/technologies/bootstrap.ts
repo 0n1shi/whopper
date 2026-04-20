@@ -9,8 +9,8 @@ export const bootstrapSignature: Signature = {
     confidence: "high",
     bodies: [
       "Bootstrap v(\\d+\\.\\d+\\.\\d+)",
-      "bootstrap.*(\\d+\\.\\d+\\.\\d+)\\.min\\.css",
-      "bootstrap.*(\\d+\\.\\d+\\.\\d+)\\.min\\.js",
+      "bootstrap[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+)[^\"'\\s<>]*?\\.min\\.css",
+      "bootstrap[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+)[^\"'\\s<>]*?\\.min\\.js",
     ],
     javascriptVariables: {
       "bootstrap.Alert.VERSION": "(\\d+\\.\\d+\\.\\d+)",

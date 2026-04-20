@@ -5,7 +5,9 @@ export const highlightSignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "/(?:([\\d.])+/)?highlight(?:\\.min)?\\.js",
+      "highlight\\.?js[/@]([\\d.]+)[^\"'\\s]*?/highlight(?:\\.min)?\\.js",
+      "highlightjs/cdn-(?:assets|release)@([\\d.]+)[^\"'\\s]*?/highlight(?:\\.min)?\\.js",
+      "/highlight(?:\\.min)?\\.js",
     ],
     javascriptVariables: {
       "hljs.highlightBlock": "",

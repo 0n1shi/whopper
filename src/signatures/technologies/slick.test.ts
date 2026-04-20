@@ -33,7 +33,35 @@ function createMockResponse(overrides: Partial<Response> = {}): Response {
 
 describe("slickSignature", () => {
   describe("URL matching", () => {
-    it("should detect Slick with version from path", () => {
+    it("should detect Slick with version from slick-carousel CDN path", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://cdn.example.com/libs/slick-carousel/1.8.1/slick.min.js",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, slickSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "1.8.1")).toBe(true);
+    });
+
+    it("should detect Slick with version from slick-carousel npm path", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://cdn.example.com/npm/slick-carousel@1.8.1/slick/slick.min.js",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, slickSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "1.8.1")).toBe(true);
+    });
+
+    it("should detect Slick presence without capturing unrelated parent-directory version", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
@@ -44,7 +72,7 @@ describe("slickSignature", () => {
 
       const result = applySignature(context, slickSignature);
       expect(result).toBeDefined();
-      expect(result?.evidences?.some((e) => e.version === "1.8.1")).toBe(true);
+      expect(result?.evidences?.every((e) => e.version === undefined)).toBe(true);
     });
 
     it("should detect Slick without version", () => {
@@ -85,6 +113,41 @@ describe("slickSignature", () => {
 
       const result = applySignature(context, slickSignature);
       expect(result).toBeUndefined();
+    });
+  });
+
+  describe("body matching", () => {
+    it("captures version from slick-carousel CDN link", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com",
+            headers: { "content-type": "text/html" },
+            body: '<link rel="stylesheet" href="https://cdn.example.com/npm/slick-carousel@1.8.1/slick/slick-theme.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, slickSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "1.8.1")).toBe(true);
+    });
+
+    it("captures slick-carousel version without miscapturing jQuery version from earlier in the body", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com",
+            headers: { "content-type": "text/html" },
+            body: '<script src="/js/jquery-3.2.1.min.js"></script><link rel="stylesheet" href="https://cdn.example.com/slick-carousel/1.8.1/slick-theme.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, slickSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "1.8.1")).toBe(true);
+      expect(result?.evidences?.every((e) => e.version !== "3.2.1")).toBe(true);
     });
   });
 });

@@ -7,7 +7,8 @@ export const metismenuSignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "(?:/|\\.)metisMenu(?:js)?(?:\\.min)?\\.js(?:\\?([\\d\\.]+))?",
+      "metismenu(?:js)?[/@]([\\d.]+)[^\"'\\s]*?metisMenu(?:js)?(?:\\.min)?\\.js",
+      "(?:/|\\.)metisMenu(?:js)?(?:\\.min)?\\.js",
     ],
     javascriptVariables: {
       "MetisMenu": "",

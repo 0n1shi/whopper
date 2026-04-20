@@ -21,7 +21,7 @@ export const wordpressSignature: Signature = {
       "wp-includes",
       "wp-json",
       "wp\\.com",
-      "WoredPress.*(\\d+\\.\\d+(\\.\\d+)?)?",
+      "WordPress[\\s/]+v?(\\d+\\.\\d+(?:\\.\\d+)?)",
       "shareaholic:wp_version",
       "wp-embed\\.min\\.js",
     ],

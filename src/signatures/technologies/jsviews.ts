@@ -7,7 +7,8 @@ export const jsviewsSignature: Signature = {
   rule: {
     confidence: "high",
     urls: [
-      "([\\d\\.]+)?/jsviews(?:\\.min)?\\.js",
+      "jsviews[/@]([\\d.]+)[^\"'\\s]*?jsviews(?:\\.min)?\\.js",
+      "/jsviews(?:\\.min)?\\.js",
     ],
   },
   impliedSoftwares: [jsobservableSignature.name, "JsRender"],

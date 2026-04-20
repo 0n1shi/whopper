@@ -8,7 +8,8 @@ export const vueJsSignature: Signature = {
     confidence: "high",
     urls: [
       "vue[.-]([\\d.]*\\d)[^/]*\\.js",
-      "(?:/([\\d.]+))?/vue(?:\\.min)?\\.js",
+      "vue[/@]([\\d.]+)[^\"'\\s]*?vue(?:\\.min)?\\.js",
+      "/vue(?:\\.min)?\\.js",
     ],
     bodies: ["<[^>]+\\sdata-v(?:ue)?-", "vue-app"],
     javascriptVariables: {

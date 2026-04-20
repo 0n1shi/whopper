@@ -11,7 +11,7 @@ export const mediaWikiSignature: Signature = {
       "<body[^>]+class=\"mediawiki\"",
       "Powered by MediaWiki",
       "Special:WhatLinksHere",
-      "<meta[^>]+name=[\"']generator[\"'][^>]+content=[\"']MediaWiki ?(.+)",
+      "<meta[^>]+name=[\"']generator[\"'][^>]+content=[\"']MediaWiki ?([^\"']+)",
     ],
     javascriptVariables: {
       "mw.util.toggleToc": "",

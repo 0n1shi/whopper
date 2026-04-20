@@ -7,8 +7,11 @@ export const slickSignature: Signature = {
     "Slick is a popular, fully responsive jQuery plugin used for creating versatile and customizable carousels and content sliders.",
   rule: {
     confidence: "high",
-    urls: ["(?:/(\\d+\\.\\d+\\.\\d+))?/slick(?:\\.min)?\\.js"],
-    bodies: ["(\\d+\\.\\d+\\.\\d+)[\\s\\S]*?slick-theme\\.css"],
+    urls: [
+      "slick(?:-carousel)?[/@](\\d+\\.\\d+\\.\\d+)[^\"'\\s]*?slick(?:\\.min)?\\.js",
+      "/slick(?:\\.min)?\\.js",
+    ],
+    bodies: ["slick[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+)[^\"'\\s<>]*?slick-theme\\.css"],
   },
   impliedSoftwares: [jquerySignature.name],
 };

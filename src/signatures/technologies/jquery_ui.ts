@@ -10,7 +10,7 @@ export const jqueryUiSignature: Signature = {
     confidence: "high",
     urls: [
       "jquery-ui[./-]?(\\d+\\.\\d+\\.\\d+)?",
-      "(\\d+\\.\\d+\\.\\d+)?/jquery-ui",
+      "(?:jqueryui|code\\.jquery\\.com/ui)/(\\d+\\.\\d+\\.\\d+)/jquery-ui",
       "jquery-ui.*\\.js",
     ],
     javascriptVariables: {
