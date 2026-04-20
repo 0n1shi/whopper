@@ -6,7 +6,10 @@ export const animateCssSignature: Signature = {
     "Animate.css is a ready-to-use library collection of CSS3 animation effects.",
   rule: {
     confidence: "high",
-    urls: ["(?:/([\\d.]+))?/animate\\.min\\.css"],
+    urls: [
+      "animate\\.css[/@]([\\d.]+)[^\"'\\s]*?animate(?:\\.min)?\\.css",
+      "/animate(?:\\.min)?\\.css",
+    ],
     bodies: ["animate__animated"],
   },
 };

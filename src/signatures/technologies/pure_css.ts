@@ -6,7 +6,9 @@ export const pureCssSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link[^>]+(?:([\\d.])+/)?pure(?:-min)?\\.css",
+      "<link[^>]+purecss[/@]([\\d.]+)[^\"'\\s<>]*?pure(?:-min)?\\.css",
+      "<link[^>]+/pure/([\\d.]+)/pure(?:-min)?\\.css",
+      "<link[^>]+/pure(?:-min)?\\.css",
       "<div[^>]+class=\"[^\"]*pure-u-(?:sm-|md-|lg-|xl-)?\\d-\\d",
     ],
   },

@@ -11,9 +11,11 @@ export const firebaseSignature: Signature = {
       Vary: "x-fh-requested-host",
     },
     urls: [
-      "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js",
+      "/firebase/([\\d.]+)/firebase(?:\\.min)?\\.js",
+      "firebase@([\\d.]+)[^\"'\\s]*?firebase(?:\\.min)?\\.js",
       "/firebasejs/([\\d.]+)/firebase",
       "\\.gstatic\\.com/firebasejs/([\\d\\.]+)/",
+      "/firebase(?:\\.min)?\\.js",
     ],
     javascriptVariables: {
       "firebase.SDK_VERSION": "([\\d.]+)$",

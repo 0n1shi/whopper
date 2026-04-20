@@ -7,7 +7,7 @@ export const fooGallerySignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "/wp-content/plugins/foogallery/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?",
+      "/wp-content/plugins/foogallery/[^\"'\\s<>]+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?",
     ],
     javascriptVariables: {
       FooGallery: "",

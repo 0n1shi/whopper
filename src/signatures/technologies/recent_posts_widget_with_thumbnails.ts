@@ -8,7 +8,7 @@ export const recentPostsWidgetWithThumbnailsSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "/wp-content/plugins/recent-posts-widget-with-thumbnails/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?",
+      "/wp-content/plugins/recent-posts-widget-with-thumbnails/[^\"'\\s<>]+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?",
     ],
   },
   impliedSoftwares: [wordpressSignature.name],

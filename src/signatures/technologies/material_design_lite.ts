@@ -9,7 +9,9 @@ export const materialDesignLiteSignature: Signature = {
       "<link[^>]* href=\"[^\"]*material(?:\\.[\\w]+-[\\w]+)?(?:\\.min)?\\.css",
     ],
     urls: [
-      "(?:/([\\d.]+))?/material(?:\\.min)?\\.js",
+      "(?:code\\.)?getmdl\\.io/([\\d.]+)/material(?:\\.min)?\\.js",
+      "material-design-lite[/@]([\\d.]+)[^\"'\\s]*?material(?:\\.min)?\\.js",
+      "/material(?:\\.min)?\\.js",
     ],
     javascriptVariables: {
       "MaterialIconToggle": "",
