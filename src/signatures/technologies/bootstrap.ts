@@ -8,13 +8,14 @@ export const bootstrapSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "Bootstrap v(\\d+\\.\\d+\\.\\d+)",
-      "bootstrap[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+)[^\"'\\s<>]*?\\.min\\.css",
-      "bootstrap[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+)[^\"'\\s<>]*?\\.min\\.js",
+      "Bootstrap v(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+)?)",
+      "bootstrap[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+)?)[^\"'\\s<>]*?\\.min\\.css",
+      "bootstrap[^\"'\\s<>]*?(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+)?)[^\"'\\s<>]*?\\.min\\.js",
     ],
     javascriptVariables: {
-      "bootstrap.Alert.VERSION": "(\\d+\\.\\d+\\.\\d+)",
-      "jQuery.fn.tooltip.Constructor.VERSION": "(\\d+\\.\\d+\\.\\d+)",
+      "bootstrap.Alert.VERSION": "(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+)?)",
+      "jQuery.fn.tooltip.Constructor.VERSION":
+        "(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.]+)?)",
     },
   },
 };

@@ -4,7 +4,7 @@ import type { Context, Response } from "../../browser/types.js";
 import { bootstrapSignature } from "./bootstrap.js";
 
 function createMockContext(
-  overrides: Partial<Pick<Context, "responses">> = {},
+  overrides: Partial<Pick<Context, "responses" | "javascriptVariables">> = {},
 ): Context {
   return {
     browser: {} as Context["browser"],
@@ -88,6 +88,54 @@ describe("bootstrapSignature", () => {
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
       expect(result?.evidences?.some((e) => e.version === "5.3.0")).toBe(true);
+    });
+
+    it("captures pre-release version from Bootstrap v header comment", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*! Bootstrap v4.0.0-beta.2 */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some((e) => e.version === "4.0.0-beta.2"),
+      ).toBe(true);
+    });
+
+    it("captures pre-release version from bootstrap.min.css filename", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link rel="stylesheet" href="/css/bootstrap4.0.0-beta2.min.css"/>',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some((e) => e.version === "4.0.0-beta2"),
+      ).toBe(true);
+    });
+  });
+
+  describe("javascript variable matching", () => {
+    it("captures pre-release version from bootstrap.Alert.VERSION", () => {
+      const context = createMockContext({
+        javascriptVariables: {
+          "bootstrap.Alert.VERSION": "4.0.0-beta.2",
+        },
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some((e) => e.version === "4.0.0-beta.2"),
+      ).toBe(true);
     });
   });
 });
