@@ -9,9 +9,11 @@ export const underscoreJsSignature: Signature = {
     confidence: "high",
     urls: ["underscore.*\\.js(?:\\?ver=([\\d.]+))?"],
     javascriptVariables: {
-      "_.VERSION": "^(.+)$",
-      "_.restArguments": "",
+      "_.VERSION": "(.+)",
+      "_.mapObject": "",
+      "_.matcher": "",
+      "_.allKeys": "",
     },
-    requiredJavascriptVariables: ["_.restArguments"],
+    requireAnyOfJavascriptVariables: ["_.mapObject", "_.matcher", "_.allKeys"],
   },
 };

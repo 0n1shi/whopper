@@ -503,7 +503,7 @@ describe("applySignature", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should detect when all requiredJavascriptVariables are present", () => {
+    it("should detect when any of requireAnyOfJavascriptVariables is present", () => {
       const signature: Signature = {
         name: "Lodash",
         rule: {
@@ -511,14 +511,14 @@ describe("applySignature", () => {
           javascriptVariables: {
             "_.VERSION": "(.+)",
           },
-          requiredJavascriptVariables: ["_.differenceBy"],
+          requireAnyOfJavascriptVariables: ["_.forOwn", "_.forIn", "_.merge"],
         },
       };
 
       const context = createMockContext({
         javascriptVariables: {
           "_.VERSION": "4.17.21",
-          "_.differenceBy": "function",
+          "_.forOwn": "[Function]",
         },
       });
 
@@ -529,7 +529,7 @@ describe("applySignature", () => {
       expect(result?.evidences?.[0]?.version).toBe("4.17.21");
     });
 
-    it("should discard script evidences when requiredJavascriptVariables are missing", () => {
+    it("should detect when only a non-first requireAnyOfJavascriptVariables marker is present", () => {
       const signature: Signature = {
         name: "Lodash",
         rule: {
@@ -537,7 +537,32 @@ describe("applySignature", () => {
           javascriptVariables: {
             "_.VERSION": "(.+)",
           },
-          requiredJavascriptVariables: ["_.differenceBy"],
+          requireAnyOfJavascriptVariables: ["_.forOwn", "_.forIn", "_.merge"],
+        },
+      };
+
+      const context = createMockContext({
+        javascriptVariables: {
+          "_.VERSION": "4.17.21",
+          "_.merge": "[Function]",
+        },
+      });
+
+      const result = applySignature(context, signature);
+
+      expect(result).toBeDefined();
+      expect(result?.evidences?.[0]?.version).toBe("4.17.21");
+    });
+
+    it("should discard script evidences when none of requireAnyOfJavascriptVariables is present", () => {
+      const signature: Signature = {
+        name: "Lodash",
+        rule: {
+          confidence: "high",
+          javascriptVariables: {
+            "_.VERSION": "(.+)",
+          },
+          requireAnyOfJavascriptVariables: ["_.forOwn", "_.forIn", "_.merge"],
         },
       };
 
@@ -551,7 +576,7 @@ describe("applySignature", () => {
       expect(result).toBeUndefined();
     });
 
-    it("should keep script evidences when non-script evidences exist even if requiredJavascriptVariables are missing", () => {
+    it("should keep script evidences when non-script evidences exist even if none of requireAnyOfJavascriptVariables is present", () => {
       const signature: Signature = {
         name: "Lodash",
         rule: {
@@ -560,7 +585,7 @@ describe("applySignature", () => {
           javascriptVariables: {
             "_.VERSION": "(.+)",
           },
-          requiredJavascriptVariables: ["_.differenceBy"],
+          requireAnyOfJavascriptVariables: ["_.forOwn", "_.forIn", "_.merge"],
         },
       };
 

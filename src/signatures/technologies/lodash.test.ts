@@ -4,9 +4,7 @@ import type { Context, Response } from "../../browser/types.js";
 import { lodashSignature } from "./lodash.js";
 
 function createMockContext(
-  overrides: Partial<
-    Pick<Context, "responses" | "javascriptVariables">
-  > = {},
+  overrides: Partial<Pick<Context, "responses" | "javascriptVariables">> = {},
 ): Context {
   return {
     browser: {} as Context["browser"],
@@ -64,17 +62,19 @@ describe("lodashSignature", () => {
   });
 
   describe("JavaScript variable matching", () => {
-    it("should detect Lodash when _.VERSION and _.differenceBy are present", () => {
+    it("should detect Lodash when a lodash-only marker and _.VERSION are present", () => {
       const context = createMockContext({
         javascriptVariables: {
+          "_.forOwn": "[Function]",
           "_.VERSION": "4.17.21",
-          "_.differenceBy": "function",
         },
       });
 
       const result = applySignature(context, lodashSignature);
       expect(result).toBeDefined();
-      expect(result?.evidences?.some((e) => e.version === "4.17.21")).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.17.21")).toBe(
+        true,
+      );
     });
 
     it("should not detect Lodash when only _.VERSION is present", () => {
@@ -103,21 +103,42 @@ describe("lodashSignature", () => {
       const result = applySignature(context, lodashSignature);
       expect(result).toBeDefined();
       expect(result?.evidences?.some((e) => e.type === "url")).toBe(true);
-      expect(result?.evidences?.some((e) => e.type === "script" && e.version === "4.17.21")).toBe(true);
+      expect(
+        result?.evidences?.some(
+          (e) => e.type === "script" && e.version === "4.17.21",
+        ),
+      ).toBe(true);
     });
 
-    it("should detect Lodash from templateSettings path", () => {
+    it("should detect Lodash when only the required lodash-only marker is present", () => {
       const context = createMockContext({
         javascriptVariables: {
-          "_.templateSettings.imports._.templateSettings.imports._.VERSION":
-            "4.17.21",
-          "_.differenceBy": "function",
+          "_.forOwn": "[Function]",
         },
       });
 
       const result = applySignature(context, lodashSignature);
       expect(result).toBeDefined();
-      expect(result?.evidences?.some((e) => e.version === "4.17.21")).toBe(true);
+      expect(result?.evidences?.some((e) => e.type === "script")).toBe(true);
+    });
+
+    it("should detect Lodash core build when only core-build markers are present", () => {
+      // lodash 4.x core build strips forOwn/forIn/merge but keeps thru/flattenDeep/concat/assignIn.
+      const context = createMockContext({
+        javascriptVariables: {
+          "_.thru": "[Function]",
+          "_.flattenDeep": "[Function]",
+          "_.concat": "[Function]",
+          "_.assignIn": "[Function]",
+          "_.VERSION": "4.17.21",
+        },
+      });
+
+      const result = applySignature(context, lodashSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "4.17.21")).toBe(
+        true,
+      );
     });
   });
 });
