@@ -4,10 +4,12 @@ import { applyActiveScans } from "./active_scan_runner.js";
 import type { Detection } from "../analyzer/types.js";
 import type { Signature } from "../signatures/_types.js";
 
-const makeRequest = (impl: (url: string) => {
-  status: number;
-  body: string;
-}) => {
+const makeRequest = (
+  impl: (url: string) => {
+    status: number;
+    body: string;
+  },
+) => {
   const get = vi.fn(async (url: string) => {
     const r = impl(url);
     return {
@@ -22,7 +24,9 @@ const makeRequest = (impl: (url: string) => {
 const sig: Signature = {
   name: "Magento",
   rule: { confidence: "high" },
-  activeRules: [{ path: "./magento_version", bodyRegex: "^Magento/(\\S+)" }],
+  activeRules: [
+    { path: "./magento_version", bodyRegexes: ["^Magento/(\\S+)"] },
+  ],
 };
 
 const otherSig: Signature = {
@@ -87,7 +91,7 @@ describe("applyActiveScans", () => {
     expect(detections[0]!.evidences).toEqual([]);
   });
 
-  it("leaves detection unchanged when bodyRegex does not match", async () => {
+  it("leaves detection unchanged when no bodyRegex matches", async () => {
     const detections: Detection[] = [{ name: "Magento", evidences: [] }];
     const { request } = makeRequest(() => ({ status: 200, body: "<html/>" }));
 
@@ -109,7 +113,7 @@ describe("applyActiveScans", () => {
       activeRules: [
         {
           path: "./magento_version",
-          bodyRegex: "^Magento/(\\S+)",
+          bodyRegexes: ["^Magento/(\\S+)"],
           confidence: "low",
         },
       ],
@@ -129,5 +133,59 @@ describe("applyActiveScans", () => {
     );
 
     expect(detections[0]!.evidences![0]!.confidence).toBe("low");
+  });
+
+  it("tries each regex in bodyRegexes and uses the first match", async () => {
+    const sigMulti: Signature = {
+      name: "Multi",
+      rule: { confidence: "high" },
+      activeRules: [
+        {
+          path: "./probe",
+          bodyRegexes: ["^First/(\\S+)", "Second (\\S+)"],
+        },
+      ],
+    };
+    const detections: Detection[] = [{ name: "Multi", evidences: [] }];
+    const { request } = makeRequest(() => ({
+      status: 200,
+      body: "Second 2.0",
+    }));
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [sigMulti],
+      request,
+      5000,
+    );
+
+    expect(detections[0]!.evidences).toHaveLength(1);
+    expect(detections[0]!.evidences![0]!.version).toBe("2.0");
+  });
+
+  it("adds no evidence when no regex in bodyRegexes matches", async () => {
+    const sigMulti: Signature = {
+      name: "Multi",
+      rule: { confidence: "high" },
+      activeRules: [
+        {
+          path: "./probe",
+          bodyRegexes: ["^First/(\\S+)", "Second (\\S+)"],
+        },
+      ],
+    };
+    const detections: Detection[] = [{ name: "Multi", evidences: [] }];
+    const { request } = makeRequest(() => ({ status: 200, body: "unrelated" }));
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [sigMulti],
+      request,
+      5000,
+    );
+
+    expect(detections[0]!.evidences).toEqual([]);
   });
 });

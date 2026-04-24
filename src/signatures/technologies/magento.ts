@@ -14,7 +14,7 @@ export const magentoSignature: Signature = {
     },
     urls: ["js/mage", "static/_requirejs", "skin/frontend/"],
     bodies: [
-      "data-requiremodule=\"[^\"]*(?:mage/|Magento_)",
+      'data-requiremodule="[^"]*(?:mage/|Magento_)',
       "text/x-magento-init",
       "data-image-optimizing-origin",
     ],
@@ -34,7 +34,7 @@ export const magentoSignature: Signature = {
   activeRules: [
     {
       path: "/magento_version",
-      bodyRegex: "^Magento/(\\S+)",
+      bodyRegexes: ["^Magento/(\\S+)"],
     },
   ],
   impliedSoftwares: [phpSignature.name, mysqlSignature.name],

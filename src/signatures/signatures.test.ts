@@ -59,9 +59,7 @@ describe("signatures validation", () => {
       try {
         new RegExp(pattern, "i");
       } catch {
-        throw new Error(
-          `Invalid regex in ${sigName}.${field}: "${pattern}"`,
-        );
+        throw new Error(`Invalid regex in ${sigName}.${field}: "${pattern}"`);
       }
     };
 
@@ -105,11 +103,17 @@ describe("signatures validation", () => {
       }
     });
 
-    it("all activeRules bodyRegex patterns should be valid regex", () => {
+    it("all activeRules bodyRegexes patterns should be valid regex", () => {
       for (const sig of signatures) {
         if (sig.activeRules) {
           for (const [i, rule] of sig.activeRules.entries()) {
-            testRegex(rule.bodyRegex, sig.name, `activeRules[${i}].bodyRegex`);
+            for (const [j, pattern] of rule.bodyRegexes.entries()) {
+              testRegex(
+                pattern,
+                sig.name,
+                `activeRules[${i}].bodyRegexes[${j}]`,
+              );
+            }
           }
         }
       }

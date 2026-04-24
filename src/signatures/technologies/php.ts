@@ -1,5 +1,10 @@
 import type { Signature } from "../_types.js";
 
+const phpinfoVersionRegexes = [
+  "<h1[^>]*>PHP Version (\\d+\\.\\d+\\.\\d+)",
+  "PHP Version\\s*</td>\\s*<td[^>]*>(\\d+\\.\\d+\\.\\d+)",
+];
+
 export const phpSignature: Signature = {
   name: "PHP",
   description:
@@ -16,4 +21,9 @@ export const phpSignature: Signature = {
       PHPSESSID: ".+",
     },
   },
+  activeRules: [
+    { path: "/info.php", bodyRegexes: phpinfoVersionRegexes },
+    { path: "/test.php", bodyRegexes: phpinfoVersionRegexes },
+    { path: "/phpinfo.php", bodyRegexes: phpinfoVersionRegexes },
+  ],
 };

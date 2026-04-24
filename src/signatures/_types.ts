@@ -17,7 +17,7 @@ export type Rule = {
 
 export type ActiveRule = {
   path: string;
-  bodyRegex: Regex;
+  bodyRegexes: Regex[];
   confidence?: Confidence;
 };
 
