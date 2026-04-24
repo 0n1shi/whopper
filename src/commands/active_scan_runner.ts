@@ -45,6 +45,7 @@ export async function applyActiveScans(
         host: response.host,
         sourceUrl: response.url,
       });
+      break;
     }
   }
 }

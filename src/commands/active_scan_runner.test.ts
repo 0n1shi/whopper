@@ -188,4 +188,62 @@ describe("applyActiveScans", () => {
 
     expect(detections[0]!.evidences).toEqual([]);
   });
+
+  it("stops probing remaining activeRules once one produces evidence", async () => {
+    const sigMany: Signature = {
+      name: "Many",
+      rule: { confidence: "high" },
+      activeRules: [
+        { path: "./first", bodyRegexes: ["^Many/(\\S+)"] },
+        { path: "./second", bodyRegexes: ["^Many/(\\S+)"] },
+        { path: "./third", bodyRegexes: ["^Many/(\\S+)"] },
+      ],
+    };
+    const detections: Detection[] = [{ name: "Many", evidences: [] }];
+    const { get, request } = makeRequest(() => ({
+      status: 200,
+      body: "Many/1.0",
+    }));
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [sigMany],
+      request,
+      5000,
+    );
+
+    expect(get).toHaveBeenCalledTimes(1);
+    expect(detections[0]!.evidences).toHaveLength(1);
+  });
+
+  it("falls through to later activeRules when earlier ones do not match", async () => {
+    const sigMany: Signature = {
+      name: "Many",
+      rule: { confidence: "high" },
+      activeRules: [
+        { path: "./first", bodyRegexes: ["^Many/(\\S+)"] },
+        { path: "./second", bodyRegexes: ["^Many/(\\S+)"] },
+        { path: "./third", bodyRegexes: ["^Many/(\\S+)"] },
+      ],
+    };
+    const detections: Detection[] = [{ name: "Many", evidences: [] }];
+    const { get, request } = makeRequest((url) =>
+      url.endsWith("/second")
+        ? { status: 200, body: "Many/2.0" }
+        : { status: 404, body: "" },
+    );
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [sigMany],
+      request,
+      5000,
+    );
+
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(detections[0]!.evidences).toHaveLength(1);
+    expect(detections[0]!.evidences![0]!.version).toBe("2.0");
+  });
 });

@@ -154,6 +154,31 @@ describe("phpSignature activeRules", () => {
     });
   });
 
+  it("stops probing test.php and phpinfo.php once info.php yields a version", async () => {
+    const detections: Detection[] = [{ name: "PHP", evidences: [] }];
+    const { get, request } = makeRequest((url) =>
+      url.endsWith("/info.php")
+        ? { status: 200, body: phpinfoTableBody("8.1.2") }
+        : { status: 200, body: phpinfoTableBody("9.9.9") },
+    );
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [phpSignature],
+      request,
+      5000,
+    );
+
+    expect(get).toHaveBeenCalledTimes(1);
+    expect(get).toHaveBeenCalledWith(
+      "https://example.com/info.php",
+      expect.anything(),
+    );
+    expect(detections[0]!.evidences).toHaveLength(1);
+    expect(detections[0]!.evidences![0]!.version).toBe("8.1.2");
+  });
+
   it("adds no evidence when responses are 200 but body lacks phpinfo marker", async () => {
     const detections: Detection[] = [{ name: "PHP", evidences: [] }];
     const { request } = makeRequest(() => ({
