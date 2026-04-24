@@ -8,6 +8,9 @@ export const lodashSignature: Signature = {
   rule: {
     confidence: "high",
     urls: ["lodash.*\\.js"],
+    bodies: [
+      "raw\\.githubusercontent\\.com/lodash/lodash/(\\d+\\.\\d+\\.\\d+)/dist/",
+    ],
     javascriptVariables: {
       "_.VERSION": "(.+)",
       // Full build markers

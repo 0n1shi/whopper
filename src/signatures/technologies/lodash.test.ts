@@ -122,6 +122,29 @@ describe("lodashSignature", () => {
       expect(result?.evidences?.some((e) => e.type === "script")).toBe(true);
     });
 
+    it("should extract version from the custom/core build banner URL in response body", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://www.example.com/common/js/vendor/libs.js",
+            headers: { "content-type": "application/javascript" },
+            body:
+              "/**\n * @license\n * Lodash (Custom Build) lodash.com/license | Underscore.js 1.8.3 underscorejs.org/LICENSE\n" +
+              " * Build: `lodash core -o ./dist/lodash.core.js`\n" +
+              " * https://raw.githubusercontent.com/lodash/lodash/4.17.21/dist/lodash.core.min.js\n */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, lodashSignature);
+      expect(result).toBeDefined();
+      expect(
+        result?.evidences?.some(
+          (e) => e.type === "body" && e.version === "4.17.21",
+        ),
+      ).toBe(true);
+    });
+
     it("should detect Lodash core build when only core-build markers are present", () => {
       // lodash 4.x core build strips forOwn/forIn/merge but keeps thru/flattenDeep/concat/assignIn.
       const context = createMockContext({
