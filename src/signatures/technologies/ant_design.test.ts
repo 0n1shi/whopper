@@ -59,11 +59,25 @@ describe("antDesignSignature", () => {
       expect(result).toBeDefined();
     });
 
-    it("detects Ant Design from CDN stylesheet with version", () => {
+    it("detects Ant Design from CDN stylesheet with @-delimited version", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
             body: '<link rel="stylesheet" href="https://cdn.example.com/npm/antd@5.12.0/dist/reset.min.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, antDesignSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "5.12.0")).toBe(true);
+    });
+
+    it("detects Ant Design from CDN stylesheet with /-delimited version (cdnjs-style)", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link rel="stylesheet" href="https://cdn.example.com/ajax/libs/antd/5.12.0/antd.min.css">',
           }),
         ],
       });
@@ -142,7 +156,7 @@ describe("antDesignSignature", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: '<link rel="stylesheet" href="/assets/relevantDashboard.css">',
+            body: '<link rel="stylesheet" href="/assets/merchantDashboard.css">',
           }),
         ],
       });
