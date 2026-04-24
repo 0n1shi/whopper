@@ -211,13 +211,13 @@ export const applySignature = (
     }
   }
 
-  if (rule?.requiredJavascriptVariables) {
+  if (rule?.requireAnyOfJavascriptVariables) {
     const jsVars = context.javascriptVariables;
-    const allPresent = rule.requiredJavascriptVariables.every(
+    const anyPresent = rule.requireAnyOfJavascriptVariables.some(
       (name) => jsVars[name] !== undefined,
     );
     const hasNonScriptEvidence = evidences.some((e) => e.type !== "script");
-    if (!allPresent && !hasNonScriptEvidence) {
+    if (!anyPresent && !hasNonScriptEvidence) {
       evidences = evidences.filter((e) => e.type !== "script");
     }
   }

@@ -4,9 +4,7 @@ import type { Context, Response } from "../../browser/types.js";
 import { underscoreJsSignature } from "./underscore_js.js";
 
 function createMockContext(
-  overrides: Partial<
-    Pick<Context, "responses" | "javascriptVariables">
-  > = {},
+  overrides: Partial<Pick<Context, "responses" | "javascriptVariables">> = {},
 ): Context {
   return {
     browser: {} as Context["browser"],
@@ -65,11 +63,11 @@ describe("underscoreJsSignature", () => {
   });
 
   describe("JavaScript variable matching", () => {
-    it("should detect Underscore.js when _.VERSION and _.restArguments are present", () => {
+    it("should detect Underscore.js when an underscore-only marker and _.VERSION are present", () => {
       const context = createMockContext({
         javascriptVariables: {
+          "_.mapObject": "[Function]",
           "_.VERSION": "1.13.6",
-          "_.restArguments": "function",
         },
       });
 
@@ -93,7 +91,11 @@ describe("underscoreJsSignature", () => {
       const result = applySignature(context, underscoreJsSignature);
       expect(result).toBeDefined();
       expect(result?.evidences?.some((e) => e.type === "url")).toBe(true);
-      expect(result?.evidences?.some((e) => e.type === "script" && e.version === "1.13.6")).toBe(true);
+      expect(
+        result?.evidences?.some(
+          (e) => e.type === "script" && e.version === "1.13.6",
+        ),
+      ).toBe(true);
     });
 
     it("should not detect Underscore.js when only _.VERSION is present", () => {
@@ -105,6 +107,18 @@ describe("underscoreJsSignature", () => {
 
       const result = applySignature(context, underscoreJsSignature);
       expect(result).toBeUndefined();
+    });
+
+    it("should detect Underscore.js when only the required underscore-only marker is present", () => {
+      const context = createMockContext({
+        javascriptVariables: {
+          "_.mapObject": "[Function]",
+        },
+      });
+
+      const result = applySignature(context, underscoreJsSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.type === "script")).toBe(true);
     });
   });
 });

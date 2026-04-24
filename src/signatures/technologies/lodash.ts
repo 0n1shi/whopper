@@ -8,11 +8,29 @@ export const lodashSignature: Signature = {
   rule: {
     confidence: "high",
     urls: ["lodash.*\\.js"],
+    bodies: [
+      "raw\\.githubusercontent\\.com/lodash/lodash/(\\d+\\.\\d+\\.\\d+)/dist/",
+    ],
     javascriptVariables: {
       "_.VERSION": "(.+)",
-      "_.differenceBy": "",
-      "_.templateSettings.imports._.templateSettings.imports._.VERSION": "(.+)",
+      // Full build markers
+      "_.forOwn": "",
+      "_.forIn": "",
+      "_.merge": "",
+      // Core build markers
+      "_.thru": "",
+      "_.flattenDeep": "",
+      "_.concat": "",
+      "_.assignIn": "",
     },
-    requiredJavascriptVariables: ["_.differenceBy"],
+    requireAnyOfJavascriptVariables: [
+      "_.forOwn",
+      "_.forIn",
+      "_.merge",
+      "_.thru",
+      "_.flattenDeep",
+      "_.concat",
+      "_.assignIn",
+    ],
   },
 };
