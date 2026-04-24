@@ -1,6 +1,6 @@
 import type { Regex } from "../signatures/_types.js";
 
-type MatchResult = {
+export type MatchResult = {
   hit: boolean;
   version: string | undefined;
   index: number | undefined;
@@ -25,15 +25,47 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
 export const truncateBodyForEvidence = (body: string): string =>
   body.length > 100 ? `${body.substring(0, 100)}...` : body;
 
+export type SnippetOptions = {
+  context?: number;
+  maxMatchLength?: number;
+  maxValueLength?: number;
+};
+
 export const extractMatchSnippet = (
   value: string,
   index: number,
   matchLength: number,
-  context = 40,
+  options: SnippetOptions = {},
 ): string => {
+  const { context = 40, maxMatchLength = 120, maxValueLength = 200 } = options;
+  if (value.length <= maxValueLength) return value;
+
   const start = Math.max(0, index - context);
   const end = Math.min(value.length, index + matchLength + context);
   const prefix = start > 0 ? "..." : "";
   const suffix = end < value.length ? "..." : "";
+
+  // Compress the match itself when it is excessively long (e.g. greedy
+  // [^"']* against a large JSON blob), keeping head/tail so the evidence
+  // stays informative without bloating output.
+  if (matchLength > maxMatchLength) {
+    const half = Math.floor(maxMatchLength / 2);
+    const leading = value.substring(start, index + half);
+    const trailing = value.substring(index + matchLength - half, end);
+    return `${prefix}${leading}...${trailing}${suffix}`;
+  }
+
   return `${prefix}${value.substring(start, end)}${suffix}`;
+};
+
+export const buildEvidenceValue = (
+  rawValue: string,
+  result: Pick<MatchResult, "index" | "matchLength">,
+  prefix?: string,
+): string => {
+  const evidenceValue =
+    result.index !== undefined && result.matchLength !== undefined
+      ? extractMatchSnippet(rawValue, result.index, result.matchLength)
+      : rawValue;
+  return prefix ? `${prefix}: ${evidenceValue}` : evidenceValue;
 };
