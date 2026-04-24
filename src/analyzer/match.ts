@@ -25,14 +25,19 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
 export const truncateBodyForEvidence = (body: string): string =>
   body.length > 100 ? `${body.substring(0, 100)}...` : body;
 
+export type SnippetOptions = {
+  context?: number;
+  maxMatchLength?: number;
+  maxValueLength?: number;
+};
+
 export const extractMatchSnippet = (
   value: string,
   index: number,
   matchLength: number,
-  context = 40,
-  maxMatchLength = 120,
-  maxValueLength = 200,
+  options: SnippetOptions = {},
 ): string => {
+  const { context = 40, maxMatchLength = 120, maxValueLength = 200 } = options;
   if (value.length <= maxValueLength) return value;
 
   const start = Math.max(0, index - context);
@@ -58,9 +63,9 @@ export const buildEvidenceValue = (
   result: Pick<MatchResult, "index" | "matchLength">,
   prefix?: string,
 ): string => {
-  const body =
+  const evidenceValue =
     result.index !== undefined && result.matchLength !== undefined
       ? extractMatchSnippet(rawValue, result.index, result.matchLength)
       : rawValue;
-  return prefix ? `${prefix}: ${body}` : body;
+  return prefix ? `${prefix}: ${evidenceValue}` : evidenceValue;
 };

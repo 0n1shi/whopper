@@ -76,22 +76,26 @@ describe("extractMatchSnippet", () => {
 
   it("truncates both sides with ellipsis when the match is in the middle", () => {
     const value = `${"a".repeat(60)}MATCH${"b".repeat(60)}`;
-    expect(extractMatchSnippet(value, 60, 5, 10, 120, 0)).toBe(
-      `...${"a".repeat(10)}MATCH${"b".repeat(10)}...`,
-    );
+    expect(
+      extractMatchSnippet(value, 60, 5, { context: 10, maxValueLength: 0 }),
+    ).toBe(`...${"a".repeat(10)}MATCH${"b".repeat(10)}...`);
   });
 
   it("omits the leading ellipsis when the match is near the start", () => {
     const value = `MATCH${"b".repeat(60)}`;
-    expect(extractMatchSnippet(value, 0, 5, 10, 120, 0)).toBe(
-      `MATCH${"b".repeat(10)}...`,
-    );
+    expect(
+      extractMatchSnippet(value, 0, 5, { context: 10, maxValueLength: 0 }),
+    ).toBe(`MATCH${"b".repeat(10)}...`);
   });
 
   it("compresses the match itself when it exceeds maxMatchLength", () => {
     const match = `${"x".repeat(100)}MIDDLE${"y".repeat(100)}`;
     const value = `${"a".repeat(20)}${match}${"b".repeat(20)}`;
-    const snippet = extractMatchSnippet(value, 20, match.length, 5, 20, 0);
+    const snippet = extractMatchSnippet(value, 20, match.length, {
+      context: 5,
+      maxMatchLength: 20,
+      maxValueLength: 0,
+    });
     expect(snippet).toBe(
       `...${"a".repeat(5)}${"x".repeat(10)}...${"y".repeat(10)}${"b".repeat(5)}...`,
     );
@@ -100,7 +104,11 @@ describe("extractMatchSnippet", () => {
   it("does not compress when the match is within maxMatchLength", () => {
     const match = "M".repeat(100);
     const value = `${"a".repeat(20)}${match}${"b".repeat(20)}`;
-    const snippet = extractMatchSnippet(value, 20, match.length, 5, 200, 0);
+    const snippet = extractMatchSnippet(value, 20, match.length, {
+      context: 5,
+      maxMatchLength: 200,
+      maxValueLength: 0,
+    });
     expect(snippet).toBe(`...${"a".repeat(5)}${match}${"b".repeat(5)}...`);
   });
 });
