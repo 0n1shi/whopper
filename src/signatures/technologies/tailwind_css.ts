@@ -7,8 +7,8 @@ export const tailwindCssSignature: Signature = {
     confidence: "high",
     bodies: [
       "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)",
-      "href[^>]+tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css",
-      "href[^>]+tailwind",
+      "<link[^>]+href=[\"'][^\"']*tailwindcss[@/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css",
+      "<link[^>]+href=[\"'][^\"']*tailwind[^\"']*\\.css",
     ],
     urls: ["\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)"],
     javascriptVariables: {
