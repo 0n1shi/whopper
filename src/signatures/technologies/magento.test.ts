@@ -35,23 +35,26 @@ describe("magentoSignature", () => {
 
     it("extracts version from 'Magento/2.4 (Community)'", () => {
       const rule = magentoSignature.activeRules![0]!;
-      const result = matchString("Magento/2.4 (Community)", rule.bodyRegex);
+      const result = matchString(
+        "Magento/2.4 (Community)",
+        rule.bodyRegexes[0]!,
+      );
       expect(result.hit).toBe(true);
       expect(result.version).toBe("2.4");
     });
 
     it("extracts version from 'Magento/2.4.6'", () => {
       const rule = magentoSignature.activeRules![0]!;
-      const result = matchString("Magento/2.4.6", rule.bodyRegex);
+      const result = matchString("Magento/2.4.6", rule.bodyRegexes[0]!);
       expect(result.hit).toBe(true);
       expect(result.version).toBe("2.4.6");
     });
 
     it("does not match unrelated responses", () => {
       const rule = magentoSignature.activeRules![0]!;
-      expect(matchString("<html>not magento</html>", rule.bodyRegex).hit).toBe(
-        false,
-      );
+      expect(
+        matchString("<html>not magento</html>", rule.bodyRegexes[0]!).hit,
+      ).toBe(false);
     });
   });
 });

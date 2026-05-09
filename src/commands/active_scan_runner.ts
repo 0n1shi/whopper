@@ -27,8 +27,15 @@ export async function applyActiveScans(
       if (!response || response.status !== 200 || !response.body) {
         continue;
       }
-      const result = matchString(response.body, activeRule.bodyRegex);
-      if (!result.hit) continue;
+      let result: ReturnType<typeof matchString> | undefined;
+      for (const regex of activeRule.bodyRegexes) {
+        const candidate = matchString(response.body, regex);
+        if (candidate.hit) {
+          result = candidate;
+          break;
+        }
+      }
+      if (!result) continue;
 
       (detection.evidences ??= []).push({
         type: "body",
@@ -38,6 +45,7 @@ export async function applyActiveScans(
         host: response.host,
         sourceUrl: response.url,
       });
+      break;
     }
   }
 }

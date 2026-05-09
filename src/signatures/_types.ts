@@ -17,7 +17,7 @@ export type Rule = {
 
 export type ActiveRule = {
   path: string;
-  bodyRegex: Regex;
+  bodyRegexes: Regex[];
   confidence?: Confidence;
 };
 
@@ -27,6 +27,7 @@ export type Signature = {
   cpe?: string;
   runtime?: Runtime;
   rule?: Rule;
+  // First-hit-wins: stops at the first rule that matches.
   activeRules?: ActiveRule[];
   impliedSoftwares?: string[];
 };
