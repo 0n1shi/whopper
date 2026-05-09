@@ -1,11 +1,7 @@
 import type { Context, Response } from "../browser/types.js";
 import type { Runtime, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
-import {
-  extractMatchSnippet,
-  matchString,
-  truncateBodyForEvidence,
-} from "./match.js";
+import { buildEvidenceValue, matchString } from "./match.js";
 
 function isFirstPartyResponse(response: Response): boolean {
   return response.isFirstParty ?? true;
@@ -91,7 +87,7 @@ export const applySignature = (
 
         evidences.push({
           type: "url",
-          value: url,
+          value: buildEvidenceValue(url, result),
           version: result.version,
           confidence: rule.confidence,
           host: response.host,
@@ -116,13 +112,9 @@ export const applySignature = (
         continue;
       }
 
-      const snippet =
-        result.index !== undefined && result.matchLength !== undefined
-          ? extractMatchSnippet(headerValue, result.index, result.matchLength)
-          : headerValue;
       evidences.push({
         type: "header",
-        value: `${header}: ${snippet}`,
+        value: buildEvidenceValue(headerValue, result, header),
         version: result.version,
         confidence: rule.confidence,
         host: response.host,
@@ -148,13 +140,9 @@ export const applySignature = (
           continue;
         }
 
-        const snippet =
-          result.index !== undefined && result.matchLength !== undefined
-            ? extractMatchSnippet(body, result.index, result.matchLength)
-            : truncateBodyForEvidence(body);
         evidences.push({
           type: "body",
-          value: snippet,
+          value: buildEvidenceValue(body, result),
           version: result.version,
           confidence: rule.confidence,
           host: response.host,
@@ -180,7 +168,7 @@ export const applySignature = (
 
       evidences.push({
         type: "cookie",
-        value: `${cookie.name}: ${cookie.value}`,
+        value: buildEvidenceValue(cookie.value, result, cookie.name),
         version: result.version,
         confidence: rule.confidence,
         host: cookie.host,
@@ -204,7 +192,7 @@ export const applySignature = (
 
       evidences.push({
         type: "script",
-        value: `${name}: ${valStr}`,
+        value: buildEvidenceValue(valStr, result, name),
         version: result.version,
         confidence: rule.confidence,
       });
