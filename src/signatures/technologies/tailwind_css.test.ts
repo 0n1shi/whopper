@@ -85,5 +85,18 @@ describe("tailwindCssSignature", () => {
       const result = applySignature(context, tailwindCssSignature);
       expect(result).toBeUndefined();
     });
+
+    it("does not detect Tailwind from an anchor tag that merely links to a page about Tailwind", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<a href="/blog/category/tailwind-tips">Tailwind Tips</a>',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, tailwindCssSignature);
+      expect(result).toBeUndefined();
+    });
   });
 });

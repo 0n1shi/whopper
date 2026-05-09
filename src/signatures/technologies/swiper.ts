@@ -8,6 +8,6 @@ export const swiperSignature: Signature = {
   rule: {
     confidence: "high",
     urls: ["swiper[@.-](\\d+\\.\\d+\\.\\d+)?"],
-    bodies: ["Swiper (\\d+\\.\\d+\\.\\d+)?"],
+    bodies: ["Swiper (\\d+\\.\\d+\\.\\d+)"],
   },
 };
