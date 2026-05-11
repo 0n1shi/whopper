@@ -7,7 +7,7 @@ export const csCartSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<a\\b[^>]*\\s+href=[\"'][^\"']*cs\\-cart\\.com",
+      "<a\\b[^>]*\\s+href=[\"'][^\"']*cs\\-cart\\.com(?:[\\/?#:]|[\"'])",
       "\\b(?:Tygh|tygh)\\.",
       "\\bcs\\-cart\\b",
     ],
