@@ -217,6 +217,58 @@ describe("applyActiveScans", () => {
     expect(detections[0]!.evidences).toHaveLength(1);
   });
 
+  it("snippets the match instead of truncating the whole body when oversized", async () => {
+    const sigUnanchored: Signature = {
+      name: "Magento",
+      rule: { confidence: "high" },
+      activeRules: [
+        { path: "./magento_version", bodyRegexes: ["Magento/(\\d+\\.\\d+)"] },
+      ],
+    };
+    const detections: Detection[] = [{ name: "Magento", evidences: [] }];
+    const body = `${"a".repeat(300)}Magento/2.4${"b".repeat(300)}`;
+    const { request } = makeRequest(() => ({ status: 200, body }));
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [sigUnanchored],
+      request,
+      5000,
+    );
+
+    const value = detections[0]!.evidences![0]!.value;
+    expect(value.startsWith("...")).toBe(true);
+    expect(value.endsWith("...")).toBe(true);
+    expect(value).toContain("Magento/2.4");
+    expect(value.length).toBeLessThan(body.length);
+    expect(detections[0]!.evidences![0]!.version).toBe("2.4");
+  });
+
+  it("keeps the match in evidence even when it sits past the legacy 100-char cutoff", async () => {
+    const sigUnanchored: Signature = {
+      name: "Magento",
+      rule: { confidence: "high" },
+      activeRules: [
+        { path: "./magento_version", bodyRegexes: ["Magento/(\\d+\\.\\d+)"] },
+      ],
+    };
+    const detections: Detection[] = [{ name: "Magento", evidences: [] }];
+    const body = `${"a".repeat(150)}Magento/2.4`;
+    const { request } = makeRequest(() => ({ status: 200, body }));
+
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [sigUnanchored],
+      request,
+      5000,
+    );
+
+    expect(detections[0]!.evidences![0]!.value).toContain("Magento/2.4");
+    expect(detections[0]!.evidences![0]!.version).toBe("2.4");
+  });
+
   it("falls through to later activeRules when earlier ones do not match", async () => {
     const sigMany: Signature = {
       name: "Many",
