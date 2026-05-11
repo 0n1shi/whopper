@@ -7,7 +7,7 @@ export const jetpackSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/jetpack\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/jetpack\\/",
     ],
     urls: [
       "/wp-content/plugins/jetpack/",

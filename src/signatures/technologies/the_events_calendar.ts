@@ -7,7 +7,7 @@ export const theEventsCalendarSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/the\\-events\\-calendar\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/the\\-events\\-calendar\\/",
     ],
     urls: [
       "/wp-content/plugins/the-events-calendar(?:-pro)?/",

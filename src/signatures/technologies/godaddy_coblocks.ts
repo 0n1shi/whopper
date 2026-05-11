@@ -7,7 +7,7 @@ export const godaddyCoblocksSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/coblocks\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/coblocks\\/",
     ],
     urls: [
       "/wp-content/plugins/coblocks/",

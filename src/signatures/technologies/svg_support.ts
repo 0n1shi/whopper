@@ -7,7 +7,7 @@ export const svgSupportSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/svg\\-support\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/svg\\-support\\/",
     ],
     urls: [
       "/wp-content/plugins/svg-support/",

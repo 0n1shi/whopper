@@ -7,8 +7,8 @@ export const cyberchimpsResponsiveSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/themes\\/responsive\\/",
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/themes\\/responsivepro\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/themes\\/responsive\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/themes\\/responsivepro\\/",
     ],
     urls: [
       "/wp-content/themes/responsive(?:pro)?/",

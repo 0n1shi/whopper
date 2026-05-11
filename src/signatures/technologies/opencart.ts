@@ -12,7 +12,7 @@ export const opencartSignature: Signature = {
       "OCSESSID": "",
     },
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*catalog\\/view\\/theme\\/rgen\\-opencart\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*catalog\\/view\\/theme\\/rgen\\-opencart\\/",
     ],
   },
   impliedSoftwares: [phpSignature.name, mysqlSignature.name],

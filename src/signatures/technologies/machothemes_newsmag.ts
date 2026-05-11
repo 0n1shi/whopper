@@ -7,7 +7,7 @@ export const machothemesNewsmagSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/themes\\/Newsmag",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/themes\\/Newsmag",
     ],
     urls: [
       "/wp-content/themes/Newsmag(?:-child)?/",

@@ -37,7 +37,7 @@ describe("csCartSignature", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: '<a href="https://www.cs-cart.com/" target="_blank">Powered by CS-Cart</a>',
+            body: '<a href="https://www.cs-cart.com/" target="_blank">Powered by shopping cart software</a>',
           }),
         ],
       });
