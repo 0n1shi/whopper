@@ -7,7 +7,7 @@ export const essentialAddonsForElementorSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/uploads\\/essential\\-addons\\-elementor\\/",
+      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/uploads\\/essential\\-addons\\-elementor\\/",
     ],
     urls: [
       "/wp-content/uploads/essential-addons-elementor/",

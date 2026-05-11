@@ -7,7 +7,7 @@ export const formidableFormSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/formidable\\/",
+      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/formidable\\/",
     ],
   },
   impliedSoftwares: [wordpressSignature.name],

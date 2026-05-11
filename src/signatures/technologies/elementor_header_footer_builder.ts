@@ -8,7 +8,7 @@ export const elementorHeaderFooterBuilderSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/header\\-footer\\-elementor\\/",
+      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/header\\-footer\\-elementor\\/",
     ],
   },
   impliedSoftwares: [elementorSignature.name, wordpressSignature.name],

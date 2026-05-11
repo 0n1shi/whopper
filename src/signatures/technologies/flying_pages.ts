@@ -7,7 +7,7 @@ export const flyingPagesSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/flying\\-pages\\/",
+      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/flying\\-pages\\/",
     ],
     urls: [
       "/wp-content/plugins/flying-pages/.+\\.js(?:\\?ver=([\\d\\.]+))?",

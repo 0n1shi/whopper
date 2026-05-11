@@ -7,7 +7,7 @@ export const seedprodComingSoonSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/coming\\-soon\\/",
+      "<link\\b[^>]+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/coming\\-soon\\/",
     ],
     urls: [
       "/wp-content/plugins/coming-soon/",
