@@ -22,9 +22,6 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
   return { hit: false, version: undefined, index: undefined, matchLength: undefined };
 };
 
-export const truncateBodyForEvidence = (body: string): string =>
-  body.length > 100 ? `${body.substring(0, 100)}...` : body;
-
 export type SnippetOptions = {
   context?: number;
   maxMatchLength?: number;

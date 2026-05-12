@@ -1,6 +1,6 @@
 import type { APIRequestContext } from "playwright";
 import { fetchActiveRule } from "../browser/active_scan.js";
-import { matchString, truncateBodyForEvidence } from "../analyzer/match.js";
+import { buildEvidenceValue, matchString } from "../analyzer/match.js";
 import type { Detection } from "../analyzer/types.js";
 import type { Signature } from "../signatures/_types.js";
 
@@ -39,7 +39,7 @@ export async function applyActiveScans(
 
       (detection.evidences ??= []).push({
         type: "body",
-        value: truncateBodyForEvidence(response.body),
+        value: buildEvidenceValue(response.body, result),
         version: result.version,
         confidence: activeRule.confidence ?? signature.rule.confidence,
         host: response.host,
