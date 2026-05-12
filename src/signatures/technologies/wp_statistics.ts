@@ -8,7 +8,7 @@ export const wpStatisticsSignature: Signature = {
     confidence: "high",
     bodies: [
       "<!-- Analytics by WP-Statistics v([\\d\\.]+)",
-      "href[^>]+\\/wp\\-content\\/plugins\\/wp\\-statistics\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/wp\\-statistics\\/",
     ],
     javascriptVariables: {
       "WP_Statistics_http": "",

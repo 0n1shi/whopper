@@ -6,7 +6,7 @@ export const salesforceDeskSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/s\\/sfsites\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/s\\/sfsites\\/",
     ],
     urls: [
       "^/s/sfsites/auraFW/",

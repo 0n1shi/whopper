@@ -8,7 +8,7 @@ export const woocommerceStripePaymentGatewaySignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/woocommerce\\-gateway\\-stripe\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/woocommerce\\-gateway\\-stripe\\/",
     ],
     urls: [
       "/wp-content/plugins/woocommerce-gateway-stripe/",

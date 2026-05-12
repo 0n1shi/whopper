@@ -6,7 +6,7 @@ export const intercomSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+https:\\/\\/widget.intercom.io",
+      "<(?:a|link)\\b[^>]*\\s+href=[\"'][^\"']*https:\\/\\/widget\\.intercom\\.io(?:[\\/?#:]|[\"'])",
       "live-chat-loader-placeholder",
       "intercom-frame",
     ],

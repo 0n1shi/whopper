@@ -7,7 +7,7 @@ export const webfactoryMaintenanceSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/maintenance\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/maintenance\\/",
     ],
     javascriptVariables: {
       "mtnc_front_options": "",

@@ -7,8 +7,8 @@ export const gtranslateSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "href[^>]+\\/wp\\-content\\/plugins\\/gtranslate\\/",
-      "src[^>]+\\/wp\\-content\\/plugins\\/gtranslate\\/",
+      "<link\\b[^>]*\\s+href=[\"'][^\"']*\\/wp\\-content\\/plugins\\/gtranslate\\/",
+      "<(?:script|img)\\b[^>]*\\s+src=[\"'][^\"']*\\/wp\\-content\\/plugins\\/gtranslate\\/",
     ],
   },
   impliedSoftwares: [wordpressSignature.name],
