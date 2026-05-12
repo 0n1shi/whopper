@@ -69,10 +69,18 @@ npm link
 
 ### Releasing a New Version
 
-To release a new version:
+Use one of the bundled release scripts. They take care of version-bumping, tag-pushing, and publishing in a single command:
 
 ```bash
-npm version patch  # or minor, major
-git push --follow-tags
-npm publish
+npm run release:patch   # bug fixes (e.g. 0.5.5 -> 0.5.6)
+npm run release:minor   # backwards-compatible features (0.5.5 -> 0.6.0)
+npm run release:major   # breaking changes (0.5.5 -> 1.0.0)
 ```
+
+If the version was already bumped (e.g. by an earlier `npm version`) and you just need to push & publish:
+
+```bash
+npm run release         # git push --follow-tags && npm publish
+```
+
+Every `npm publish` automatically triggers the `prepublishOnly` hook, which runs `clean → lint → test → build` so the published tarball always contains a freshly built `dist/`. Direct `npm publish` is therefore safe as well — the release scripts mainly bundle the version bump and tag push.

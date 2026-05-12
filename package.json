@@ -4,11 +4,17 @@
   "description": "Whopper is a CLI tool that discovers and detects web technologies used on websites.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist",
     "dev": "node --enable-source-maps ./dist/main.js",
     "start": "npm run build && node ./dist/main.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "prepublishOnly": "npm run clean && npm run lint && npm test && npm run build",
+    "release": "git push --follow-tags && npm publish",
+    "release:patch": "npm version patch && git push --follow-tags && npm publish",
+    "release:minor": "npm version minor && git push --follow-tags && npm publish",
+    "release:major": "npm version major && git push --follow-tags && npm publish"
   },
   "bin": {
     "whopper": "./dist/main.js"

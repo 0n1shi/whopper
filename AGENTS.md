@@ -99,11 +99,25 @@ export const exampleSignature: Signature = {
 
 ## Release
 
+Use the bundled release scripts so the publish always ships a freshly built `dist/`.
+
 ```bash
-npm version patch  # or minor, major
-git push --follow-tags
-npm publish
+npm run release:patch   # bump patch, push tags, publish
+npm run release:minor   # bump minor, push tags, publish
+npm run release:major   # bump major, push tags, publish
 ```
+
+When the version was already bumped and tagged (e.g. by an earlier `npm version`):
+
+```bash
+npm run release         # push tags + publish (skips the version bump)
+```
+
+Notes:
+
+- `prepublishOnly` runs automatically before every `npm publish`, executing `clean → lint → test → build`. This guarantees the published tarball contains an up-to-date `dist/`.
+- `npm version` requires a clean working tree, which acts as a safety net before tagging.
+- Running `npm publish` directly is still safe because of `prepublishOnly`, but the `release:*` scripts handle the version-bump + tag-push in one shot.
 
 ## Development Notes
 
