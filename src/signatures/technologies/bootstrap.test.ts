@@ -153,6 +153,75 @@ describe("bootstrapSignature", () => {
         result?.evidences?.some((e) => e.version === "4.0.0-rc-1"),
       ).toBe(true);
     });
+
+    it("does not pick up an unrelated library version when the host merely contains 'bootstrap'", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link rel="stylesheet" href="https://bootstrapcdn.example.com/icon-lib/4.7.0/css/icon-lib.min.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeUndefined();
+    });
+
+    it("captures version from a '/bootstrap/x.y.z/' CDN path even when the host contains 'bootstrap'", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link rel="stylesheet" href="https://bootstrapcdn.example.com/bootstrap/4.5.2/css/bootstrap.min.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "4.5.2")).toBe(true);
+    });
+
+    it("captures version from a 'bootstrap@x.y.z' package path", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link rel="stylesheet" href="https://cdn.example.com/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "5.3.2")).toBe(true);
+    });
+
+    it("captures version from a 'twitter-bootstrap/x.y.z' path", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link rel="stylesheet" href="https://cdn.example.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "3.4.1")).toBe(true);
+    });
+
+    it("captures version from a 'bootstrap.bundle.min.js' reference loaded via 'bootstrap@x.y.z'", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<script src="https://cdn.example.com/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "5.3.0")).toBe(true);
+    });
   });
 
   describe("javascript variable matching", () => {
