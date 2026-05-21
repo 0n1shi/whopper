@@ -162,6 +162,7 @@ describe("openPage", () => {
 
       expect(mockPage.goto).toHaveBeenCalledWith("https://example.com", {
         waitUntil: "load",
+        timeout: 10000,
       });
     });
 
@@ -1633,7 +1634,7 @@ describe("openPage", () => {
       const result = await openPage("https://example.com", 10000, []);
 
       expect(logger.warn).toHaveBeenCalledWith(
-        expect.stringContaining("Failed to extract cookies"),
+        expect.stringContaining("Extraction failed"),
       );
       expect(result.cookies).toEqual([]);
     });
