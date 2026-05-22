@@ -166,6 +166,7 @@ describe("detectCommand", () => {
           blockCrossDomainRedirect: false,
           networkIdleThresholdMs: 2000,
           extractionTimeoutMs: 10000,
+          blockMedia: true,
         },
       );
     });

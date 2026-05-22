@@ -63,6 +63,7 @@ export async function openPage(
     blockCrossDomainRedirect = false,
     networkIdleThresholdMs = NETWORK_IDLE_THRESHOLD_MS,
     extractionTimeoutMs = DEFAULT_EXTRACTION_TIMEOUT_MS,
+    blockMedia = true,
   } = options;
 
   const pageHost = getHostFromUrl(url);
@@ -87,6 +88,22 @@ export async function openPage(
 
   await page.route("**/*", async (route) => {
     const request = route.request();
+
+    // Drop media (video / audio) requests up front when enabled. These
+    // rarely contribute to technology detection (signatures match on URLs,
+    // bodies, headers, cookies, or JS variables) but can dominate the
+    // page's main-thread / network budget — autoplaying videos in
+    // particular keep the scan running long after the meaningful
+    // resources have loaded. Recording the URL in `urls` preserves the
+    // audit trail of what would have been fetched.
+    if (blockMedia && request.resourceType() === "media") {
+      const blockedUrl = request.url();
+      logger.debug(`Blocked media resource: ${blockedUrl}`);
+      urls.push({ url: blockedUrl, error: "blocked: media" });
+      await route.abort("blockedbyclient");
+      return;
+    }
+
     if (
       !request.isNavigationRequest() ||
       request.frame() !== page.mainFrame()

@@ -54,6 +54,10 @@ export const detectCommand = (): Command => {
       10000,
     )
     .option(
+      "--no-block-media",
+      "Do not abort media (video/audio) requests during the scan",
+    )
+    .option(
       "-a, --active",
       "Enable active scanning (sends additional requests to technology-specific paths)",
       false,
@@ -72,6 +76,7 @@ export const detectCommand = (): Command => {
           blockCrossDomainRedirect: boolean;
           idleTimeout: number;
           extractionTimeout: number;
+          blockMedia: boolean;
           active: boolean;
         },
       ) => {
@@ -115,6 +120,7 @@ export const detectCommand = (): Command => {
               blockCrossDomainRedirect: options.blockCrossDomainRedirect,
               networkIdleThresholdMs: options.idleTimeout,
               extractionTimeoutMs: options.extractionTimeout,
+              blockMedia: options.blockMedia,
             },
           );
           const detections = analyze(context, signatures);
