@@ -48,6 +48,12 @@ export const detectCommand = (): Command => {
       2000,
     )
     .option(
+      "--extraction-timeout <ms>",
+      "Timeout in milliseconds for the post-load cookie / JS variable extraction phase (default: 10000)",
+      (v: string) => Number(v),
+      10000,
+    )
+    .option(
       "-a, --active",
       "Enable active scanning (sends additional requests to technology-specific paths)",
       false,
@@ -65,6 +71,7 @@ export const detectCommand = (): Command => {
           header: string[];
           blockCrossDomainRedirect: boolean;
           idleTimeout: number;
+          extractionTimeout: number;
           active: boolean;
         },
       ) => {
@@ -107,6 +114,7 @@ export const detectCommand = (): Command => {
                 : undefined,
               blockCrossDomainRedirect: options.blockCrossDomainRedirect,
               networkIdleThresholdMs: options.idleTimeout,
+              extractionTimeoutMs: options.extractionTimeout,
             },
           );
           const detections = analyze(context, signatures);

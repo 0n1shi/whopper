@@ -35,6 +35,7 @@ export type OpenPageOptions = {
   extraHTTPHeaders?: Record<string, string> | undefined;
   blockCrossDomainRedirect?: boolean | undefined;
   networkIdleThresholdMs?: number | undefined;
+  extractionTimeoutMs?: number | undefined;
 };
 
 export type Context = {

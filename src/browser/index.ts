@@ -20,6 +20,13 @@ const MAX_REDIRECT_HOPS = 20;
 const NETWORK_IDLE_THRESHOLD_MS = 2000;
 // Polling interval (ms) for the idle-decision loop.
 const NETWORK_IDLE_POLL_INTERVAL_MS = 200;
+// Default hard budget (ms) for the post-load extraction phase (cookies + JS
+// variables). Heavy SPA pages (e.g. continuous WebGL / requestAnimationFrame
+// loops, autoplaying video) can keep page.evaluate() blocked for many times
+// the navigation timeout. Without a separate budget here, the overall scan
+// can run for several minutes even after `goto` has already exhausted its
+// own timeout. Overridable via OpenPageOptions.extractionTimeoutMs.
+const DEFAULT_EXTRACTION_TIMEOUT_MS = 10000;
 
 function colorizeStatusCode(statusCode: number): string {
   const code = String(statusCode);
@@ -55,6 +62,7 @@ export async function openPage(
     extraHTTPHeaders,
     blockCrossDomainRedirect = false,
     networkIdleThresholdMs = NETWORK_IDLE_THRESHOLD_MS,
+    extractionTimeoutMs = DEFAULT_EXTRACTION_TIMEOUT_MS,
   } = options;
 
   const pageHost = getHostFromUrl(url);
@@ -308,7 +316,12 @@ export async function openPage(
   // so resolve goto at the `load` event (onload fired) and wait for
   // secondary requests triggered by deferred scripts using our own
   // idle-decision loop below.
-  const goto = page.goto(url, { waitUntil: "load" });
+  //
+  // Pass `timeout` explicitly so goto stops trying once our budget is up;
+  // otherwise it would continue in the background until Playwright's default
+  // 30s navigation timeout, leaving subsequent page.* calls blocked on an
+  // unresolved navigation.
+  const goto = page.goto(url, { waitUntil: "load", timeout: timeoutMs });
 
   const result = await Promise.race([
     goto.then(() => "loaded").catch((e) => e.message),
@@ -376,14 +389,16 @@ export async function openPage(
     if (idleWaitTimedOut) {
       timeoutOccurred = true;
       logger.warn(
-        `Timeout of ${timeoutMs}ms exceeded while waiting for network idle after load on ${url}`,
+        `Timeout of ${timeoutMs.toLocaleString("en-US")}ms exceeded while waiting for network idle after load on ${url}`,
       );
     } else {
       logger.info("Page loaded successfully");
     }
   } else if (result === "timeout") {
     timeoutOccurred = true;
-    logger.warn(`Timeout of ${timeoutMs}ms exceeded while loading ${url}`);
+    logger.warn(
+      `Timeout of ${timeoutMs.toLocaleString("en-US")}ms exceeded while loading ${url}`,
+    );
   } else if (blockedByRedirectPolicy) {
     // Already logged by the route handler as "Blocked redirect by policy"
   } else {
@@ -401,8 +416,30 @@ export async function openPage(
   let cookies: Context["cookies"] = [];
   let javascriptVariables: Record<string, unknown> = {};
 
+  // Bound the extraction phase with a hard budget. page.evaluate() in
+  // particular can block for far longer than the navigation timeout on
+  // pages with a saturated main thread (heavy animation, video decoding),
+  // so without this race the overall scan can hang for minutes after the
+  // navigation budget has already been exhausted.
+  const extractionDeadline = Date.now() + extractionTimeoutMs;
+  const withDeadline = async <T>(p: Promise<T>, label: string): Promise<T> => {
+    const remaining = Math.max(0, extractionDeadline - Date.now());
+    return Promise.race([
+      p,
+      sleep(remaining).then(() => {
+        throw new Error(
+          `${label} timeout (${extractionTimeoutMs.toLocaleString("en-US")}ms)`,
+        );
+      }),
+    ]);
+  };
+
   try {
-    cookies = (await page.context().cookies()).map((cookie) => {
+    const rawCookies = await withDeadline(
+      page.context().cookies(),
+      "cookies",
+    );
+    cookies = rawCookies.map((cookie) => {
       const cookieHost = cookie.domain.replace(/^\./, "").toLowerCase();
       return {
         host: cookieHost,
@@ -418,21 +455,23 @@ export async function openPage(
       };
     });
 
-    javascriptVariables = await page.evaluate(
-      ({ varNames, extractFn }) => {
-        // Re-create the function in browser context
-        const fn = new Function("return " + extractFn)();
-        return fn(window, varNames);
-      },
-      {
-        varNames: javascriptVariableNames,
-        extractFn: extractJsVariables.toString(),
-      },
+    javascriptVariables = await withDeadline(
+      page.evaluate(
+        ({ varNames, extractFn }) => {
+          // Re-create the function in browser context
+          const fn = new Function("return " + extractFn)();
+          return fn(window, varNames);
+        },
+        {
+          varNames: javascriptVariableNames,
+          extractFn: extractJsVariables.toString(),
+        },
+      ),
+      "js variables",
     );
-  } catch {
-    logger.warn(
-      "Failed to extract cookies or JavaScript variables (page context may have been destroyed)",
-    );
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    logger.warn(`Extraction failed: ${message.split("\n")[0]}`);
   }
 
   return {
