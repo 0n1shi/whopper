@@ -226,6 +226,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://www.example.com",
@@ -266,6 +267,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.net",
@@ -300,9 +302,74 @@ describe("openPage", () => {
       const abortMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => false,
           frame: () => mockMainFrame,
           url: () => "https://example.net/script.js",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(continueMock).toHaveBeenCalledTimes(1);
+      expect(abortMock).not.toHaveBeenCalled();
+    });
+
+    it("should abort media requests by default and record them in urls", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
+          routeHandler = handler;
+        },
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          resourceType: () => "media",
+          isNavigationRequest: () => false,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com/intro.mov",
+        }),
+        continue: continueMock,
+        abort: abortMock,
+      });
+
+      expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
+      expect(continueMock).not.toHaveBeenCalled();
+      expect(result.urls).toContainEqual({
+        url: "https://example.com/intro.mov",
+        error: "blocked: media",
+      });
+    });
+
+    it("should not abort media requests when blockMedia is false", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
+          routeHandler = handler;
+        },
+      );
+
+      await openPage("https://example.com", 10000, [], { blockMedia: false });
+
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          resourceType: () => "media",
+          isNavigationRequest: () => false,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com/intro.mov",
         }),
         continue: continueMock,
         abort: abortMock,
@@ -331,6 +398,7 @@ describe("openPage", () => {
       const abortMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => ({ id: "iframe-1" }),
           url: () => "https://example.net/embedded",
@@ -366,6 +434,7 @@ describe("openPage", () => {
       // first top-level navigation
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -378,6 +447,7 @@ describe("openPage", () => {
       // second top-level navigation with invalid URL should still continue
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "not-a-url",
@@ -419,6 +489,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://app.example.com",
@@ -430,6 +501,7 @@ describe("openPage", () => {
       });
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://cdn.example.com",
@@ -473,6 +545,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://www.example.com",
@@ -522,6 +595,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -566,6 +640,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -610,6 +685,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -654,6 +730,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -689,6 +766,7 @@ describe("openPage", () => {
       const fetchMock = vi.fn(() => Promise.reject("string error"));
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -741,6 +819,7 @@ describe("openPage", () => {
 
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -755,6 +834,7 @@ describe("openPage", () => {
       const continueMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com/page",
@@ -803,6 +883,7 @@ describe("openPage", () => {
 
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -817,6 +898,7 @@ describe("openPage", () => {
       for (let i = 0; i < 20; i++) {
         await routeHandler({
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => true,
             frame: () => mockMainFrame,
             url: () => "https://example.com/page",
@@ -832,6 +914,7 @@ describe("openPage", () => {
       const abortMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com/page",
@@ -878,6 +961,7 @@ describe("openPage", () => {
 
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -922,6 +1006,7 @@ describe("openPage", () => {
 
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -969,6 +1054,7 @@ describe("openPage", () => {
 
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1020,6 +1106,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1085,6 +1172,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1153,6 +1241,7 @@ describe("openPage", () => {
         .mockResolvedValueOnce(mock200Response);
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1212,6 +1301,7 @@ describe("openPage", () => {
         .mockResolvedValueOnce(mock200Response);
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1253,6 +1343,7 @@ describe("openPage", () => {
       const fulfillMock = vi.fn(() => Promise.resolve());
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1308,6 +1399,7 @@ describe("openPage", () => {
       // Use a data: URL that getHostFromUrl returns null for
       await routeHandler({
         request: () => ({
+          resourceType: () => "document",
           isNavigationRequest: () => true,
           frame: () => mockMainFrame,
           url: () => "https://example.com",
@@ -1467,6 +1559,7 @@ describe("openPage", () => {
           headers: () => ({}),
           text: () => textPromise,
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => false,
             frame: () => null,
           }),
@@ -1508,6 +1601,7 @@ describe("openPage", () => {
           headers: () => ({}),
           text: () => neverResolves,
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => false,
             frame: () => null,
           }),
@@ -1562,6 +1656,7 @@ describe("openPage", () => {
         // Route handler records a fetch error
         await routeHandler({
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => true,
             frame: () => mockMainFrame,
             url: () => "https://example.com",
@@ -1600,6 +1695,7 @@ describe("openPage", () => {
         // Simulate the route handler blocking a cross-host redirect
         await routeHandler({
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => true,
             frame: () => mockMainFrame,
             url: () => "https://other.example",
@@ -1752,6 +1848,7 @@ describe("openPage", () => {
           headers: () => ({ "content-type": "application/json" }),
           text: () => Promise.resolve('{"data": "test"}'),
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => false,
             frame: () => null,
           }),
@@ -1798,6 +1895,7 @@ describe("openPage", () => {
           headers: () => ({ "content-type": "application/octet-stream" }),
           text: () => Promise.reject(new Error("Cannot read binary")),
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => false,
             frame: () => null,
           }),
@@ -1839,6 +1937,7 @@ describe("openPage", () => {
           headers: () => ({ "content-type": "text/javascript" }),
           text: () => Promise.resolve("console.log('ok')"),
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => false,
             frame: () => null,
           }),
@@ -1878,6 +1977,7 @@ describe("openPage", () => {
           headers: () => ({ "content-type": "text/html" }),
           text: () => Promise.resolve("<html></html>"),
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => true,
             frame: () => mockMainFrame,
           }),
@@ -1913,6 +2013,7 @@ describe("openPage", () => {
           headers: () => ({ "content-type": "text/css" }),
           text: () => Promise.resolve("body {}"),
           request: () => ({
+            resourceType: () => "document",
             isNavigationRequest: () => false,
             frame: () => null,
           }),
