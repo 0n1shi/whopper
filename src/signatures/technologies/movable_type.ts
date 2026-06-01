@@ -1,4 +1,5 @@
 import type { ActiveRule, Signature } from "../_types.js";
+import { perlSignature } from "./perl.js";
 
 // Probe common install dirs for the mt.cgi admin page. The logout mode avoids
 // the redirect to mt-update.cgi on installs that need updating. Each probe
@@ -55,4 +56,5 @@ export const movableTypeSignature: Signature = {
     ],
   },
   activeRules,
+  impliedSoftwares: [perlSignature.name], // Movable Type is a Perl CGI application
 };

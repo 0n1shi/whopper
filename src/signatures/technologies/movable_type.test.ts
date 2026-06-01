@@ -138,4 +138,8 @@ describe("movableTypeSignature", () => {
   it("uses the Six Apart Movable Type CPE 2.2 identifier", () => {
     expect(movableTypeSignature.cpe).toBe("cpe:/a:sixapart:movable_type");
   });
+
+  it("implies Perl as the underlying runtime", () => {
+    expect(movableTypeSignature.impliedSoftwares).toContain("Perl");
+  });
 });
