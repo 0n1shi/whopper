@@ -42,9 +42,10 @@ export const movableTypeSignature: Signature = {
       // generator meta tag emitted by the default templates, e.g.
       // <meta name="generator" content="Movable Type Pro 7.9.1" />.
       // Anchored to a literal <meta tag so escaped examples (&lt;meta ...) in
-      // articles about MT don't match. The trailing optional group captures
-      // the version when present.
-      '<meta[^>]*name="generator"[^>]*content="Movable Type[^"0-9]*([0-9]+(?:\\.[0-9]+)*)?',
+      // articles about MT don't match; accepts single or double quotes like the
+      // other generator signatures. The trailing optional group captures the
+      // version when present.
+      "<meta[^>]+name=[\"']generator[\"'][^>]+content=[\"']Movable Type[^\"'0-9]*([0-9]+(?:\\.[0-9]+)*)?",
       'mt\\.cgi"><img alt="Movable Type"', // admin marker, specific enough for passive use
       // Versioned mt.js asset, e.g. src="/mt-static/mt.js?v=7.9.7". On the admin
       // page this is often the only detection + version source (the mt-static

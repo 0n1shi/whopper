@@ -23,6 +23,14 @@ describe("movableTypeSignature", () => {
       expect(result.version).toBe("7.9.1");
     });
 
+    it("matches a single-quoted generator meta tag", () => {
+      const html =
+        "<meta name='generator' content='Movable Type Pro 7.9.1' />";
+      const result = matchString(html, generatorRegex);
+      expect(result.hit).toBe(true);
+      expect(result.version).toBe("7.9.1");
+    });
+
     it("matches mt-static asset URLs", () => {
       const url = "https://example.com/mt-static/themes-base/blog.css";
       expect(urls.some((r) => matchString(url, r).hit)).toBe(true);
