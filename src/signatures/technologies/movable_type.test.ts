@@ -51,6 +51,17 @@ describe("movableTypeSignature", () => {
       expect(result.version).toBe("7.9.7");
     });
 
+    it("extracts the mt.js version regardless of quoting or trailing params", () => {
+      const verRegex = bodies.find((r) => r.includes("mt\\.js"))!;
+      const singleQuoted = matchString(
+        "<script src='/mt-static/mt.js?v=7.9.7'></script>",
+        verRegex,
+      );
+      expect(singleQuoted.version).toBe("7.9.7");
+      const extraParams = matchString('"/mt-static/mt.js?v=7.9.7&cb=1"', verRegex);
+      expect(extraParams.version).toBe("7.9.7");
+    });
+
     it("does not match an escaped generator example quoted in an article", () => {
       const html =
         'Movable Type emits &lt;meta name="generator" ' +

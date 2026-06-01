@@ -5,7 +5,7 @@ import type { ActiveRule, Signature } from "../_types.js";
 // mirrors the three admin-page markers (MT v2/v3/v4); the version-bearing
 // patterns come first so the version is captured when available.
 const adminPageRegexes = [
-  '/mt\\.js\\?v=([0-9.]+)"', // version (MT v4)
+  '/mt\\.js\\?v=([0-9]+(?:\\.[0-9]+)*)', // version (MT v4)
   // version (MT v2.x / v3.x). Capture from the first digit up to the next tag
   // so non-numeric suffixes (e.g. "3.36-ja" on Japanese editions) are kept
   // without greedily spanning later </b> tags.
@@ -49,8 +49,9 @@ export const movableTypeSignature: Signature = {
       'mt\\.cgi"><img alt="Movable Type"', // admin marker, specific enough for passive use
       // Versioned mt.js asset, e.g. src="/mt-static/mt.js?v=7.9.7". On the admin
       // page this is often the only detection + version source (the mt-static
-      // URL rule may miss it when subresources aren't captured).
-      '/mt\\.js\\?v=([0-9.]+)"',
+      // URL rule may miss it when subresources aren't captured). No trailing
+      // delimiter so single/double quotes and extra query params all work.
+      '/mt\\.js\\?v=([0-9]+(?:\\.[0-9]+)*)',
     ],
   },
   activeRules,
