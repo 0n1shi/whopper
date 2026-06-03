@@ -434,6 +434,7 @@ import { onepressSocialLockerSignature } from "./technologies/onepress_social_lo
 import { wpStatisticsSignature } from "./technologies/wp_statistics.js";
 import { pwaSignature } from "./technologies/pwa.js";
 import { stripeSignature } from "./technologies/stripe.js";
+import { movableTypeSignature } from "./technologies/movable_type.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -870,4 +871,5 @@ export const signatures: Signature[] = [
   wpStatisticsSignature,
   pwaSignature,
   stripeSignature,
+  movableTypeSignature,
 ];
