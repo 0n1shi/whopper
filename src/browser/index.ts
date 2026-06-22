@@ -100,6 +100,20 @@ export async function openPage(
       const blockedUrl = request.url();
       logger.debug(`Blocked media resource: ${blockedUrl}`);
       urls.push({ url: blockedUrl, error: "blocked: media" });
+      // URL signatures are matched only against `context.responses[].url`
+      // (see analyzer/apply.ts), not the `urls` audit log. Aborting the
+      // request would otherwise drop it from `responses` and turn any
+      // media-URL-based detection into a false negative. Record a body-less
+      // response so URL matching is preserved while we still skip the
+      // (irrelevant and costly) media body.
+      const blockedHost = getHostFromUrl(blockedUrl) ?? "";
+      responses.push({
+        url: blockedUrl,
+        host: blockedHost,
+        isFirstParty: blockedHost ? isFirstPartyHost(pageHost, blockedHost) : false,
+        status: 0,
+        headers: {},
+      });
       await route.abort("blockedbyclient");
       return;
     }

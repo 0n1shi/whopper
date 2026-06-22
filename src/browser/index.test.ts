@@ -349,6 +349,41 @@ describe("openPage", () => {
       });
     });
 
+    it("should record blocked media as a body-less response to preserve URL detection", async () => {
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
+          routeHandler = handler;
+        },
+      );
+
+      const result = await openPage("https://example.com", 10000, []);
+
+      await routeHandler({
+        request: () => ({
+          resourceType: () => "media",
+          isNavigationRequest: () => false,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com/intro.mov",
+        }),
+        continue: vi.fn(() => Promise.resolve()),
+        abort: vi.fn(() => Promise.resolve()),
+      });
+
+      // URL signatures match against responses[].url (analyzer/apply.ts), so the
+      // blocked media URL must still appear in responses (body-less) so that
+      // URL-based detection on a media URL is not silently lost.
+      const blocked = result.responses.find(
+        (response) => response.url === "https://example.com/intro.mov",
+      );
+      expect(blocked).toBeDefined();
+      expect(blocked?.body).toBeUndefined();
+      expect(blocked?.isFirstParty).toBe(true);
+    });
+
     it("should not abort media requests when blockMedia is false", async () => {
       let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
