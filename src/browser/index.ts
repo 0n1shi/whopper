@@ -414,6 +414,13 @@ export async function openPage(
   page.off("requestfinished", onRequestFinished);
   page.off("requestfailed", onRequestFailed);
   page.off("response", onResponse);
+  // Remove the route handler too so the frozen capture set cannot be mutated by
+  // late/lazy media requests after this point (the media-block branch pushes to
+  // `urls`/`responses`; leaving it installed would bloat memory and make the
+  // snapshot non-deterministic, e.g. during active scans).
+  await page.unroute("**/*").catch((e) => {
+    logger.debug(`Failed to unroute after capture: ${e}`);
+  });
 
   logger.info(`${responses.length} responses captured`);
   if (result === "loaded") {

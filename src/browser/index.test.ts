@@ -7,6 +7,7 @@ vi.mock("playwright", () => {
     on: vi.fn(),
     off: vi.fn(),
     route: vi.fn(),
+    unroute: vi.fn(() => Promise.resolve()),
     mainFrame: vi.fn(),
     goto: vi.fn(),
     context: vi.fn(),
@@ -59,6 +60,7 @@ describe("openPage", () => {
     on: ReturnType<typeof vi.fn>;
     off: ReturnType<typeof vi.fn>;
     route: ReturnType<typeof vi.fn>;
+    unroute: ReturnType<typeof vi.fn>;
     mainFrame: ReturnType<typeof vi.fn>;
     goto: ReturnType<typeof vi.fn>;
     context: ReturnType<typeof vi.fn>;
@@ -83,6 +85,7 @@ describe("openPage", () => {
       on: vi.fn(),
       off: vi.fn(),
       route: vi.fn(),
+      unroute: vi.fn(() => Promise.resolve()),
       mainFrame: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
       context: vi.fn(),
@@ -382,6 +385,15 @@ describe("openPage", () => {
       expect(blocked).toBeDefined();
       expect(blocked?.body).toBeUndefined();
       expect(blocked?.isFirstParty).toBe(true);
+    });
+
+    it("should unroute the route handler after the capture phase", async () => {
+      // The media-block branch mutates urls/responses; the handler must be
+      // removed once the capture snapshot is frozen so late/lazy media requests
+      // cannot keep appending to it.
+      await openPage("https://example.com", 10000, []);
+
+      expect(mockPage.unroute).toHaveBeenCalledWith("**/*");
     });
 
     it("should not abort media requests when blockMedia is false", async () => {

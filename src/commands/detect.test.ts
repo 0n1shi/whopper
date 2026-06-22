@@ -204,6 +204,17 @@ describe("detectCommand", () => {
       );
     });
 
+    it("should pass blockMedia false when --no-block-media is provided", async () => {
+      await runCommand(["--no-block-media"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ blockMedia: false }),
+      );
+    });
+
     it("should pass custom idle-timeout when provided", async () => {
       await runCommand(["--idle-timeout", "500"]);
 
