@@ -88,8 +88,23 @@ export function makeDetectCommandOutput(
     });
   });
 
+  // Build the set of technology names excluded by any directly-detected
+  // technology, then drop them from the results. Runs BEFORE the implies step so
+  // the excluded tech's own implications never fire, while the surviving tech's
+  // implications still do.
+  const excludedNames = new Set<string>();
+  for (const ds of detectedSoftwares) {
+    const sig = signatures.find((s) => s.name === ds.name);
+    for (const name of sig?.excludes ?? []) {
+      excludedNames.add(name);
+    }
+  }
+  const keptSoftwares = detectedSoftwares.filter(
+    (ds) => !excludedNames.has(ds.name),
+  );
+
   // Handle implied softwares
-  const impliedSoftwares = detectedSoftwares.flatMap((detectedSoftware) => {
+  const impliedSoftwares = keptSoftwares.flatMap((detectedSoftware) => {
     const signature = signatures.find(
       (signature) => signature.name === detectedSoftware.name,
     )!;
@@ -97,8 +112,13 @@ export function makeDetectCommandOutput(
       signature.impliedSoftwares?.includes(s.name),
     );
     return impliedSignatures.flatMap((impliedSignature) => {
+      // Skip implications that are themselves excluded (safety net: the implies
+      // step runs after excludes are computed).
+      if (excludedNames.has(impliedSignature.name)) {
+        return [];
+      }
       // Avoid duplicates
-      if (detectedSoftwares.some((ds) => ds.name === impliedSignature.name)) {
+      if (keptSoftwares.some((ds) => ds.name === impliedSignature.name)) {
         return [];
       }
 
@@ -115,7 +135,7 @@ export function makeDetectCommandOutput(
   });
 
   const mergedByKey = new Map<string, DetectedSoftware>();
-  const allSoftwares = [...detectedSoftwares, ...impliedSoftwares];
+  const allSoftwares = [...keptSoftwares, ...impliedSoftwares];
 
   for (const software of allSoftwares) {
     const key = software.name + "|" + (software.version || "");

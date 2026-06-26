@@ -30,4 +30,8 @@ export type Signature = {
   // First-hit-wins: stops at the first rule that matches.
   activeRules?: ActiveRule[];
   impliedSoftwares?: string[];
+  // Names of other technologies to remove from the final output when THIS
+  // technology is detected. Used when a product is built on top of another and
+  // would otherwise be double-detected (e.g. PowerCMS excludes Movable Type).
+  excludes?: string[];
 };

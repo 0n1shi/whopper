@@ -78,7 +78,12 @@ export const exampleSignature: Signature = {
 - Export names: camelCase + Signature (`jqueryUiSignature`)
 - Use `.js` extension in imports (ESM compatibility)
 - Version extraction regex: `(\\d+\\.\\d+\\.\\d+)`
-- Formatting: Prettier is the source of truth; run `npm run format` before PRs
+- Formatting: Prettier is the source of truth. The repo is NOT fully
+  Prettier-clean, so `npm run format` (= `prettier --write .`) rewrites hundreds
+  of unrelated files and pollutes the diff. Do NOT run it in a feature change.
+  Instead format only the files you touched, e.g.
+  `npx prettier --write <changed-file> ...`, and keep the diff limited to your
+  change.
 - Linting: ESLint with `@eslint/js` + `typescript-eslint` recommendations
 - Code comments (including inline comments, JSDoc, and TODO/FIXME) must be written in English, regardless of any global preference for Japanese. This project's source code is English-only; only chat with the user in Japanese.
 

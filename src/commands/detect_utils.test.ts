@@ -339,10 +339,7 @@ describe("makeDetectCommandOutput", () => {
         { name: "nginx" }, // No description
       ];
 
-      const detections: Detection[] = [
-        { name: "nginx" },
-        { name: "nginx" },
-      ];
+      const detections: Detection[] = [{ name: "nginx" }, { name: "nginx" }];
 
       const result = makeDetectCommandOutput([], detections, signatures);
 
@@ -412,7 +409,10 @@ describe("makeDetectCommandOutput", () => {
       const evidences = result.detectedSoftwares[0]!.evidences!;
 
       expect(
-        evidences.map((e) => `${e.type}|${e.value}|${e.host}|${e.sourceUrl}|${e.confidence}`),
+        evidences.map(
+          (e) =>
+            `${e.type}|${e.value}|${e.host}|${e.sourceUrl}|${e.confidence}`,
+        ),
       ).toEqual([
         "body|Z|z.example.com|https://z.example.com/index.html|high",
         "header|A|a.example.com|https://a.example.com/app.js|high",
@@ -518,7 +518,9 @@ describe("printDetectCommandOutputAsText", () => {
 
     printDetectCommandOutputAsText(output, false);
 
-    const allOutput = consoleLogSpy.mock.calls.map((c: unknown[]) => c[0]).join("\n");
+    const allOutput = consoleLogSpy.mock.calls
+      .map((c: unknown[]) => c[0])
+      .join("\n");
     expect(allOutput).toContain("1.20.0");
   });
 
@@ -543,7 +545,9 @@ describe("printDetectCommandOutputAsText", () => {
 
     printDetectCommandOutputAsText(output, true);
 
-    const allOutput = consoleLogSpy.mock.calls.map((c: unknown[]) => c[0]).join("\n");
+    const allOutput = consoleLogSpy.mock.calls
+      .map((c: unknown[]) => c[0])
+      .join("\n");
     expect(allOutput).toContain("[header]");
     expect(allOutput).toContain("Server: nginx");
   });
@@ -570,7 +574,9 @@ describe("printDetectCommandOutputAsText", () => {
 
     printDetectCommandOutputAsText(output, true);
 
-    const allOutput = consoleLogSpy.mock.calls.map((c: unknown[]) => c[0]).join("\n");
+    const allOutput = consoleLogSpy.mock.calls
+      .map((c: unknown[]) => c[0])
+      .join("\n");
     expect(allOutput).toContain("[body] https://example.com/index.html");
     expect(allOutput).not.toContain("<!doctype html>...");
   });
@@ -596,7 +602,9 @@ describe("printDetectCommandOutputAsText", () => {
 
     printDetectCommandOutputAsText(output, false);
 
-    const allOutput = consoleLogSpy.mock.calls.map((c: unknown[]) => c[0]).join("\n");
+    const allOutput = consoleLogSpy.mock.calls
+      .map((c: unknown[]) => c[0])
+      .join("\n");
     expect(allOutput).not.toContain("[header]");
   });
 
@@ -614,7 +622,9 @@ describe("printDetectCommandOutputAsText", () => {
 
     printDetectCommandOutputAsText(output, true);
 
-    const allOutput = consoleLogSpy.mock.calls.map((c: unknown[]) => c[0]).join("\n");
+    const allOutput = consoleLogSpy.mock.calls
+      .map((c: unknown[]) => c[0])
+      .join("\n");
     expect(allOutput).toContain("[implied]");
     expect(allOutput).toContain("WordPress");
   });
@@ -668,5 +678,84 @@ describe("printDetectCommandOutputAsJSON", () => {
     expect(jsonOutput.detectedSoftwares[0].name).toBe("nginx");
     expect(jsonOutput.detectedSoftwares[0].description).toBe("Web server");
     expect(jsonOutput.detectedSoftwares[0].version).toBe("1.20.0");
+  });
+});
+
+describe("makeDetectCommandOutput excludes", () => {
+  const signatures: Signature[] = [
+    { name: "Perl", description: "Programming language" },
+    {
+      name: "Movable Type",
+      description: "Blog system",
+      cpe: "cpe:/a:sixapart:movable_type",
+      impliedSoftwares: ["Perl"],
+    },
+    {
+      name: "PowerCMS",
+      description: "CMS",
+      cpe: "cpe:/a:alfasado:powercms",
+      excludes: ["Movable Type"],
+      impliedSoftwares: ["Perl"],
+    },
+  ];
+
+  it("removes an excluded technology when its excluder is detected", () => {
+    const detections: Detection[] = [
+      {
+        name: "PowerCMS",
+        evidences: [
+          {
+            type: "url",
+            value: "/mt-static/plugins/PowerCMS/",
+            version: undefined,
+            confidence: "high",
+          },
+        ],
+      },
+      {
+        name: "Movable Type",
+        evidences: [
+          {
+            type: "url",
+            value: "/mt-static/",
+            version: undefined,
+            confidence: "high",
+          },
+        ],
+      },
+    ];
+
+    const result = makeDetectCommandOutput([], detections, signatures);
+    const names = result.detectedSoftwares.map((s) => s.name);
+
+    expect(names).toContain("PowerCMS");
+    expect(names).not.toContain("Movable Type");
+    // Perl survives because PowerCMS implies it, even though MT was removed.
+    expect(names).toContain("Perl");
+    expect(
+      result.detectedSoftwares.find((s) => s.name === "Perl")!.impliedBy,
+    ).toBe("PowerCMS");
+  });
+
+  it("does not remove Movable Type when PowerCMS is absent", () => {
+    const detections: Detection[] = [
+      {
+        name: "Movable Type",
+        evidences: [
+          {
+            type: "url",
+            value: "/mt-static/",
+            version: undefined,
+            confidence: "high",
+          },
+        ],
+      },
+    ];
+
+    const result = makeDetectCommandOutput([], detections, signatures);
+    const names = result.detectedSoftwares.map((s) => s.name);
+
+    expect(names).toContain("Movable Type");
+    expect(names).toContain("Perl");
   });
 });

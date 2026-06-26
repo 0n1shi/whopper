@@ -435,6 +435,7 @@ import { wpStatisticsSignature } from "./technologies/wp_statistics.js";
 import { pwaSignature } from "./technologies/pwa.js";
 import { stripeSignature } from "./technologies/stripe.js";
 import { movableTypeSignature } from "./technologies/movable_type.js";
+import { powerCmsSignature } from "./technologies/power_cms.js";
 
 export const signatures: Signature[] = [
   addToAnySignature,
@@ -872,4 +873,5 @@ export const signatures: Signature[] = [
   pwaSignature,
   stripeSignature,
   movableTypeSignature,
+  powerCmsSignature,
 ];
