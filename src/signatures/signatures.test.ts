@@ -172,6 +172,28 @@ describe("signatures validation", () => {
     });
   });
 
+  describe("excludes", () => {
+    it("all excluded software references should exist", () => {
+      const allNames = new Set(signatures.map((s) => s.name));
+      const missingRefs: string[] = [];
+
+      for (const sig of signatures) {
+        if (sig.excludes) {
+          for (const excluded of sig.excludes) {
+            if (!allNames.has(excluded)) {
+              missingRefs.push(`${sig.name} -> ${excluded}`);
+            }
+          }
+        }
+      }
+
+      expect(
+        missingRefs,
+        `Missing excluded software references: ${missingRefs.join(", ")}`,
+      ).toEqual([]);
+    });
+  });
+
   describe("data integrity", () => {
     it("should have a reasonable number of signatures", () => {
       expect(signatures.length).toBeGreaterThan(100);
