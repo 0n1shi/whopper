@@ -38,11 +38,11 @@ export function makeDetectCommandOutput(
   detections: Detection[],
   signatures: Signature[],
 ): DetectCommandOutput {
+  const signatureByName = new Map(signatures.map((s) => [s.name, s]));
+
   // Handle directly detected softwares (one entry per version)
   const detectedSoftwares = detections.flatMap((detection) => {
-    const signature = signatures.find(
-      (signature) => signature.name === detection.name,
-    )!;
+    const signature = signatureByName.get(detection.name)!;
     const evidences = [...(detection.evidences || [])].sort(compareEvidence);
 
     // Group evidences by version
@@ -94,7 +94,7 @@ export function makeDetectCommandOutput(
   // implications still do.
   const excludedNames = new Set<string>();
   for (const detection of detections) {
-    const sig = signatures.find((s) => s.name === detection.name);
+    const sig = signatureByName.get(detection.name);
     for (const name of sig?.excludes ?? []) {
       excludedNames.add(name);
     }
@@ -105,9 +105,7 @@ export function makeDetectCommandOutput(
 
   // Handle implied softwares
   const impliedSoftwares = keptSoftwares.flatMap((detectedSoftware) => {
-    const signature = signatures.find(
-      (signature) => signature.name === detectedSoftware.name,
-    )!;
+    const signature = signatureByName.get(detectedSoftware.name)!;
     const impliedSignatures = signatures.filter((s) =>
       signature.impliedSoftwares?.includes(s.name),
     );
