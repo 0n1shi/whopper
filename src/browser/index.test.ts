@@ -7,7 +7,6 @@ vi.mock("playwright", () => {
     on: vi.fn(),
     off: vi.fn(),
     route: vi.fn(),
-    unroute: vi.fn(() => Promise.resolve()),
     mainFrame: vi.fn(),
     goto: vi.fn(),
     context: vi.fn(),
@@ -60,7 +59,6 @@ describe("openPage", () => {
     on: ReturnType<typeof vi.fn>;
     off: ReturnType<typeof vi.fn>;
     route: ReturnType<typeof vi.fn>;
-    unroute: ReturnType<typeof vi.fn>;
     mainFrame: ReturnType<typeof vi.fn>;
     goto: ReturnType<typeof vi.fn>;
     context: ReturnType<typeof vi.fn>;
@@ -85,7 +83,6 @@ describe("openPage", () => {
       on: vi.fn(),
       off: vi.fn(),
       route: vi.fn(),
-      unroute: vi.fn(() => Promise.resolve()),
       mainFrame: vi.fn(),
       goto: vi.fn(() => Promise.resolve()),
       context: vi.fn(),
