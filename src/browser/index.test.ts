@@ -319,30 +319,30 @@ describe("openPage", () => {
     });
 
     it("should abort media requests by default and record them in urls", async () => {
-      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      const continueMock = vi.fn(() => Promise.resolve());
+      const abortMock = vi.fn(() => Promise.resolve());
+      // Invoke the handler during route registration, i.e. while the capture
+      // phase is still live (before the snapshot is frozen), matching the
+      // timing of a real media request.
       mockPage.route.mockImplementation(
         async (
           _pattern: string,
           handler: (route: unknown) => Promise<void>,
         ) => {
-          routeHandler = handler;
+          await handler({
+            request: () => ({
+              resourceType: () => "media",
+              isNavigationRequest: () => false,
+              frame: () => mockMainFrame,
+              url: () => "https://example.com/intro.mov",
+            }),
+            continue: continueMock,
+            abort: abortMock,
+          });
         },
       );
 
       const result = await openPage("https://example.com", 10000, []);
-
-      const continueMock = vi.fn(() => Promise.resolve());
-      const abortMock = vi.fn(() => Promise.resolve());
-      await routeHandler({
-        request: () => ({
-          resourceType: () => "media",
-          isNavigationRequest: () => false,
-          frame: () => mockMainFrame,
-          url: () => "https://example.com/intro.mov",
-        }),
-        continue: continueMock,
-        abort: abortMock,
-      });
 
       expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
       expect(continueMock).not.toHaveBeenCalled();
@@ -353,28 +353,25 @@ describe("openPage", () => {
     });
 
     it("should record blocked media as a body-less response to preserve URL detection", async () => {
-      let routeHandler: (route: unknown) => Promise<void> = async () => {};
       mockPage.route.mockImplementation(
         async (
           _pattern: string,
           handler: (route: unknown) => Promise<void>,
         ) => {
-          routeHandler = handler;
+          await handler({
+            request: () => ({
+              resourceType: () => "media",
+              isNavigationRequest: () => false,
+              frame: () => mockMainFrame,
+              url: () => "https://example.com/intro.mov",
+            }),
+            continue: vi.fn(() => Promise.resolve()),
+            abort: vi.fn(() => Promise.resolve()),
+          });
         },
       );
 
       const result = await openPage("https://example.com", 10000, []);
-
-      await routeHandler({
-        request: () => ({
-          resourceType: () => "media",
-          isNavigationRequest: () => false,
-          frame: () => mockMainFrame,
-          url: () => "https://example.com/intro.mov",
-        }),
-        continue: vi.fn(() => Promise.resolve()),
-        abort: vi.fn(() => Promise.resolve()),
-      });
 
       // URL signatures match against responses[].url (analyzer/apply.ts), so the
       // blocked media URL must still appear in responses (body-less) so that
@@ -387,13 +384,40 @@ describe("openPage", () => {
       expect(blocked?.isFirstParty).toBe(true);
     });
 
-    it("should unroute the route handler after the capture phase", async () => {
-      // The media-block branch mutates urls/responses; the handler must be
-      // removed once the capture snapshot is frozen so late/lazy media requests
-      // cannot keep appending to it.
-      await openPage("https://example.com", 10000, []);
+    it("should keep aborting media after capture but stop recording it", async () => {
+      // After the capture snapshot is frozen the route handler stays installed
+      // so media is still aborted (autoplay / lazy media during cookie / JS
+      // extraction would otherwise reintroduce the cost this blocking avoids),
+      // but it must no longer append to the now-frozen urls/responses set.
+      let routeHandler: (route: unknown) => Promise<void> = async () => {};
+      mockPage.route.mockImplementation(
+        async (
+          _pattern: string,
+          handler: (route: unknown) => Promise<void>,
+        ) => {
+          routeHandler = handler;
+        },
+      );
 
-      expect(mockPage.unroute).toHaveBeenCalledWith("**/*");
+      const result = await openPage("https://example.com", 10000, []);
+      const urlsBefore = result.urls.length;
+      const responsesBefore = result.responses.length;
+
+      const abortMock = vi.fn(() => Promise.resolve());
+      await routeHandler({
+        request: () => ({
+          resourceType: () => "media",
+          isNavigationRequest: () => false,
+          frame: () => mockMainFrame,
+          url: () => "https://example.com/late.mov",
+        }),
+        continue: vi.fn(() => Promise.resolve()),
+        abort: abortMock,
+      });
+
+      expect(abortMock).toHaveBeenCalledWith("blockedbyclient");
+      expect(result.urls.length).toBe(urlsBefore);
+      expect(result.responses.length).toBe(responsesBefore);
     });
 
     it("should not abort media requests when blockMedia is false", async () => {
