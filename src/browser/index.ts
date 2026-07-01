@@ -63,6 +63,7 @@ export async function openPage(
     blockCrossDomainRedirect = false,
     networkIdleThresholdMs = NETWORK_IDLE_THRESHOLD_MS,
     extractionTimeoutMs = DEFAULT_EXTRACTION_TIMEOUT_MS,
+    blockMedia = true,
   } = options;
 
   const pageHost = getHostFromUrl(url);
@@ -80,13 +81,62 @@ export async function openPage(
   const page = await context.newPage();
 
   let blockedByRedirectPolicy = false;
+  // Once the capture phase ends we keep the route handler installed (so media
+  // is still aborted for the rest of the scan) but stop appending to the
+  // frozen urls/responses snapshot. Guards the media branch's pushes below.
+  let captureFrozen = false;
   let lastNavigationUrl = url;
   let inspectedUrls = new Set<string>();
   let reentryCount = 0;
   const preInspectedUrls = new Set<string>();
+  // Declared before the route handler so its media-block branch can push to
+  // them (the handler is a closure over these; the network-idle listeners
+  // below also share them).
+  const urls: UrlEntry[] = [];
+  const responses: Response[] = [];
 
   await page.route("**/*", async (route) => {
     const request = route.request();
+
+    // Drop media (video / audio) requests up front when enabled. These
+    // rarely contribute to technology detection (signatures match on URLs,
+    // bodies, headers, cookies, or JS variables) but can dominate the
+    // page's main-thread / network budget — autoplaying videos in
+    // particular keep the scan running long after the meaningful
+    // resources have loaded. Recording the URL in `urls` preserves the
+    // audit trail of what would have been fetched.
+    if (blockMedia && request.resourceType() === "media") {
+      const blockedUrl = request.url();
+      // Always abort media, even after the capture phase is frozen: autoplay
+      // or lazy media that starts during the post-load cookie / JS extraction
+      // phase would otherwise reintroduce the main-thread / network cost this
+      // blocking is meant to avoid. We only *record* the block while capture
+      // is live — once frozen, pushing would mutate the returned snapshot
+      // (see the capture-freeze point below) non-deterministically.
+      if (!captureFrozen) {
+        logger.debug(`Blocked media resource: ${blockedUrl}`);
+        urls.push({ url: blockedUrl, error: "blocked: media" });
+        // URL signatures are matched only against `context.responses[].url`
+        // (see analyzer/apply.ts), not the `urls` audit log. Aborting the
+        // request would otherwise drop it from `responses` and turn any
+        // media-URL-based detection into a false negative. Record a body-less
+        // response so URL matching is preserved while we still skip the
+        // (irrelevant and costly) media body.
+        const blockedHost = getHostFromUrl(blockedUrl) ?? "";
+        responses.push({
+          url: blockedUrl,
+          host: blockedHost,
+          isFirstParty: blockedHost
+            ? isFirstPartyHost(pageHost, blockedHost)
+            : false,
+          status: 0,
+          headers: {},
+        });
+      }
+      await route.abort("blockedbyclient");
+      return;
+    }
+
     if (
       !request.isNavigationRequest() ||
       request.frame() !== page.mainFrame()
@@ -224,8 +274,6 @@ export async function openPage(
     await route.fulfill({ response: firstResponse });
   });
 
-  const urls: UrlEntry[] = [];
-  const responses: Response[] = [];
   // Timestamp of the most recent network activity (request sent or
   // response received). Used by the custom idle-decision loop below.
   let lastNetworkActivityAt = Date.now();
@@ -383,6 +431,14 @@ export async function openPage(
   page.off("requestfinished", onRequestFinished);
   page.off("requestfailed", onRequestFailed);
   page.off("response", onResponse);
+  // Freeze the capture. We intentionally keep the route handler installed so
+  // media requests are still aborted for the remainder of the scan (cookie / JS
+  // extraction can trigger autoplay / lazy media, whose main-thread / network
+  // cost is exactly what this blocking avoids). The `captureFrozen` guard stops
+  // the media branch from appending to the now-frozen `urls`/`responses`
+  // snapshot, so late/lazy requests can neither bloat memory nor make the
+  // returned capture non-deterministic.
+  captureFrozen = true;
 
   logger.info(`${responses.length} responses captured`);
   if (result === "loaded") {

@@ -166,6 +166,7 @@ describe("detectCommand", () => {
           blockCrossDomainRedirect: false,
           networkIdleThresholdMs: 2000,
           extractionTimeoutMs: 10000,
+          blockMedia: true,
         },
       );
     });
@@ -200,6 +201,17 @@ describe("detectCommand", () => {
         10000,
         expect.any(Array),
         expect.objectContaining({ blockCrossDomainRedirect: true }),
+      );
+    });
+
+    it("should pass blockMedia false when --no-block-media is provided", async () => {
+      await runCommand(["--no-block-media"]);
+
+      expect(openPage).toHaveBeenCalledWith(
+        "https://example.com",
+        10000,
+        expect.any(Array),
+        expect.objectContaining({ blockMedia: false }),
       );
     });
 

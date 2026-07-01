@@ -36,6 +36,7 @@ export type OpenPageOptions = {
   blockCrossDomainRedirect?: boolean | undefined;
   networkIdleThresholdMs?: number | undefined;
   extractionTimeoutMs?: number | undefined;
+  blockMedia?: boolean | undefined;
 };
 
 export type Context = {
