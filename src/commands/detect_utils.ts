@@ -93,8 +93,8 @@ export function makeDetectCommandOutput(
   // the excluded tech's own implications never fire, while the surviving tech's
   // implications still do.
   const excludedNames = new Set<string>();
-  for (const ds of detectedSoftwares) {
-    const sig = signatures.find((s) => s.name === ds.name);
+  for (const detection of detections) {
+    const sig = signatures.find((s) => s.name === detection.name);
     for (const name of sig?.excludes ?? []) {
       excludedNames.add(name);
     }
