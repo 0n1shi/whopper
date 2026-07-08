@@ -19,10 +19,12 @@ export const thinkPhpSignature: Signature = {
     },
     bodies: [
       // Distinctive framework banner emitted by older ThinkPHP versions
-      // (appears in an HTML comment on generated pages). Body matching runs
-      // against raw response text with no HTML-entity decoding, so accept both
-      // the literal "&" and the "&amp;" entity form.
-      "Fast &(?:amp;)? Simple OOP PHP Framework",
+      // (2.x/3.x), e.g. `ThinkPHP</a><sup>3.1.3</sup> { Fast & Simple OOP PHP
+      // Framework }`. The version is captured from the adjacent <sup> tag when
+      // present, and the banner still matches (version-less) when it is not.
+      // Body matching runs against raw response text with no HTML-entity
+      // decoding, so accept both the literal "&" and the "&amp;" entity form.
+      "(?:<sup>(\\d+\\.\\d+\\.\\d+)</sup>[\\s{]*)?Fast &(?:amp;)? Simple OOP PHP Framework",
       // Framework source paths leaked on debug / exception pages (TP5.x).
       "/thinkphp/library/think/",
       // Default welcome page shown by fresh installs (V5 / V6 / V8, ...).

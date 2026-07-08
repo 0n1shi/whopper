@@ -83,6 +83,18 @@ describe("thinkPhpSignature", () => {
     expect(detection?.name).toBe("ThinkPHP");
   });
 
+  it("captures the version from the legacy framework banner", () => {
+    const context = createMockContext({
+      responses: [
+        createMockResponse({
+          body: "ThinkPHP</a><sup>3.1.3</sup> { Fast & Simple OOP PHP Framework } -- [ WE CAN DO IT JUST THINK ]",
+        }),
+      ],
+    });
+    const detection = applySignature(context, thinkPhpSignature);
+    expect(detection?.evidences?.some((e) => e.version === "3.1.3")).toBe(true);
+  });
+
   it("detects the legacy banner marker with an HTML-encoded ampersand", () => {
     const context = createMockContext({
       responses: [
