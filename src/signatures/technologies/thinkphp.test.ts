@@ -71,6 +71,30 @@ describe("thinkPhpSignature", () => {
     expect(detection?.name).toBe("ThinkPHP");
   });
 
+  it("detects ThinkPHP from the legacy framework banner marker", () => {
+    const context = createMockContext({
+      responses: [
+        createMockResponse({
+          body: "<!-- Fast & Simple OOP PHP Framework -->",
+        }),
+      ],
+    });
+    const detection = applySignature(context, thinkPhpSignature);
+    expect(detection?.name).toBe("ThinkPHP");
+  });
+
+  it("detects the legacy banner marker with an HTML-encoded ampersand", () => {
+    const context = createMockContext({
+      responses: [
+        createMockResponse({
+          body: "<!-- Fast &amp; Simple OOP PHP Framework -->",
+        }),
+      ],
+    });
+    const detection = applySignature(context, thinkPhpSignature);
+    expect(detection?.name).toBe("ThinkPHP");
+  });
+
   it("detects ThinkPHP from the page-trace cookie", () => {
     const context = createMockContext({
       cookies: [
