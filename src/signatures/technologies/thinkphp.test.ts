@@ -107,6 +107,31 @@ describe("thinkPhpSignature", () => {
     expect(detection?.name).toBe("ThinkPHP");
   });
 
+  it("captures the full version from the debug exception page footer", () => {
+    const context = createMockContext({
+      responses: [
+        createMockResponse({
+          body: '<a href="http://www.thinkphp.cn">ThinkPHP</a>\n        <span>V6.0.13</span>',
+        }),
+      ],
+    });
+    const detection = applySignature(context, thinkPhpSignature);
+    expect(detection?.evidences?.some((e) => e.version === "6.0.13")).toBe(
+      true,
+    );
+  });
+
+  it("does not capture a major-only version from the welcome page", () => {
+    const context = createMockContext({
+      responses: [
+        createMockResponse({ body: "<h1>:)</h1><p> ThinkPHP V6<br/></p>" }),
+      ],
+    });
+    const detection = applySignature(context, thinkPhpSignature);
+    expect(detection?.name).toBe("ThinkPHP");
+    expect(detection?.evidences?.some((e) => e.version)).toBeFalsy();
+  });
+
   it("detects ThinkPHP from the page-trace cookie", () => {
     const context = createMockContext({
       cookies: [

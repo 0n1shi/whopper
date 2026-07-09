@@ -25,6 +25,14 @@ export const thinkPhpSignature: Signature = {
       // Body matching runs against raw response text with no HTML-entity
       // decoding, so accept both the literal "&" and the "&amp;" entity form.
       "(?:<sup>(\\d+\\.\\d+\\.\\d+)</sup>[\\s{]*)?Fast &(?:amp;)? Simple OOP PHP Framework",
+      // Debug exception page footer emitted by newer versions (5.1 / 6 / 8).
+      // The footer template renders `App::version()` (the full VERSION
+      // constant), e.g. `ThinkPHP</a> <span>V6.0.13</span>`. Requiring three
+      // numeric groups means the major-only welcome page ("ThinkPHP V6") is
+      // never captured, so no inaccurate major-only CPE is produced. The
+      // template puts a newline / indentation between </a> and <span>, so allow
+      // whitespace with \s*.
+      "ThinkPHP</a>\\s*<span>\\s*V(\\d+\\.\\d+\\.\\d+)",
       // Framework source paths leaked on debug / exception pages (TP5.x).
       "/thinkphp/library/think/",
       // Default welcome page shown by fresh installs (V5 / V6 / V8, ...).
