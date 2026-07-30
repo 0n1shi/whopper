@@ -45,10 +45,14 @@ function createMockCookie(
   } as Context["cookies"][number];
 }
 
-// Sprockets digests are hex: MD5 up to Rails 5.1, SHA-256 from Rails 5.2.
+// Asset digests are hex, and their length identifies the pipeline: Propshaft
+// truncates SHA-1 to 8 chars, Sprockets uses MD5 (32) then SHA-256 (64).
+const propshaftDigest = "0a1b2c3d";
 const md5Digest = "0123456789abcdef0123456789abcdef";
 const sha256Digest =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+// No Rails pipeline emits a full 40-char SHA-1; other stacks do.
+const sha1Digest = "0123456789abcdef0123456789abcdef01234567";
 
 describe("rubyOnRailsSignature", () => {
   describe("header matching", () => {
@@ -171,6 +175,20 @@ describe("rubyOnRailsSignature", () => {
   });
 
   describe("url matching", () => {
+    it("detects Rails from a Propshaft asset URL (Rails 7+)", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: `https://example.com/assets/application-${propshaftDigest}.js`,
+            headers: { "content-type": "application/javascript" },
+          }),
+        ],
+      });
+
+      const result = applySignature(context, rubyOnRailsSignature);
+      expect(result?.name).toBe("Ruby on Rails");
+    });
+
     it("detects Rails from a fingerprinted MD5 asset URL (Rails 4 to 5.1)", () => {
       const context = createMockContext({
         responses: [
@@ -204,6 +222,20 @@ describe("rubyOnRailsSignature", () => {
         responses: [
           createMockResponse({
             url: "https://example.com/assets/application.js",
+            headers: { "content-type": "application/javascript" },
+          }),
+        ],
+      });
+
+      const result = applySignature(context, rubyOnRailsSignature);
+      expect(result).toBeUndefined();
+    });
+
+    it("does not match a full 40-char SHA-1 digest from another pipeline", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: `https://example.com/assets/application-${sha1Digest}.js`,
             headers: { "content-type": "application/javascript" },
           }),
         ],
