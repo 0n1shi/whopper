@@ -15,7 +15,9 @@ export const rubyOnRailsSignature: Signature = {
     cookies: {
       _session_id: ".+",
     },
-    urls: ["/assets/application-[a-z\\d]{32}/\\.js"],
+    // Sprockets fingerprints assets with a hex digest: MD5 (32 chars) up to
+    // Rails 5.1, SHA-256 (64 chars) from Rails 5.2 onwards.
+    urls: ["/assets/application-[a-f\\d]{32,64}\\.js"],
     bodies: [
       "<meta[^>]+name=[\"']csrf-param[\"'][^>]+content=[\"']authenticity_token[\"']",
     ],
