@@ -71,6 +71,23 @@ describe("neveSignature", () => {
       const result = applySignature(context, neveSignature);
       expect(result).toBeUndefined();
     });
+
+    it("does not detect Neve from a minified JS body where 'neve' is only a substring", () => {
+      // "whenever" contains the substring "neve", and ".css" appears later in
+      // the same run of non-whitespace characters. A loose "neve\\S*\\.css"
+      // pattern would falsely match here even though there is no Neve theme.
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "application/javascript" },
+            body: 'var whenever=1,x=load("assets/app.min.css");',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, neveSignature);
+      expect(result).toBeUndefined();
+    });
   });
 
   describe("url matching", () => {
