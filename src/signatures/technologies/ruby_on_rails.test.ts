@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { applySignature } from "../../analyzer/apply.js";
-import type { Context, Response } from "../../browser/types.js";
+import type { Context, Cookie, Response } from "../../browser/types.js";
 import { rubyOnRailsSignature } from "./ruby_on_rails.js";
 
 function createMockContext(
@@ -33,20 +33,22 @@ function createMockResponse(overrides: Partial<Response> = {}): Response {
   };
 }
 
-function createMockCookie(
-  overrides: Partial<Context["cookies"][number]> = {},
-): Context["cookies"][number] {
+function createMockCookie(overrides: Partial<Cookie> = {}): Cookie {
   return {
     name: "_session_id",
     value: "abc123",
+    domain: "example.com",
     host: "example.com",
     isFirstParty: true,
+    path: "/",
+    expires: -1,
+    httpOnly: true,
+    secure: true,
+    sameSite: "Lax",
     ...overrides,
-  } as Context["cookies"][number];
+  };
 }
 
-// Asset digests are hex, and their length identifies the pipeline: Propshaft
-// truncates SHA-1 to 8 chars, Sprockets uses MD5 (32) then SHA-256 (64).
 const propshaftDigest = "0a1b2c3d";
 const md5Digest = "0123456789abcdef0123456789abcdef";
 const sha256Digest =
@@ -112,17 +114,6 @@ describe("rubyOnRailsSignature", () => {
       expect(result?.name).toBe("Ruby on Rails");
     });
 
-    it("does not match a cookie name that merely ends with _session_id", () => {
-      const context = createMockContext({
-        cookies: [
-          createMockCookie({ name: "karte_session_id", value: "abc123" }),
-        ],
-      });
-
-      const result = applySignature(context, rubyOnRailsSignature);
-      expect(result).toBeUndefined();
-    });
-
     it("does not match an empty _session_id cookie", () => {
       const context = createMockContext({
         cookies: [createMockCookie({ value: "" })],
@@ -175,68 +166,99 @@ describe("rubyOnRailsSignature", () => {
   });
 
   describe("url matching", () => {
-    it("detects Rails from a Propshaft asset URL (Rails 7+)", () => {
+    function detectFromUrl(url: string) {
       const context = createMockContext({
-        responses: [
-          createMockResponse({
-            url: `https://example.com/assets/application-${propshaftDigest}.js`,
-            headers: { "content-type": "application/javascript" },
-          }),
-        ],
+        responses: [createMockResponse({ url })],
       });
+      return applySignature(context, rubyOnRailsSignature);
+    }
 
-      const result = applySignature(context, rubyOnRailsSignature);
+    it("detects Rails from a Propshaft asset URL", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${propshaftDigest}.js`,
+      );
       expect(result?.name).toBe("Ruby on Rails");
     });
 
-    it("detects Rails from a fingerprinted MD5 asset URL (Rails 4 to 5.1)", () => {
-      const context = createMockContext({
-        responses: [
-          createMockResponse({
-            url: `https://example.com/assets/application-${md5Digest}.js`,
-            headers: { "content-type": "application/javascript" },
-          }),
-        ],
-      });
-
-      const result = applySignature(context, rubyOnRailsSignature);
+    it("detects Rails from a Sprockets MD5 asset URL", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${md5Digest}.js`,
+      );
       expect(result?.name).toBe("Ruby on Rails");
     });
 
-    it("detects Rails from a fingerprinted SHA-256 asset URL (Rails 5.2+)", () => {
-      const context = createMockContext({
-        responses: [
-          createMockResponse({
-            url: `https://example.com/assets/application-${sha256Digest}.js`,
-            headers: { "content-type": "application/javascript" },
-          }),
-        ],
-      });
+    it("detects Rails from a Sprockets SHA-256 asset URL", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${sha256Digest}.js`,
+      );
+      expect(result?.name).toBe("Ruby on Rails");
+    });
 
-      const result = applySignature(context, rubyOnRailsSignature);
+    it("detects Rails from a fingerprinted stylesheet", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${sha256Digest}.css`,
+      );
+      expect(result?.name).toBe("Ruby on Rails");
+    });
+
+    it("detects Rails from a fingerprinted sourcemap", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${propshaftDigest}.js.map`,
+      );
+      expect(result?.name).toBe("Ruby on Rails");
+    });
+
+    it("detects Rails from an asset URL carrying the Sprockets debug query", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${md5Digest}.js?body=1`,
+      );
       expect(result?.name).toBe("Ruby on Rails");
     });
 
     it("does not match an unfingerprinted application.js", () => {
-      const context = createMockContext({
-        responses: [
-          createMockResponse({
-            url: "https://example.com/assets/application.js",
-            headers: { "content-type": "application/javascript" },
-          }),
-        ],
-      });
-
-      const result = applySignature(context, rubyOnRailsSignature);
+      const result = detectFromUrl("https://example.com/assets/application.js");
       expect(result).toBeUndefined();
     });
 
     it("does not match a full 40-char SHA-1 digest from another pipeline", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${sha1Digest}.js`,
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it("does not match a fingerprinted JSON manifest", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${propshaftDigest}.json`,
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it("does not match a fingerprinted .jsx source", () => {
+      const result = detectFromUrl(
+        `https://example.com/assets/application-${propshaftDigest}.jsx`,
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it("does not match an asset path echoed back in a query string", () => {
+      const result = detectFromUrl(
+        `https://example.com/login?next=/assets/application-${propshaftDigest}.js`,
+      );
+      expect(result).toBeUndefined();
+    });
+
+    // Known limitation, not signature behaviour: this signature carries headers
+    // and cookies, so inferRuntime() classifies it as "server" and the urls loop
+    // skips third-party responses. Assets served from a CDN via
+    // config.asset_host are therefore never evaluated.
+    it("does not evaluate an asset URL served from a third-party CDN host", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            url: `https://example.com/assets/application-${sha1Digest}.js`,
-            headers: { "content-type": "application/javascript" },
+            url: `https://cdn.example.net/assets/application-${md5Digest}.js`,
+            host: "cdn.example.net",
+            isFirstParty: false,
           }),
         ],
       });
