@@ -181,6 +181,51 @@ describe("makeDetectCommandOutput", () => {
       expect(php?.impliedBy).toBe("WordPress");
     });
 
+    it("should demote implied confidence one level below its parent", () => {
+      const detections: Detection[] = [
+        {
+          name: "WordPress",
+          evidences: [
+            {
+              type: "body",
+              value: "wp-content",
+              version: undefined,
+              confidence: "high",
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
+
+      const php = result.detectedSoftwares.find((s) => s.name === "PHP");
+      // WordPress is detected at high, so its implications are reported at medium.
+      expect(php?.confidence).toBe("medium");
+    });
+
+    it("should carry the parent's evidences onto implied softwares", () => {
+      const detections: Detection[] = [
+        {
+          name: "WordPress",
+          evidences: [
+            {
+              type: "body",
+              value: "wp-content",
+              version: undefined,
+              confidence: "high",
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
+
+      const php = result.detectedSoftwares.find((s) => s.name === "PHP");
+      expect(php?.impliedBy).toBe("WordPress");
+      expect(php?.evidences).toBeDefined();
+      expect(php!.evidences!.map((e) => e.value)).toContain("wp-content");
+    });
+
     it("should not duplicate when software is both detected and implied", () => {
       const detections: Detection[] = [
         {
@@ -281,7 +326,9 @@ describe("makeDetectCommandOutput", () => {
       expect(js).toBeDefined();
       expect(js!.impliedBy).toContain("React");
       expect(js!.impliedBy).toContain("Vue");
-      expect(js!.confidence).toBe("high"); // Should use highest confidence
+      // Implied confidences are demoted from their parents (React high -> medium,
+      // Vue medium -> low), then merged to the highest of the two.
+      expect(js!.confidence).toBe("medium");
     });
 
     it("should create separate entries when same software has different versions", () => {

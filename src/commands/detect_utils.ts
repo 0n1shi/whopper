@@ -3,7 +3,7 @@ import type { Confidence, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "../analyzer/types.js";
 import type { DetectCommandOutput, DetectedSoftware } from "./detect_types.js";
 import type { UrlEntry } from "../browser/types.js";
-import { maxConfidence } from "../analyzer/utils.js";
+import { demoteConfidence, maxConfidence } from "../analyzer/utils.js";
 
 export function colorizeConfidence(confidence: Confidence): string {
   switch (confidence) {
@@ -122,11 +122,19 @@ export function makeDetectCommandOutput(
 
       const impliedSoftware: DetectedSoftware = {
         name: impliedSignature.name,
-        confidence: detectedSoftware.confidence,
+        // Implied softwares are detected indirectly, so they are reported one
+        // confidence level below the direct detection that implied them.
+        confidence: demoteConfidence(detectedSoftware.confidence),
         impliedBy: detectedSoftware.name,
       };
       if (impliedSignature.description) {
         impliedSoftware.description = impliedSignature.description;
+      }
+      // Carry over the parent's evidences so the report can show what led to
+      // the implication. The per-evidence confidence stays as-is; only the
+      // aggregate confidence above is demoted.
+      if (detectedSoftware.evidences?.length) {
+        impliedSoftware.evidences = detectedSoftware.evidences;
       }
       return [impliedSoftware];
     });
