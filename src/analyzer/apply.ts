@@ -2,6 +2,7 @@ import type { Context, Response } from "../browser/types.js";
 import type { Runtime, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
 import { buildEvidenceValue, matchString } from "./match.js";
+import { stripOutOfScopeUrls } from "./scope.js";
 
 function isFirstPartyResponse(response: Response): boolean {
   return response.isFirstParty ?? true;
@@ -125,13 +126,36 @@ export const applySignature = (
 
   // Match bodies
   if (rule?.bodies) {
+    // For server-runtime signatures, drop out-of-scope absolute URLs from
+    // first-party bodies so a third-party URL quoted inside a first-party file
+    // is not treated as evidence that the target runs this technology. The
+    // in-scope host set is derived from the first-party responses themselves.
+    const inScopeHosts =
+      runtime === "server"
+        ? [...new Set(firstPartyResponses.map((response) => response.host))]
+        : [];
+    const effectiveBodyCache = new Map<Response, string>();
+    const getEffectiveBody = (response: Response): string => {
+      const cached = effectiveBodyCache.get(response);
+      if (cached !== undefined) {
+        return cached;
+      }
+      const rawBody = response.body ?? "";
+      const effective =
+        runtime === "server" && rawBody
+          ? stripOutOfScopeUrls(rawBody, inScopeHosts)
+          : rawBody;
+      effectiveBodyCache.set(response, effective);
+      return effective;
+    };
+
     for (const regex of rule.bodies) {
       for (const response of allResponses) {
         if (!isBodyMatchAllowed(response, runtime)) {
           continue;
         }
 
-        const body = response.body ?? "";
+        const body = getEffectiveBody(response);
         if (!body) {
           continue;
         }

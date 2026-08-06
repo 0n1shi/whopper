@@ -280,6 +280,30 @@ describe("applySignature", () => {
       const result = applySignature(context, signature);
       expect(result).toBeUndefined();
     });
+
+    it("does not strip out-of-scope URLs for client-runtime signatures", () => {
+      // No headers/cookies -> runtime is inferred as "client", so the
+      // out-of-scope URL scoping (which is server-runtime only) must not apply.
+      const signature: Signature = {
+        name: "SomeClientLib",
+        rule: {
+          confidence: "medium",
+          bodies: ["wp-content"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "text/html" },
+            body: '"https://external.example/wp-content/plugins/foo/bar.js"',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeDefined();
+    });
   });
 
   describe("URL matching", () => {

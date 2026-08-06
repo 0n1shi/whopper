@@ -101,5 +101,34 @@ describe("wordpressSignature", () => {
       const result = applySignature(context, wordpressSignature);
       expect(result).toBeDefined();
     });
+
+    it("does not detect WordPress from a third-party URL quoted inside a first-party script", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/js/app.min.js",
+            host: "example.com",
+            headers: { "content-type": "application/javascript" },
+            body: '"https://external.example/wp-content/plugins/foo/bar.js"',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeUndefined();
+    });
+
+    it("detects WordPress from an in-scope absolute wp-content URL", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="https://example.com/wp-content/themes/foo/style.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+    });
   });
 });
