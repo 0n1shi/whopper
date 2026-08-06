@@ -65,4 +65,12 @@ describe("stripOutOfScopeUrls", () => {
     const result = stripOutOfScopeUrls(body, ["example.com"]);
     expect(result).toBe(body);
   });
+
+  it("leaves a URL with an empty host untouched", () => {
+    // `https://./...` parses to an empty hostname; without a real host we
+    // cannot prove it is out of scope, so it must not be stripped.
+    const body = '"https://./wp-content/themes/foo/style.css"';
+    const result = stripOutOfScopeUrls(body, ["example.com"]);
+    expect(result).toBe(body);
+  });
 });

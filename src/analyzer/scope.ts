@@ -35,8 +35,10 @@ export function stripOutOfScopeUrls(
     // Give protocol-relative URLs a scheme so the host can be parsed.
     const normalized = match.startsWith("//") ? `https:${match}` : match;
     const host = getHostFromUrl(normalized);
-    if (host === undefined) {
-      // Not a parseable URL host; leave it as-is.
+    if (!host) {
+      // No identifiable host (unparseable, or an empty authority such as
+      // `https:///path`); leave it untouched so that only URLs that provably
+      // point at an out-of-scope host are removed.
       return match;
     }
     const inScope = inScopeHosts.some((inScopeHost) =>
