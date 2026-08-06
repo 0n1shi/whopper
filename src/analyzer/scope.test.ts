@@ -49,6 +49,11 @@ describe("outOfScopeUrlSpans", () => {
     expect(spannedText(body, ["example.com"])).toEqual([outOfScope]);
   });
 
+  it("spans an out-of-scope URL including its query and fragment", () => {
+    const url = "https://external.example/a?p=wp-json#wp-content";
+    expect(spannedText(`x="${url}"`, ["example.com"])).toEqual([url]);
+  });
+
   it("does not span a URL without an identifiable host", () => {
     // Unparseable and empty-authority (`https://./...`) URLs cannot be proven
     // out of scope, so they are not excluded.

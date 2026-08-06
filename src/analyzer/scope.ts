@@ -31,7 +31,8 @@ export function outOfScopeUrlSpans(
   }
 
   const spans: UrlSpan[] = [];
-  const regex = new RegExp(ABSOLUTE_URL_PATTERN.source, "gi");
+  // Copy source and flags from the shared pattern (fresh lastIndex, no divergence).
+  const regex = new RegExp(ABSOLUTE_URL_PATTERN);
   let match: RegExpExecArray | null;
   while ((match = regex.exec(body)) !== null) {
     const url = match[0];
