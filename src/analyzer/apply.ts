@@ -1,8 +1,8 @@
 import type { Context, Response } from "../browser/types.js";
 import type { Runtime, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
-import { buildEvidenceValue, matchString } from "./match.js";
-import { stripOutOfScopeUrls } from "./scope.js";
+import { buildEvidenceValue, matchString, matchStringOutsideSpans } from "./match.js";
+import { outOfScopeUrlSpans } from "./scope.js";
 
 function isFirstPartyResponse(response: Response): boolean {
   return response.isFirstParty ?? true;
@@ -126,27 +126,27 @@ export const applySignature = (
 
   // Match bodies
   if (rule?.bodies) {
-    // For server-runtime signatures, drop out-of-scope absolute URLs from
-    // first-party bodies so a third-party URL quoted inside a first-party file
-    // is not treated as evidence that the target runs this technology. The
+    // For server-runtime signatures, ignore body pattern hits that fall inside
+    // an out-of-scope URL quoted within a first-party file, so a third-party
+    // URL is not treated as evidence that the target runs this technology. The
     // in-scope host set is derived from the first-party responses themselves.
+    // The body is not modified, so matches are neither created nor destroyed.
     const inScopeHosts =
       runtime === "server"
         ? [...new Set(firstPartyResponses.map((response) => response.host))]
         : [];
-    const effectiveBodyCache = new Map<Response, string>();
-    const getEffectiveBody = (response: Response): string => {
-      const cached = effectiveBodyCache.get(response);
+    const excludedSpanCache = new Map<Response, Array<[number, number]>>();
+    const excludedSpansFor = (response: Response): Array<[number, number]> => {
+      if (runtime !== "server") {
+        return [];
+      }
+      const cached = excludedSpanCache.get(response);
       if (cached !== undefined) {
         return cached;
       }
-      const rawBody = response.body ?? "";
-      const effective =
-        runtime === "server" && rawBody
-          ? stripOutOfScopeUrls(rawBody, inScopeHosts)
-          : rawBody;
-      effectiveBodyCache.set(response, effective);
-      return effective;
+      const spans = outOfScopeUrlSpans(response.body ?? "", inScopeHosts);
+      excludedSpanCache.set(response, spans);
+      return spans;
     };
 
     for (const regex of rule.bodies) {
@@ -155,11 +155,15 @@ export const applySignature = (
           continue;
         }
 
-        const body = getEffectiveBody(response);
+        const body = response.body ?? "";
         if (!body) {
           continue;
         }
-        const result = matchString(body, regex);
+        const result = matchStringOutsideSpans(
+          body,
+          regex,
+          excludedSpansFor(response),
+        );
         if (!result.hit) {
           continue;
         }

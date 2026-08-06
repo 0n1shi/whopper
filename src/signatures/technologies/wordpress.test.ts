@@ -130,5 +130,23 @@ describe("wordpressSignature", () => {
       const result = applySignature(context, wordpressSignature);
       expect(result).toBeDefined();
     });
+
+    it("does not read a version across an out-of-scope URL between the tokens", () => {
+      // "WordPress" and "6.4.2" are separated by an out-of-scope URL. Because
+      // the URL is excluded by span (not replaced with whitespace), the version
+      // pattern must not bridge the two into a spurious 6.4.2 detection. An
+      // in-scope relative path still yields a WordPress detection.
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="/wp-content/style.css"> WordPress https://external.example/a/b.js 6.4.2',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.every((e) => e.version !== "6.4.2")).toBe(true);
+    });
   });
 });

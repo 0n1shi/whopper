@@ -1,76 +1,62 @@
 import { describe, it, expect } from "vitest";
-import { stripOutOfScopeUrls } from "./scope.js";
+import { outOfScopeUrlSpans } from "./scope.js";
 
-describe("stripOutOfScopeUrls", () => {
-  it("removes an out-of-scope absolute URL", () => {
-    const body = '"https://external.example/wp-content/plugins/foo/bar.js"';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-content")).toBe(false);
-    expect(result.includes("external.example")).toBe(false);
+function spannedText(body: string, inScopeHosts: string[]): string[] {
+  return outOfScopeUrlSpans(body, inScopeHosts).map(([start, end]) =>
+    body.slice(start, end),
+  );
+}
+
+describe("outOfScopeUrlSpans", () => {
+  it("spans an out-of-scope absolute URL", () => {
+    const url = "https://external.example/wp-content/plugins/foo/bar.js";
+    expect(spannedText(`"${url}"`, ["example.com"])).toEqual([url]);
   });
 
-  it("keeps an in-scope absolute URL", () => {
+  it("does not span an in-scope absolute URL", () => {
     const body = '<link href="https://example.com/wp-content/themes/foo.css">';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-content")).toBe(true);
+    expect(outOfScopeUrlSpans(body, ["example.com"])).toEqual([]);
   });
 
   it("treats a subdomain of the in-scope host as in scope", () => {
     const body = '<script src="https://cdn.example.com/wp-includes/js/a.js">';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-includes")).toBe(true);
+    expect(outOfScopeUrlSpans(body, ["example.com"])).toEqual([]);
   });
 
-  it("keeps relative paths untouched", () => {
+  it("does not span relative paths", () => {
     const body = '<link href="/wp-content/themes/foo/style.css">';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result).toBe(body);
+    expect(outOfScopeUrlSpans(body, ["example.com"])).toEqual([]);
   });
 
-  it("returns the body unchanged when no in-scope hosts are known", () => {
+  it("returns no spans when no in-scope hosts are known", () => {
     const body = '"https://external.example/wp-content/plugins/foo/bar.js"';
-    const result = stripOutOfScopeUrls(body, []);
-    expect(result).toBe(body);
+    expect(outOfScopeUrlSpans(body, [])).toEqual([]);
   });
 
-  it("removes only the out-of-scope URL when both are present", () => {
-    const body =
-      '"https://external.example/wp-json/x" and "https://example.com/wp-content/y"';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-json")).toBe(false);
-    expect(result.includes("wp-content")).toBe(true);
+  it("spans an out-of-scope protocol-relative URL", () => {
+    const url = "//external.example/wp-content/plugins/foo/bar.js";
+    expect(spannedText(`"${url}"`, ["example.com"])).toEqual([url]);
   });
 
-  it("removes an out-of-scope protocol-relative URL", () => {
-    const body = '"//external.example/wp-content/plugins/foo/bar.js"';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-content")).toBe(false);
+  it("does not span an in-scope protocol-relative URL", () => {
+    const body = '"//example.com/wp-includes/js/a.js"';
+    expect(outOfScopeUrlSpans(body, ["example.com"])).toEqual([]);
   });
 
-  it("keeps an in-scope protocol-relative URL", () => {
-    const body = '<script src="//example.com/wp-includes/js/a.js">';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-includes")).toBe(true);
+  it("spans only the out-of-scope URL when both are present", () => {
+    const outOfScope = "https://external.example/wp-json/x";
+    const body = `"${outOfScope}" and "https://example.com/wp-content/y"`;
+    expect(spannedText(body, ["example.com"])).toEqual([outOfScope]);
   });
 
-  it("removes query and fragment belonging to an out-of-scope URL", () => {
-    const body = 'x="https://external.example/a?p=wp-json#wp-content"';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result.includes("wp-json")).toBe(false);
-    expect(result.includes("wp-content")).toBe(false);
-  });
-
-  it("leaves a token untouched when it does not parse to a host", () => {
-    const body = "see https://[ for details";
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result).toBe(body);
-  });
-
-  it("leaves a URL with an empty host untouched", () => {
-    // `https://./...` parses to an empty hostname; without a real host we
-    // cannot prove it is out of scope, so it must not be stripped.
-    const body = '"https://./wp-content/themes/foo/style.css"';
-    const result = stripOutOfScopeUrls(body, ["example.com"]);
-    expect(result).toBe(body);
+  it("does not span a URL without an identifiable host", () => {
+    // Unparseable and empty-authority (`https://./...`) URLs cannot be proven
+    // out of scope, so they are not excluded.
+    expect(outOfScopeUrlSpans("see https://[ here", ["example.com"])).toEqual(
+      [],
+    );
+    expect(
+      outOfScopeUrlSpans('"https://./wp-content/x"', ["example.com"]),
+    ).toEqual([]);
   });
 });

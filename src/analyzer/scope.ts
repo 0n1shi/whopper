@@ -3,49 +3,50 @@ import { getHostFromUrl, isFirstPartyHost } from "../browser/utils.js";
 // Matches absolute http(s) URLs and protocol-relative URLs (`//host/...`),
 // stopping at characters that commonly delimit a URL inside HTML/JS/CSS
 // (whitespace, quotes, backticks, angle brackets, parentheses, backslashes).
-// Tokens that do not parse to a host are left untouched (see below), so a bare
-// `//foo` in a comment is only ever removed when it resolves to an out-of-scope
-// host, and removing text can never introduce a new match.
 const ABSOLUTE_URL_PATTERN = /(?:https?:)?\/\/[^\s"'`<>()\\]+/gi;
 
+// A half-open character range [start, end) within a body.
+export type UrlSpan = [start: number, end: number];
+
 /**
- * Removes absolute URLs whose host is out of scope (i.e. not first-party to the
- * scanned target) from a response body.
+ * Returns the character spans of absolute / protocol-relative URLs in `body`
+ * whose host is out of scope (i.e. not first-party to the scanned target).
  *
- * A server-runtime signature is meant to answer "does the scanned site itself
- * run this technology?". A first-party file (e.g. a bundled `.min.js`) can quote
- * an unrelated third-party URL as a plain string; matching a body pattern such
- * as `wp-content` against that string wrongly attributes another site's
- * technology to the target. Stripping out-of-scope URLs before matching removes
- * that source of over-detection.
+ * Used by server-runtime body matching to reject pattern hits that fall inside a
+ * third-party URL quoted within a first-party file (e.g. `wp-content` inside an
+ * unrelated site's URL). The body itself is never modified, so no match can be
+ * created or destroyed across the excluded region.
  *
- * In-scope absolute URLs and relative paths (e.g. `/wp-content/...`) are left
- * untouched, so genuine first-party references still match. When the in-scope
- * host set is unknown (empty), the body is returned unchanged.
+ * URLs without an identifiable host (unparseable, or an empty authority such as
+ * `https://./...`) are not treated as out of scope, so only provably
+ * out-of-scope URLs are excluded. When the in-scope host set is unknown (empty),
+ * no spans are returned.
  */
-export function stripOutOfScopeUrls(
+export function outOfScopeUrlSpans(
   body: string,
   inScopeHosts: string[],
-): string {
+): UrlSpan[] {
   if (inScopeHosts.length === 0) {
-    return body;
+    return [];
   }
 
-  return body.replace(ABSOLUTE_URL_PATTERN, (match) => {
+  const spans: UrlSpan[] = [];
+  const regex = new RegExp(ABSOLUTE_URL_PATTERN.source, "gi");
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(body)) !== null) {
+    const url = match[0];
     // Give protocol-relative URLs a scheme so the host can be parsed.
-    const normalized = match.startsWith("//") ? `https:${match}` : match;
+    const normalized = url.startsWith("//") ? `https:${url}` : url;
     const host = getHostFromUrl(normalized);
     if (!host) {
-      // No identifiable host (unparseable, or an empty authority such as
-      // `https:///path`); leave it untouched so that only URLs that provably
-      // point at an out-of-scope host are removed.
-      return match;
+      continue;
     }
     const inScope = inScopeHosts.some((inScopeHost) =>
       isFirstPartyHost(inScopeHost, host),
     );
-    // Replace with a single space so surrounding tokens do not merge across the
-    // removed URL.
-    return inScope ? match : " ";
-  });
+    if (!inScope) {
+      spans.push([match.index, match.index + url.length]);
+    }
+  }
+  return spans;
 }
