@@ -1,7 +1,11 @@
 import type { Context, Response } from "../browser/types.js";
 import type { Runtime, Signature } from "../signatures/_types.js";
 import type { Detection, Evidence } from "./types.js";
-import { buildEvidenceValue, matchString, matchStringOutsideSpans } from "./match.js";
+import {
+  buildEvidenceValue,
+  matchString,
+  matchStringOutsideSpans,
+} from "./match.js";
 import { outOfScopeUrlSpans } from "./scope.js";
 
 function isFirstPartyResponse(response: Response): boolean {
@@ -93,6 +97,7 @@ export const applySignature = (
           confidence: rule.confidence,
           host: response.host,
           sourceUrl: response.url,
+          isFirstParty: isFirstPartyResponse(response),
         });
       }
     }
@@ -102,7 +107,9 @@ export const applySignature = (
   if (rule?.headers) {
     for (const [header, regex] of Object.entries(rule.headers)) {
       const headerKey = header.toLowerCase();
-      const response = firstPartyResponses.find((res) => res.headers[headerKey]);
+      const response = firstPartyResponses.find(
+        (res) => res.headers[headerKey],
+      );
       if (!response) {
         continue;
       }
@@ -120,6 +127,7 @@ export const applySignature = (
         confidence: rule.confidence,
         host: response.host,
         sourceUrl: response.url,
+        isFirstParty: isFirstPartyResponse(response),
       });
     }
   }
@@ -175,6 +183,7 @@ export const applySignature = (
           confidence: rule.confidence,
           host: response.host,
           sourceUrl: response.url,
+          isFirstParty: isFirstPartyResponse(response),
         });
       }
     }
@@ -184,7 +193,9 @@ export const applySignature = (
   if (rule?.cookies) {
     for (const [name, regex] of Object.entries(rule.cookies)) {
       const cookieNameRegex = new RegExp(`^(?:${name})$`, "i");
-      const cookie = firstPartyCookies.find((c) => cookieNameRegex.test(c.name));
+      const cookie = firstPartyCookies.find((c) =>
+        cookieNameRegex.test(c.name),
+      );
       if (!cookie) {
         continue;
       }
@@ -200,6 +211,7 @@ export const applySignature = (
         version: result.version,
         confidence: rule.confidence,
         host: cookie.host,
+        isFirstParty: isFirstPartyCookie(cookie),
       });
     }
   }
@@ -223,6 +235,9 @@ export const applySignature = (
         value: buildEvidenceValue(valStr, result, name),
         version: result.version,
         confidence: rule.confidence,
+        // JavaScript variables are read from the scanned page's own window, so
+        // they are first-party by construction.
+        isFirstParty: true,
       });
     }
   }

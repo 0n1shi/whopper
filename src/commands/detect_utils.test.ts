@@ -226,6 +226,90 @@ describe("makeDetectCommandOutput", () => {
       expect(php!.evidences!.map((e) => e.value)).toContain("wp-content");
     });
 
+    it("does not imply from a parent backed only by third-party evidence", () => {
+      // "WordPress" is detected solely from a third-party resource (isFirstParty
+      // false), e.g. a plugin name referenced inside an ad or form-collector
+      // script. It must not cascade into PHP/jQuery for the scanned target.
+      const detections: Detection[] = [
+        {
+          name: "WordPress",
+          evidences: [
+            {
+              type: "body",
+              value: "wp-content",
+              version: undefined,
+              confidence: "high",
+              host: "ads.example.net",
+              isFirstParty: false,
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
+
+      const names = result.detectedSoftwares.map((s) => s.name);
+      expect(names).toContain("WordPress");
+      expect(names).not.toContain("PHP");
+      expect(names).not.toContain("jQuery");
+    });
+
+    it("still implies when the parent has at least one first-party evidence", () => {
+      const detections: Detection[] = [
+        {
+          name: "WordPress",
+          evidences: [
+            {
+              type: "body",
+              value: "wp-content",
+              version: undefined,
+              confidence: "high",
+              host: "ads.example.net",
+              isFirstParty: false,
+            },
+            {
+              type: "body",
+              value: "wp-includes",
+              version: undefined,
+              confidence: "high",
+              host: "example.com",
+              isFirstParty: true,
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
+
+      const names = result.detectedSoftwares.map((s) => s.name);
+      expect(names).toContain("PHP");
+      expect(names).toContain("jQuery");
+    });
+
+    it("still implies when the evidence first-party flag is unknown", () => {
+      // Evidence without an isFirstParty flag is treated as first-party, matching
+      // the `?? true` convention, so existing detections keep implying.
+      const detections: Detection[] = [
+        {
+          name: "WordPress",
+          evidences: [
+            {
+              type: "body",
+              value: "wp-content",
+              version: undefined,
+              confidence: "high",
+            },
+          ],
+        },
+      ];
+
+      const result = makeDetectCommandOutput([], detections, baseSignatures);
+
+      const names = result.detectedSoftwares.map((s) => s.name);
+      expect(names).toContain("PHP");
+      expect(names).toContain("jQuery");
+    });
+
     it("should not duplicate when software is both detected and implied", () => {
       const detections: Detection[] = [
         {

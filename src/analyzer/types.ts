@@ -9,6 +9,12 @@ export type Evidence = {
   confidence: Confidence;
   host?: string;
   sourceUrl?: string;
+  // Whether the response/cookie this evidence came from is first-party to the
+  // scanned target. Used to avoid implying a target technology from evidence
+  // seen only inside a third-party resource (e.g. an ad or form-collector
+  // script that merely references a plugin name). Undefined means unknown and
+  // is treated as first-party by consumers, matching the `?? true` convention.
+  isFirstParty?: boolean;
 };
 
 export type Detection = {
