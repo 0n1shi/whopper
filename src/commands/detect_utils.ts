@@ -106,13 +106,14 @@ export function makeDetectCommandOutput(
   // Handle implied softwares
   const impliedSoftwares = keptSoftwares.flatMap((detectedSoftware) => {
     const signature = signatureByName.get(detectedSoftware.name)!;
-    // Only let a detection imply other technologies when it has at least one
-    // first-party evidence. A detection backed solely by third-party resources
-    // (e.g. "Gravity Forms" matched inside a form-collector script, or "Site
-    // Kit" named inside an ad script) is not reliable proof that the target
-    // itself runs the implied stack, so it must not cascade into WordPress /
-    // PHP / MySQL and similar. Evidence with an unknown flag is treated as
-    // first-party, matching the `?? true` convention used elsewhere.
+    // Suppress a detection's implications only when it is backed *solely* by
+    // third-party evidence. Such a detection (e.g. "Gravity Forms" matched
+    // inside a form-collector script, or "Site Kit" named inside an ad script)
+    // is not reliable proof that the target itself runs the implied stack, so it
+    // must not cascade into WordPress / PHP / MySQL and similar. A detection
+    // with no evidence at all, or with at least one first-party evidence, still
+    // implies as before. Evidence whose flag is unknown counts as first-party,
+    // matching the `?? true` convention used elsewhere.
     const parentEvidences = detectedSoftware.evidences ?? [];
     const backedByFirstParty =
       parentEvidences.length === 0 ||
