@@ -101,5 +101,52 @@ describe("wordpressSignature", () => {
       const result = applySignature(context, wordpressSignature);
       expect(result).toBeDefined();
     });
+
+    it("does not detect WordPress from a third-party URL quoted inside a first-party script", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/js/app.min.js",
+            host: "example.com",
+            headers: { "content-type": "application/javascript" },
+            body: '"https://external.example/wp-content/plugins/foo/bar.js"',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeUndefined();
+    });
+
+    it("detects WordPress from an in-scope absolute wp-content URL", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="https://example.com/wp-content/themes/foo/style.css">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+    });
+
+    it("does not read a version across an out-of-scope URL between the tokens", () => {
+      // "WordPress" and "6.4.2" are separated by an out-of-scope URL. Because
+      // the URL is excluded by span (not replaced with whitespace), the version
+      // pattern must not bridge the two into a spurious 6.4.2 detection. An
+      // in-scope relative path still yields a WordPress detection.
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="/wp-content/style.css"> WordPress https://external.example/a/b.js 6.4.2',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.every((e) => e.version !== "6.4.2")).toBe(true);
+    });
   });
 });

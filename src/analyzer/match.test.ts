@@ -3,7 +3,37 @@ import {
   buildEvidenceValue,
   extractMatchSnippet,
   matchString,
+  matchStringOutsideSpans,
 } from "./match.js";
+
+describe("matchStringOutsideSpans", () => {
+  it("behaves like matchString when there are no excluded spans", () => {
+    const result = matchStringOutsideSpans("has wp-content here", "wp-content", []);
+    expect(result.hit).toBe(true);
+    expect(result.index).toBe(4);
+  });
+
+  it("skips a match that falls inside an excluded span", () => {
+    const value = 'x="https://external.example/wp-content/a.js"';
+    const span: [number, number] = [3, value.length - 1];
+    const result = matchStringOutsideSpans(value, "wp-content", [span]);
+    expect(result.hit).toBe(false);
+  });
+
+  it("returns the next match outside the excluded span", () => {
+    // First "wp-content" is inside the span; the second one is outside.
+    const value = "AAwp-contentAA /wp-content/theme";
+    const result = matchStringOutsideSpans(value, "wp-content", [[0, 12]]);
+    expect(result.hit).toBe(true);
+    expect(result.index).toBe(16);
+  });
+
+  it("keeps the captured version group for an allowed match", () => {
+    const result = matchStringOutsideSpans("nginx/1.20.0", "nginx/([\\d.]+)", []);
+    expect(result.hit).toBe(true);
+    expect(result.version).toBe("1.20.0");
+  });
+});
 
 describe("matchString", () => {
   describe("basic matching", () => {

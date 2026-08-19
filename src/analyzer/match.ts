@@ -22,6 +22,48 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
   return { hit: false, version: undefined, index: undefined, matchLength: undefined };
 };
 
+/**
+ * Like {@link matchString}, but returns the first match that does not overlap
+ * any of `excludedSpans` (half-open `[start, end)` character ranges). The value
+ * is matched as-is, so no match can be created or destroyed by the exclusion —
+ * matches that merely fall inside an excluded range are skipped in favour of the
+ * next one. With no excluded spans it is equivalent to {@link matchString}.
+ */
+export const matchStringOutsideSpans = (
+  value: string,
+  regex: Regex,
+  excludedSpans: Array<[number, number]>,
+): MatchResult => {
+  if (excludedSpans.length === 0) {
+    return matchString(value, regex);
+  }
+
+  const regexExp = new RegExp(regex, "gi");
+  let match: RegExpExecArray | null;
+  while ((match = regexExp.exec(value)) !== null) {
+    if (match[0].length === 0) {
+      // Guard against zero-width matches looping forever.
+      regexExp.lastIndex++;
+      continue;
+    }
+    const start = match.index;
+    const end = start + match[0].length;
+    const overlapsExcluded = excludedSpans.some(
+      ([spanStart, spanEnd]) => start < spanEnd && end > spanStart,
+    );
+    if (!overlapsExcluded) {
+      return {
+        hit: true,
+        version: match.length > 1 ? match[1] : undefined,
+        index: match.index,
+        matchLength: match[0].length,
+      };
+    }
+  }
+
+  return { hit: false, version: undefined, index: undefined, matchLength: undefined };
+};
+
 export type SnippetOptions = {
   context?: number;
   maxMatchLength?: number;

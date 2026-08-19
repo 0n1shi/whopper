@@ -179,7 +179,6 @@ describe("applySignature", () => {
       const result = applySignature(context, signature);
       expect(result).toBeUndefined();
     });
-
   });
 
   describe("body matching", () => {
@@ -206,6 +205,48 @@ describe("applySignature", () => {
       expect(result).toBeDefined();
       expect(result?.name).toBe("jQuery");
       expect(result?.evidences?.[0]?.version).toBe("3.6.0");
+    });
+
+    it("carries the response first-party flag onto body evidence", () => {
+      const signature: Signature = {
+        name: "jQuery",
+        rule: {
+          confidence: "medium",
+          bodies: ["jquery[.-]([\\d.]+)(?:\\.min)?\\.js"],
+        },
+      };
+      const body = '<script src="/js/jquery-3.6.0.min.js"></script>';
+
+      const firstParty = applySignature(
+        createMockContext({
+          responses: [
+            createMockResponse({
+              headers: { "content-type": "text/html" },
+              body,
+              isFirstParty: true,
+            }),
+          ],
+        }),
+        signature,
+      );
+      expect(firstParty?.evidences?.[0]?.isFirstParty).toBe(true);
+
+      // A third-party JavaScript response is still matched for a client-runtime
+      // signature, but its evidence is flagged as not first-party.
+      const thirdParty = applySignature(
+        createMockContext({
+          responses: [
+            createMockResponse({
+              host: "cdn.thirdparty.example",
+              headers: { "content-type": "application/javascript" },
+              body,
+              isFirstParty: false,
+            }),
+          ],
+        }),
+        signature,
+      );
+      expect(thirdParty?.evidences?.[0]?.isFirstParty).toBe(false);
     });
 
     it("should include a snippet around the match in body evidence value", () => {
@@ -279,6 +320,30 @@ describe("applySignature", () => {
 
       const result = applySignature(context, signature);
       expect(result).toBeUndefined();
+    });
+
+    it("does not strip out-of-scope URLs for client-runtime signatures", () => {
+      // No headers/cookies -> runtime is inferred as "client", so the
+      // out-of-scope URL scoping (which is server-runtime only) must not apply.
+      const signature: Signature = {
+        name: "SomeClientLib",
+        rule: {
+          confidence: "medium",
+          bodies: ["wp-content"],
+        },
+      };
+
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            headers: { "content-type": "text/html" },
+            body: '"https://external.example/wp-content/plugins/foo/bar.js"',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, signature);
+      expect(result).toBeDefined();
     });
   });
 
@@ -605,7 +670,11 @@ describe("applySignature", () => {
       expect(result).toBeDefined();
       expect(result?.evidences).toHaveLength(2);
       expect(result?.evidences?.some((e) => e.type === "url")).toBe(true);
-      expect(result?.evidences?.some((e) => e.type === "script" && e.version === "4.17.21")).toBe(true);
+      expect(
+        result?.evidences?.some(
+          (e) => e.type === "script" && e.version === "4.17.21",
+        ),
+      ).toBe(true);
     });
 
     it("should skip when JavaScript variable value does not match pattern", () => {
@@ -793,7 +862,9 @@ describe("applySignature", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            headers: { "content-type": "application/javascript; charset=utf-8" },
+            headers: {
+              "content-type": "application/javascript; charset=utf-8",
+            },
             body: "/*! Swiper 8.4.7 */",
             host: "cdn.example.com",
             isFirstParty: false,
@@ -820,7 +891,9 @@ describe("applySignature", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            headers: { "content-type": "application/javascript; charset=utf-8" },
+            headers: {
+              "content-type": "application/javascript; charset=utf-8",
+            },
             body: "var config = { path: '/wp-content/plugins/foo.js' };",
             host: "www.googletagmanager.com",
             isFirstParty: false,
