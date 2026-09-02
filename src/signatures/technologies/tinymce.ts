@@ -15,11 +15,12 @@ export const tinyMceSignature: Signature = {
     // TinyMCE 4 prints "// X.Y.Z (<date>)" as the very first line of the
     // bundle. Bodies are matched against every text-like response including
     // HTML, so each pattern is anchored on what surrounds the banner (the
-    // comment marker, the tiny.cloud line, the start of the file) and requires
-    // the release date that always follows the version. Prose naming a version
-    // ("we upgraded to TinyMCE version 5.10.9") must not pass as evidence.
+    // comment opener, the preceding tiny.cloud line, the start of the file) and
+    // requires the release date that always follows the version. Neither prose
+    // naming a version ("we upgraded to TinyMCE version 5.10.9") nor a Markdown
+    // bullet repeating the banner may pass as evidence.
     bodies: [
-      "\\*\\s*TinyMCE version (\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
+      "/\\*\\*[\\s\\S]{0,20}?TinyMCE version (\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
       "tiny\\.cloud/[\\s\\S]{0,20}?Version:\\s*(\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
       "^// (\\d+\\.\\d+\\.\\d+) \\(\\d{4}-\\d{2}-\\d{2}\\)\\s*!function",
     ],

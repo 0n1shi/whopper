@@ -108,6 +108,20 @@ describe("tinyMceSignature", () => {
       ]);
     });
 
+    it("ignores a Markdown bullet that repeats the banner", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/docs/changelog.md",
+            headers: { "content-type": "text/markdown" },
+            body: "* TinyMCE version 8.1.2 (2023-11-15)\n* Something else\n",
+          }),
+        ],
+      });
+
+      expect(applySignature(context, tinyMceSignature)).toBeUndefined();
+    });
+
     it("detects a bundle whose banner was stripped without a version", () => {
       const context = createMockContext({
         responses: [
