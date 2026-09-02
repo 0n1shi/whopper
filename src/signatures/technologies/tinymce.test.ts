@@ -122,6 +122,20 @@ describe("tinyMceSignature", () => {
       expect(applySignature(context, tinyMceSignature)).toBeUndefined();
     });
 
+    it("ignores a banner quoted inside a documentation page", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            url: "https://example.com/docs/upgrading.html",
+            headers: { "content-type": "text/html" },
+            body: "<p>The bundle starts with:</p><pre>/**\n * TinyMCE version 8.1.2 (2023-11-15)\n */</pre>",
+          }),
+        ],
+      });
+
+      expect(applySignature(context, tinyMceSignature)).toBeUndefined();
+    });
+
     it("detects a bundle whose banner was stripped without a version", () => {
       const context = createMockContext({
         responses: [

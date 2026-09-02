@@ -14,14 +14,15 @@ export const tinyMceSignature: Signature = {
     // (<date>)" right below the tiny.cloud line of its copyright header, and
     // TinyMCE 4 prints "// X.Y.Z (<date>)" as the very first line of the
     // bundle. Bodies are matched against every text-like response including
-    // HTML, so each pattern is anchored on what surrounds the banner (the
-    // comment opener, the preceding tiny.cloud line, the start of the file) and
-    // requires the release date that always follows the version. Neither prose
-    // naming a version ("we upgraded to TinyMCE version 5.10.9") nor a Markdown
-    // bullet repeating the banner may pass as evidence.
+    // HTML, so every pattern requires the release date that always follows the
+    // version and is anchored at the start of the response, where the banner
+    // sits in a real bundle. A page that merely names a version, or that quotes
+    // the banner in a bullet list or a code block, therefore cannot pass as
+    // evidence. Requiring bundle code after the banner instead would not work:
+    // TinyMCE 7 and 8 put a second comment block between the two.
     bodies: [
-      "/\\*\\*[\\s\\S]{0,20}?TinyMCE version (\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
-      "tiny\\.cloud/[\\s\\S]{0,20}?Version:\\s*(\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
+      "^\\s{0,10}/\\*\\*[\\s\\S]{0,20}?TinyMCE version (\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
+      "^\\s{0,10}/\\*\\*[\\s\\S]{0,400}?tiny\\.cloud/[\\s\\S]{0,20}?Version:\\s*(\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
       "^// (\\d+\\.\\d+\\.\\d+) \\(\\d{4}-\\d{2}-\\d{2}\\)\\s*!function",
     ],
     javascriptVariables: {
