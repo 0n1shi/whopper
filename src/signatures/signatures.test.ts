@@ -72,11 +72,10 @@ describe("signatures validation", () => {
       // A version template may only name capture groups the regex actually has,
       // otherwise the pattern silently reports no version at all.
       const groupCount = new RegExp(`${compiled.source}|`).exec("")!.length - 1;
-      for (const [, digit] of pattern.version.matchAll(/\$(\d)/g)) {
-        expect(
-          Number(digit),
-          `Version template of ${sigName}.${field} refers to $${digit}, but "${regex}" has ${groupCount} capture group(s)`,
-        ).toBeLessThanOrEqual(groupCount);
+      for (const [, digits] of pattern.version.matchAll(/\$(\d+)/g)) {
+        const message = `Version template of ${sigName}.${field} refers to $${digits}, but "${regex}" has ${groupCount} capture group(s)`;
+        expect(Number(digits), message).toBeGreaterThanOrEqual(1);
+        expect(Number(digits), message).toBeLessThanOrEqual(groupCount);
       }
     };
 

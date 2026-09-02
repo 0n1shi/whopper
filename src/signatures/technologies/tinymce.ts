@@ -18,7 +18,7 @@ export const tinyMceSignature: Signature = {
         // the script URL above. Reading the banner instead would miss exactly
         // those builds.
         regex:
-          'majorVersion:"(\\d+)",\\s*minorVersion:"(\\d+(?:\\.\\d+)*)",\\s*releaseDate:',
+          'majorVersion:"(\\d+)",\\s*minorVersion:"(\\d+(?:\\.\\d+)*)",\\s*releaseDate:"',
         version: "$1.$2",
       },
     ],

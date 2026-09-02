@@ -4,11 +4,11 @@ import { movableTypeSignature } from "./movable_type.js";
 
 describe("movableTypeSignature", () => {
   describe("rule (passive, public-facing markers)", () => {
-    const bodies = movableTypeSignature.rule?.bodies ?? [];
+    const bodies = (movableTypeSignature.rule?.bodies ?? []).filter(
+      (pattern): pattern is string => typeof pattern === "string",
+    );
     const urls = movableTypeSignature.rule?.urls ?? [];
-    const generatorRegex = bodies.find(
-      (r) => typeof r === "string" && r.includes("generator"),
-    ) as string;
+    const generatorRegex = bodies.find((r) => r.includes("generator"))!;
 
     it("matches the generator meta tag without a version", () => {
       const html = '<meta name="generator" content="Movable Type" />';
@@ -18,16 +18,14 @@ describe("movableTypeSignature", () => {
     });
 
     it("extracts the version from the generator meta tag", () => {
-      const html =
-        '<meta name="generator" content="Movable Type Pro 7.9.1" />';
+      const html = '<meta name="generator" content="Movable Type Pro 7.9.1" />';
       const result = matchString(html, generatorRegex);
       expect(result.hit).toBe(true);
       expect(result.version).toBe("7.9.1");
     });
 
     it("matches a single-quoted generator meta tag", () => {
-      const html =
-        "<meta name='generator' content='Movable Type Pro 7.9.1' />";
+      const html = "<meta name='generator' content='Movable Type Pro 7.9.1' />";
       const result = matchString(html, generatorRegex);
       expect(result.hit).toBe(true);
       expect(result.version).toBe("7.9.1");
@@ -44,9 +42,7 @@ describe("movableTypeSignature", () => {
     });
 
     it("extracts the version from the mt-static mt.js asset reference", () => {
-      const verRegex = bodies.find(
-        (r) => typeof r === "string" && r.includes("mt\\.js"),
-      ) as string;
+      const verRegex = bodies.find((r) => r.includes("mt\\.js"))!;
       const result = matchString(
         '<script src="/mt-static/mt.js?v=7.9.7"></script>',
         verRegex,
@@ -56,9 +52,7 @@ describe("movableTypeSignature", () => {
     });
 
     it("extracts the mt.js version regardless of quoting or trailing params", () => {
-      const verRegex = bodies.find(
-        (r) => typeof r === "string" && r.includes("mt\\.js"),
-      ) as string;
+      const verRegex = bodies.find((r) => r.includes("mt\\.js"))!;
       const singleQuoted = matchString(
         "<script src='/mt-static/mt.js?v=7.9.7'></script>",
         verRegex,

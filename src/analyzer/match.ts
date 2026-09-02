@@ -21,9 +21,9 @@ const splitPattern = (
 /**
  * Builds the version of a match. Without a template the first capture group is
  * the version, as it is for every pattern written as a plain regex. With one,
- * $1, $2 … are replaced by the corresponding groups; a template naming a group
- * that did not participate in the match yields no version rather than a
- * half-built one.
+ * $1, $2 … $n are replaced by the corresponding groups; a template naming a
+ * group that did not participate in the match, or the invalid $0, yields no
+ * version rather than a half-built one.
  */
 const resolveVersion = (
   match: RegExpMatchArray,
@@ -34,14 +34,20 @@ const resolveVersion = (
   }
 
   let missingGroup = false;
-  const version = template.replace(/\$(\d)/g, (_placeholder, digit: string) => {
-    const group = match[Number(digit)];
-    if (group === undefined) {
-      missingGroup = true;
-      return "";
-    }
-    return group;
-  });
+  const version = template.replace(
+    /\$(\d+)/g,
+    (_placeholder, digits: string) => {
+      const index = Number(digits);
+      // $0 would be the whole match rather than a capture group, so it is not
+      // a valid placeholder and leaves the pattern without a version.
+      const group = index >= 1 ? match[index] : undefined;
+      if (group === undefined) {
+        missingGroup = true;
+        return "";
+      }
+      return group;
+    },
+  );
 
   return missingGroup ? undefined : version;
 };
