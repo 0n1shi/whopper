@@ -8,8 +8,28 @@ export const tinyMceSignature: Signature = {
   rule: {
     confidence: "high",
     urls: ["/tiny_?mce(?:\\.min)?\\.js"],
+    // The bundle banner is the only place that carries the whole version as a
+    // single string, and its shape changed twice: TinyMCE 6 and later print
+    // "TinyMCE version X.Y.Z (<date>)", TinyMCE 5 prints "Version: X.Y.Z
+    // (<date>)" right below the tiny.cloud line of its copyright header, and
+    // TinyMCE 4 prints "// X.Y.Z (<date>)" as the very first line of the
+    // bundle. Bodies are matched against every text-like response including
+    // HTML, so each pattern is anchored on what surrounds the banner (the
+    // comment marker, the tiny.cloud line, the start of the file) and requires
+    // the release date that always follows the version. Prose naming a version
+    // ("we upgraded to TinyMCE version 5.10.9") must not pass as evidence.
+    bodies: [
+      "\\*\\s*TinyMCE version (\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
+      "tiny\\.cloud/[\\s\\S]{0,20}?Version:\\s*(\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
+      "^// (\\d+\\.\\d+\\.\\d+) \\(\\d{4}-\\d{2}-\\d{2}\\)\\s*!function",
+    ],
     javascriptVariables: {
-      "tinyMCE.majorVersion": "([\\d.]+)",
+      // Presence check only. tinyMCE.majorVersion holds the major number on its
+      // own ("8") and tinyMCE.minorVersion holds the remainder ("1.2"), so no
+      // single variable carries the full version. Capturing the major number
+      // here would report a second, less precise version next to the one taken
+      // from the banner, because detections are split per distinct version.
+      "tinyMCE.majorVersion": "",
       tinymce: "",
     },
   },
