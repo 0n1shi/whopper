@@ -1,4 +1,4 @@
-import type { Regex } from "../signatures/_types.js";
+import type { Pattern, Regex } from "../signatures/_types.js";
 
 export type MatchResult = {
   hit: boolean;
@@ -7,19 +7,64 @@ export type MatchResult = {
   matchLength: number | undefined;
 };
 
-export const matchString = (value: string, regex: Regex): MatchResult => {
+/**
+ * Splits a pattern into the regex to run and the version template to apply to
+ * its capture groups, if the pattern carries one.
+ */
+const splitPattern = (
+  pattern: Pattern,
+): { regex: Regex; template: string | undefined } =>
+  typeof pattern === "string"
+    ? { regex: pattern, template: undefined }
+    : { regex: pattern.regex, template: pattern.version };
+
+/**
+ * Builds the version of a match. Without a template the first capture group is
+ * the version, as it is for every pattern written as a plain regex. With one,
+ * $1, $2 … are replaced by the corresponding groups; a template naming a group
+ * that did not participate in the match yields no version rather than a
+ * half-built one.
+ */
+const resolveVersion = (
+  match: RegExpMatchArray,
+  template: string | undefined,
+): string | undefined => {
+  if (template === undefined) {
+    return match.length > 1 ? match[1] : undefined;
+  }
+
+  let missingGroup = false;
+  const version = template.replace(/\$(\d)/g, (_placeholder, digit: string) => {
+    const group = match[Number(digit)];
+    if (group === undefined) {
+      missingGroup = true;
+      return "";
+    }
+    return group;
+  });
+
+  return missingGroup ? undefined : version;
+};
+
+export const matchString = (value: string, pattern: Pattern): MatchResult => {
+  const { regex, template } = splitPattern(pattern);
   const regexExp = new RegExp(regex, "i");
   const match = value.match(regexExp);
   if (match) {
     return {
       hit: true,
-      version: match.length > 1 ? match[1] : undefined,
+      version: resolveVersion(match, template),
       index: match.index,
       matchLength: match[0].length,
     };
   }
 
-  return { hit: false, version: undefined, index: undefined, matchLength: undefined };
+  return {
+    hit: false,
+    version: undefined,
+    index: undefined,
+    matchLength: undefined,
+  };
 };
 
 /**
@@ -31,13 +76,14 @@ export const matchString = (value: string, regex: Regex): MatchResult => {
  */
 export const matchStringOutsideSpans = (
   value: string,
-  regex: Regex,
+  pattern: Pattern,
   excludedSpans: Array<[number, number]>,
 ): MatchResult => {
   if (excludedSpans.length === 0) {
-    return matchString(value, regex);
+    return matchString(value, pattern);
   }
 
+  const { regex, template } = splitPattern(pattern);
   const regexExp = new RegExp(regex, "gi");
   let match: RegExpExecArray | null;
   while ((match = regexExp.exec(value)) !== null) {
@@ -54,14 +100,19 @@ export const matchStringOutsideSpans = (
     if (!overlapsExcluded) {
       return {
         hit: true,
-        version: match.length > 1 ? match[1] : undefined,
+        version: resolveVersion(match, template),
         index: match.index,
         matchLength: match[0].length,
       };
     }
   }
 
-  return { hit: false, version: undefined, index: undefined, matchLength: undefined };
+  return {
+    hit: false,
+    version: undefined,
+    index: undefined,
+    matchLength: undefined,
+  };
 };
 
 export type SnippetOptions = {

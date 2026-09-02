@@ -8,29 +8,24 @@ export const tinyMceSignature: Signature = {
   rule: {
     confidence: "high",
     urls: ["/tiny_?mce(?:\\.min)?\\.js"],
-    // The bundle banner is the only place that carries the whole version as a
-    // single string, and its shape changed twice: TinyMCE 6 and later print
-    // "TinyMCE version X.Y.Z (<date>)", TinyMCE 5 prints "Version: X.Y.Z
-    // (<date>)" right below the tiny.cloud line of its copyright header, and
-    // TinyMCE 4 prints "// X.Y.Z (<date>)" as the very first line of the
-    // bundle. Bodies are matched against every text-like response including
-    // HTML, so every pattern requires the release date that always follows the
-    // version and is anchored at the start of the response, where the banner
-    // sits in a real bundle. A page that merely names a version, or that quotes
-    // the banner in a bullet list or a code block, therefore cannot pass as
-    // evidence. Requiring bundle code after the banner instead would not work:
-    // TinyMCE 7 and 8 put a second comment block between the two.
     bodies: [
-      "^\\s{0,10}/\\*\\*[\\s\\S]{0,20}?TinyMCE version (\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
-      "^\\s{0,10}/\\*\\*[\\s\\S]{0,400}?tiny\\.cloud/[\\s\\S]{0,20}?Version:\\s*(\\d+\\.\\d+\\.\\d+)\\s*\\((?:TBD|\\d{4}-\\d{2}-\\d{2})\\)",
-      "^// (\\d+\\.\\d+\\.\\d+) \\(\\d{4}-\\d{2}-\\d{2}\\)\\s*!function",
+      {
+        // TinyMCE never carries the whole version in one place: majorVersion
+        // holds "8" on its own and minorVersion the remainder ("8.2"). The two
+        // sit next to each other ahead of the release date in every major from
+        // 4 onwards, and they survive being bundled into an application bundle,
+        // where the version banner is dropped and the file no longer matches
+        // the script URL above. Reading the banner instead would miss exactly
+        // those builds.
+        regex:
+          'majorVersion:"(\\d+)",\\s*minorVersion:"(\\d+(?:\\.\\d+)*)",\\s*releaseDate:',
+        version: "$1.$2",
+      },
     ],
     javascriptVariables: {
-      // Presence check only. tinyMCE.majorVersion holds the major number on its
-      // own ("8") and tinyMCE.minorVersion holds the remainder ("1.2"), so no
-      // single variable carries the full version. Capturing the major number
-      // here would report a second, less precise version next to the one taken
-      // from the banner, because detections are split per distinct version.
+      // Presence check only: this global holds the major number alone, so
+      // capturing it would report a second, less precise version next to the
+      // one built above, detections being split per distinct version.
       "tinyMCE.majorVersion": "",
       tinymce: "",
     },

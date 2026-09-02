@@ -41,42 +41,44 @@ function versionsOf(detection: ReturnType<typeof applySignature>): string[] {
   ];
 }
 
+function editorManager(major: string, minor: string): string {
+  return `documentBaseURL:null,suffix:null,majorVersion:"${major}",minorVersion:"${minor}",releaseDate:"2026-07-27",i18n:t`;
+}
+
 describe("tinyMceSignature", () => {
   describe("body matching", () => {
-    it("takes the full version from the TinyMCE 6+ bundle banner", () => {
+    it("joins the major and minor fields into the full version", () => {
       const context = createMockContext({
-        responses: [
-          createMockResponse({
-            body: '/**\n * TinyMCE version 8.1.2 (TBD)\n */\n!function(){"use strict"}();',
-          }),
-        ],
+        responses: [createMockResponse({ body: editorManager("8", "8.2") })],
       });
 
       expect(versionsOf(applySignature(context, tinyMceSignature))).toEqual([
-        "8.1.2",
+        "8.8.2",
       ]);
     });
 
-    it("takes the full version from the TinyMCE 5 copyright banner", () => {
+    it("reads the same fields in a TinyMCE 4 bundle", () => {
+      const context = createMockContext({
+        responses: [createMockResponse({ body: editorManager("4", "9.11") })],
+      });
+
+      expect(versionsOf(applySignature(context, tinyMceSignature))).toEqual([
+        "4.9.11",
+      ]);
+    });
+
+    it("reads the version out of an application bundle", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: [
-              "/**",
-              " * Copyright (c) Tiny Technologies, Inc. All rights reserved.",
-              " * Licensed under the LGPL or a commercial license.",
-              " * For LGPL see License.txt in the project root for license information.",
-              " * For commercial licenses see https://www.tiny.cloud/",
-              " *",
-              " * Version: 5.10.9 (2023-11-15)",
-              " */",
-            ].join("\n"),
+            url: "https://example.com/static/spa/index-3ef96762.js",
+            body: `var e=1;${editorManager("8", "8.2")};export{e};`,
           }),
         ],
       });
 
       expect(versionsOf(applySignature(context, tinyMceSignature))).toEqual([
-        "5.10.9",
+        "8.8.2",
       ]);
     });
 
@@ -94,49 +96,7 @@ describe("tinyMceSignature", () => {
       expect(applySignature(context, tinyMceSignature)).toBeUndefined();
     });
 
-    it("takes the full version from the TinyMCE 4 leading comment", () => {
-      const context = createMockContext({
-        responses: [
-          createMockResponse({
-            body: '// 4.9.11 (2020-07-13)\n!function(V){"use strict"}();',
-          }),
-        ],
-      });
-
-      expect(versionsOf(applySignature(context, tinyMceSignature))).toEqual([
-        "4.9.11",
-      ]);
-    });
-
-    it("ignores a Markdown bullet that repeats the banner", () => {
-      const context = createMockContext({
-        responses: [
-          createMockResponse({
-            url: "https://example.com/docs/changelog.md",
-            headers: { "content-type": "text/markdown" },
-            body: "* TinyMCE version 8.1.2 (2023-11-15)\n* Something else\n",
-          }),
-        ],
-      });
-
-      expect(applySignature(context, tinyMceSignature)).toBeUndefined();
-    });
-
-    it("ignores a banner quoted inside a documentation page", () => {
-      const context = createMockContext({
-        responses: [
-          createMockResponse({
-            url: "https://example.com/docs/upgrading.html",
-            headers: { "content-type": "text/html" },
-            body: "<p>The bundle starts with:</p><pre>/**\n * TinyMCE version 8.1.2 (2023-11-15)\n */</pre>",
-          }),
-        ],
-      });
-
-      expect(applySignature(context, tinyMceSignature)).toBeUndefined();
-    });
-
-    it("detects a bundle whose banner was stripped without a version", () => {
+    it("detects a bundle without the version fields but reports no version", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({ body: '!function(){"use strict"}();' }),
@@ -154,7 +114,7 @@ describe("tinyMceSignature", () => {
       const context = createMockContext({
         javascriptVariables: {
           "tinyMCE.majorVersion": "8",
-          tinymce: { majorVersion: "8", minorVersion: "1.2" },
+          tinymce: { majorVersion: "8", minorVersion: "8.2" },
         },
       });
 

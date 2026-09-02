@@ -8,7 +8,11 @@ import {
 
 describe("matchStringOutsideSpans", () => {
   it("behaves like matchString when there are no excluded spans", () => {
-    const result = matchStringOutsideSpans("has wp-content here", "wp-content", []);
+    const result = matchStringOutsideSpans(
+      "has wp-content here",
+      "wp-content",
+      [],
+    );
     expect(result.hit).toBe(true);
     expect(result.index).toBe(4);
   });
@@ -29,7 +33,11 @@ describe("matchStringOutsideSpans", () => {
   });
 
   it("keeps the captured version group for an allowed match", () => {
-    const result = matchStringOutsideSpans("nginx/1.20.0", "nginx/([\\d.]+)", []);
+    const result = matchStringOutsideSpans(
+      "nginx/1.20.0",
+      "nginx/([\\d.]+)",
+      [],
+    );
     expect(result.hit).toBe(true);
     expect(result.version).toBe("1.20.0");
   });
@@ -73,9 +81,54 @@ describe("matchString", () => {
     });
 
     it("should extract version with optional prefix", () => {
-      const result = matchString("nginx/1.20.0", "^nginx/?(\\d+\\.\\d+\\.\\d+)?");
+      const result = matchString(
+        "nginx/1.20.0",
+        "^nginx/?(\\d+\\.\\d+\\.\\d+)?",
+      );
       expect(result.hit).toBe(true);
       expect(result.version).toBe("1.20.0");
+    });
+  });
+
+  describe("version templates", () => {
+    it("joins several capture groups", () => {
+      const result = matchString('major:"8",minor:"8.2"', {
+        regex: 'major:"(\\d+)",minor:"([\\d.]+)"',
+        version: "$1.$2",
+      });
+      expect(result.hit).toBe(true);
+      expect(result.version).toBe("8.8.2");
+    });
+
+    it("keeps the literal text of the template", () => {
+      const result = matchString("v1 build 7", {
+        regex: "v(\\d+) build (\\d+)",
+        version: "$1.0.$2",
+      });
+      expect(result.version).toBe("1.0.7");
+    });
+
+    it("reports no version when a group named by the template did not match", () => {
+      const result = matchString('major:"8"', {
+        regex: 'major:"(\\d+)"(?:,minor:"([\\d.]+)")?',
+        version: "$1.$2",
+      });
+      expect(result.hit).toBe(true);
+      expect(result.version).toBeUndefined();
+    });
+
+    it("applies the template when spans are excluded as well", () => {
+      const value = 'skip:"1",minor:"0" major:"8",minor:"8.2"';
+      const result = matchStringOutsideSpans(
+        value,
+        {
+          regex: '(?:major|skip):"(\\d+)",minor:"([\\d.]+)"',
+          version: "$1.$2",
+        },
+        [[0, 18]],
+      );
+      expect(result.hit).toBe(true);
+      expect(result.version).toBe("8.8.2");
     });
   });
 
@@ -86,7 +139,10 @@ describe("matchString", () => {
     });
 
     it("should handle regex with special characters", () => {
-      const result = matchString("jQuery v3.6.0", "jQuery\\s+v(\\d+\\.\\d+\\.\\d+)");
+      const result = matchString(
+        "jQuery v3.6.0",
+        "jQuery\\s+v(\\d+\\.\\d+\\.\\d+)",
+      );
       expect(result.hit).toBe(true);
       expect(result.version).toBe("3.6.0");
     });
@@ -151,11 +207,7 @@ describe("buildEvidenceValue", () => {
 
   it("attaches the prefix with a colon separator", () => {
     expect(
-      buildEvidenceValue(
-        "X-Inertia",
-        { index: 0, matchLength: 9 },
-        "Vary",
-      ),
+      buildEvidenceValue("X-Inertia", { index: 0, matchLength: 9 }, "Vary"),
     ).toBe("Vary: X-Inertia");
   });
 

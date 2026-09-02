@@ -6,7 +6,9 @@ describe("movableTypeSignature", () => {
   describe("rule (passive, public-facing markers)", () => {
     const bodies = movableTypeSignature.rule?.bodies ?? [];
     const urls = movableTypeSignature.rule?.urls ?? [];
-    const generatorRegex = bodies.find((r) => r.includes("generator"))!;
+    const generatorRegex = bodies.find(
+      (r) => typeof r === "string" && r.includes("generator"),
+    ) as string;
 
     it("matches the generator meta tag without a version", () => {
       const html = '<meta name="generator" content="Movable Type" />';
@@ -42,7 +44,9 @@ describe("movableTypeSignature", () => {
     });
 
     it("extracts the version from the mt-static mt.js asset reference", () => {
-      const verRegex = bodies.find((r) => r.includes("mt\\.js"))!;
+      const verRegex = bodies.find(
+        (r) => typeof r === "string" && r.includes("mt\\.js"),
+      ) as string;
       const result = matchString(
         '<script src="/mt-static/mt.js?v=7.9.7"></script>',
         verRegex,
@@ -52,13 +56,18 @@ describe("movableTypeSignature", () => {
     });
 
     it("extracts the mt.js version regardless of quoting or trailing params", () => {
-      const verRegex = bodies.find((r) => r.includes("mt\\.js"))!;
+      const verRegex = bodies.find(
+        (r) => typeof r === "string" && r.includes("mt\\.js"),
+      ) as string;
       const singleQuoted = matchString(
         "<script src='/mt-static/mt.js?v=7.9.7'></script>",
         verRegex,
       );
       expect(singleQuoted.version).toBe("7.9.7");
-      const extraParams = matchString('"/mt-static/mt.js?v=7.9.7&cb=1"', verRegex);
+      const extraParams = matchString(
+        '"/mt-static/mt.js?v=7.9.7&cb=1"',
+        verRegex,
+      );
       expect(extraParams.version).toBe("7.9.7");
     });
 
@@ -71,7 +80,7 @@ describe("movableTypeSignature", () => {
 
     it("does not match an unrelated page", () => {
       const html =
-        '<html><head><title>Some Blog</title>' +
+        "<html><head><title>Some Blog</title>" +
         '<meta name="generator" content="WordPress 6.5" /></head></html>';
       expect(bodies.some((r) => matchString(html, r).hit)).toBe(false);
     });
@@ -130,7 +139,9 @@ describe("movableTypeSignature", () => {
     it("does not match an unrelated response", () => {
       const probe = rules[0]!;
       expect(
-        probe.bodyRegexes.some((r) => matchString("<html>not mt</html>", r).hit),
+        probe.bodyRegexes.some(
+          (r) => matchString("<html>not mt</html>", r).hit,
+        ),
       ).toBe(false);
     });
   });

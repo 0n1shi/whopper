@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { signatures } from "./index.js";
+import type { Pattern } from "./_types.js";
 import { isRelativePath } from "../browser/active_scan.js";
 
 const VALID_CONFIDENCES = ["high", "medium", "low"];
@@ -55,11 +56,27 @@ describe("signatures validation", () => {
   });
 
   describe("regex patterns", () => {
-    const testRegex = (pattern: string, sigName: string, field: string) => {
+    const testRegex = (pattern: Pattern, sigName: string, field: string) => {
+      const regex = typeof pattern === "string" ? pattern : pattern.regex;
+      let compiled: RegExp;
       try {
-        new RegExp(pattern, "i");
+        compiled = new RegExp(regex, "i");
       } catch {
-        throw new Error(`Invalid regex in ${sigName}.${field}: "${pattern}"`);
+        throw new Error(`Invalid regex in ${sigName}.${field}: "${regex}"`);
+      }
+
+      if (typeof pattern === "string") {
+        return;
+      }
+
+      // A version template may only name capture groups the regex actually has,
+      // otherwise the pattern silently reports no version at all.
+      const groupCount = new RegExp(`${compiled.source}|`).exec("")!.length - 1;
+      for (const [, digit] of pattern.version.matchAll(/\$(\d)/g)) {
+        expect(
+          Number(digit),
+          `Version template of ${sigName}.${field} refers to $${digit}, but "${regex}" has ${groupCount} capture group(s)`,
+        ).toBeLessThanOrEqual(groupCount);
       }
     };
 
