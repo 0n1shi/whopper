@@ -66,6 +66,20 @@ export const exampleSignature: Signature = {
 };
 ```
 
+A pattern may also be written as `{ regex, version }` when the product splits
+its version across several fields, so no single capture group holds all of it.
+`version` is a template in which `$1`, `$2` … stand for the pattern's capture
+groups (see `tinymce.ts`):
+
+```typescript
+    bodies: [
+      {
+        regex: 'majorVersion:"(\\d+)",minorVersion:"([\\d.]+)"',
+        version: "$1.$2",
+      },
+    ],
+```
+
 ### CPE Guidelines
 
 - **Format**: Use CPE 2.2 (`cpe:/a:vendor:product`)
