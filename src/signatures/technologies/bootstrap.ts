@@ -11,8 +11,10 @@ export const bootstrapSignature: Signature = {
       // Bootstrap's official dist banner always continues onto a Copyright
       // line. Requiring it avoids matching themes that embed only the first
       // line of the banner as an attribution comment without shipping
-      // Bootstrap itself.
-      "Bootstrap\\s+v(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\\n]*\\s*\\*\\s*Copyright",
+      // Bootstrap itself. Up to 3.0.0 the CSS banner separates the version and
+      // Copyright lines with blank comment lines, so allow a few of them in
+      // between.
+      "Bootstrap\\s+v(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\\n]*(?:\\n\\s*\\*[^\\n]*){0,4}\\n\\s*\\*\\s*Copyright",
       "bootstrap[-/@.]?(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\"'\\s<>]*?\\.min\\.css",
       "bootstrap[-/@.]?(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\"'\\s<>]*?\\.min\\.js",
     ],

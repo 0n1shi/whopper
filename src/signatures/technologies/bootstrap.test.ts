@@ -156,6 +156,20 @@ describe("bootstrapSignature", () => {
       );
     });
 
+    it("captures version from a banner with blank comment lines before Copyright", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*!\n * Bootstrap v2.3.2\n *\n * Copyright 2012 Twitter, Inc\n * Licensed under the Apache License v2.0\n */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "2.3.2")).toBe(true);
+    });
+
     it("does not capture a version from a one-line attribution banner", () => {
       const context = createMockContext({
         responses: [
