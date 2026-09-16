@@ -8,7 +8,11 @@ export const bootstrapSignature: Signature = {
   rule: {
     confidence: "high",
     bodies: [
-      "Bootstrap v(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)",
+      // Bootstrap's official dist banner always continues onto a Copyright
+      // line. Requiring it avoids matching themes that embed only the first
+      // line of the banner as an attribution comment without shipping
+      // Bootstrap itself.
+      "Bootstrap\\s+v(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\\n]*\\s*\\*\\s*Copyright",
       "bootstrap[-/@.]?(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\"'\\s<>]*?\\.min\\.css",
       "bootstrap[-/@.]?(\\d+\\.\\d+\\.\\d+(?:-[a-zA-Z0-9.-]+)?)[^\"'\\s<>]*?\\.min\\.js",
     ],
