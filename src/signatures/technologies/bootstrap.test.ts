@@ -72,7 +72,9 @@ describe("bootstrapSignature", () => {
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(result?.evidences?.every((e) => e.version !== "1.12.3")).toBe(true);
+      expect(result?.evidences?.every((e) => e.version !== "1.12.3")).toBe(
+        true,
+      );
       expect(result?.evidences?.every((e) => e.version !== "3.2.1")).toBe(true);
     });
 
@@ -80,7 +82,7 @@ describe("bootstrapSignature", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: "/*! Bootstrap v5.3.0 */",
+            body: "/*!\n * Bootstrap v5.3.0 (https://getbootstrap.com/)\n * Copyright 2011-2023 The Bootstrap Authors\n */",
           }),
         ],
       });
@@ -94,16 +96,16 @@ describe("bootstrapSignature", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: "/*! Bootstrap v4.0.0-beta.2 */",
+            body: "/*!\n * Bootstrap v4.0.0-beta.2 (https://getbootstrap.com)\n * Copyright 2011-2017 The Bootstrap Authors\n */",
           }),
         ],
       });
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(
-        result?.evidences?.some((e) => e.version === "4.0.0-beta.2"),
-      ).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.0.0-beta.2")).toBe(
+        true,
+      );
     });
 
     it("captures pre-release version from bootstrap.min.css filename", () => {
@@ -117,9 +119,9 @@ describe("bootstrapSignature", () => {
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(
-        result?.evidences?.some((e) => e.version === "4.0.0-beta2"),
-      ).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.0.0-beta2")).toBe(
+        true,
+      );
     });
 
     it("captures pre-release version from bootstrap.min.js filename", () => {
@@ -133,25 +135,52 @@ describe("bootstrapSignature", () => {
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(
-        result?.evidences?.some((e) => e.version === "4.0.0-beta2"),
-      ).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.0.0-beta2")).toBe(
+        true,
+      );
     });
 
     it("captures SemVer pre-release identifier containing a hyphen", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: "/*! Bootstrap v4.0.0-rc-1 */",
+            body: "/*!\n * Bootstrap v4.0.0-rc-1 (https://getbootstrap.com)\n * Copyright 2011-2017 The Bootstrap Authors\n */",
           }),
         ],
       });
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(
-        result?.evidences?.some((e) => e.version === "4.0.0-rc-1"),
-      ).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.0.0-rc-1")).toBe(
+        true,
+      );
+    });
+
+    it("does not capture a version from a one-line attribution banner", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "}td,th{padding:0}/*!\n * Bootstrap v4.0.0-alpha.2 (https://getbootstrap.com)\n */.ast-container{max-width:100%}",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeUndefined();
+    });
+
+    it("captures version from a banner with extra whitespace before 'v'", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*!\n * Bootstrap  v5.3.8 (https://getbootstrap.com/)\n * Copyright 2011-2025 The Bootstrap Authors\n */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "5.3.8")).toBe(true);
     });
 
     it("does not pick up an unrelated library version when the host merely contains 'bootstrap'", () => {
@@ -234,9 +263,9 @@ describe("bootstrapSignature", () => {
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(
-        result?.evidences?.some((e) => e.version === "4.0.0-beta.2"),
-      ).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.0.0-beta.2")).toBe(
+        true,
+      );
     });
 
     it("captures pre-release version from jQuery.fn.tooltip.Constructor.VERSION", () => {
@@ -248,9 +277,9 @@ describe("bootstrapSignature", () => {
 
       const result = applySignature(context, bootstrapSignature);
       expect(result).toBeDefined();
-      expect(
-        result?.evidences?.some((e) => e.version === "4.0.0-beta.2"),
-      ).toBe(true);
+      expect(result?.evidences?.some((e) => e.version === "4.0.0-beta.2")).toBe(
+        true,
+      );
     });
   });
 });
