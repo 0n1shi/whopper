@@ -156,6 +156,47 @@ describe("bootstrapSignature", () => {
       );
     });
 
+    it("captures version from a banner with blank comment lines before Copyright", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*!\n * Bootstrap v2.3.2\n *\n * Copyright 2012 Twitter, Inc\n * Licensed under the Apache License v2.0\n */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "2.3.2")).toBe(true);
+    });
+
+    it("captures version from a banner collapsed onto a single line", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*! Bootstrap v5.3.0 (https://getbootstrap.com/) * Copyright 2011-2023 The Bootstrap Authors */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "5.3.0")).toBe(true);
+    });
+
+    it("does not reach the Copyright line of a later unrelated comment", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: "/*!\n * Bootstrap v4.0.0-alpha.2 (https://getbootstrap.com)\n */.ast-container{max-width:100%}/*!\n * Copyright 2020 Some Other Vendor\n */",
+          }),
+        ],
+      });
+
+      const result = applySignature(context, bootstrapSignature);
+      expect(result).toBeUndefined();
+    });
+
     it("does not capture a version from a one-line attribution banner", () => {
       const context = createMockContext({
         responses: [
