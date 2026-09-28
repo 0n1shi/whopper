@@ -61,6 +61,36 @@ describe("wordpressSignature", () => {
       expect(result?.evidences?.some((e) => e.version === "6.4.2")).toBe(true);
     });
 
+    it("captures version when attributes have spaces around =", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<meta name = "generator" content = "WordPress 6.4.2">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.some((e) => e.version === "6.4.2")).toBe(true);
+    });
+
+    it("does not take a version from an element whose name starts with meta", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="/wp-content/style.css"><metadata name="generator" content="WordPress 6.9">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.every((e) => e.version === undefined)).toBe(
+        true,
+      );
+    });
+
     it("does not take a version from a non-generator meta tag", () => {
       const context = createMockContext({
         responses: [
