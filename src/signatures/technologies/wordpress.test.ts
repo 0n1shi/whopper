@@ -61,6 +61,38 @@ describe("wordpressSignature", () => {
       expect(result?.evidences?.some((e) => e.version === "6.4.2")).toBe(true);
     });
 
+    it("does not take a version from a non-generator meta tag", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="/wp-content/style.css"><meta name="description" content="WordPress 6.9">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.every((e) => e.version === undefined)).toBe(
+        true,
+      );
+    });
+
+    it("does not take a version from a data-content attribute", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="/wp-content/style.css"><meta name="generator" data-content="WordPress 6.9">',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect(result).toBeDefined();
+      expect(result?.evidences?.every((e) => e.version === undefined)).toBe(
+        true,
+      );
+    });
+
     it("does not take a version from a deprecation notice in a core script", () => {
       const context = createMockContext({
         responses: [

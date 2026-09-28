@@ -25,7 +25,7 @@ export const wordpressSignature: Signature = {
       // bundles mention other releases in free text (e.g. "will stop working
       // in WordPress 6.9" in deprecation notices), so a bare "WordPress X.Y"
       // is not evidence of the running version.
-      "<meta\\s[^>]*content=[\"']WordPress\\s+(\\d+\\.\\d+(?:\\.\\d+)?)[\"']",
+      "<meta(?=[^>]*\\sname=[\"']generator[\"'])[^>]*\\scontent=[\"']WordPress\\s+(\\d+\\.\\d+(?:\\.\\d+)?)[\"']",
       "shareaholic:wp_version",
       "wp-embed\\.min\\.js",
     ],
