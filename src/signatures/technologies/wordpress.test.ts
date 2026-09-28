@@ -47,11 +47,11 @@ describe("wordpressSignature", () => {
       expect(result?.evidences?.some((e) => e.version === "6.4.2")).toBe(true);
     });
 
-    it("captures version from slash-separated form (e.g. WordPress/6.4.2)", () => {
+    it("captures version from meta generator with content before name", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: "Powered by WordPress/6.4.2",
+            body: "<meta content='WordPress 6.4.2' name='generator' />",
           }),
         ],
       });
@@ -61,18 +61,37 @@ describe("wordpressSignature", () => {
       expect(result?.evidences?.some((e) => e.version === "6.4.2")).toBe(true);
     });
 
-    it("captures version with v prefix (WordPress v6.4.2)", () => {
+    it("does not take a version from a deprecation notice in a core script", () => {
       const context = createMockContext({
         responses: [
           createMockResponse({
-            body: "WordPress v6.4.2",
+            url: "https://example.com/wp-includes/js/dist/foo.min.js",
+            headers: { "content-type": "application/javascript" },
+            body: '"foo is deprecated and will stop working in WordPress 6.9. Please use bar instead."',
+          }),
+        ],
+      });
+
+      const result = applySignature(context, wordpressSignature);
+      expect((result?.evidences ?? []).every((e) => e.version !== "6.9")).toBe(
+        true,
+      );
+    });
+
+    it("does not take a version from free text outside a generator", () => {
+      const context = createMockContext({
+        responses: [
+          createMockResponse({
+            body: '<link href="/wp-content/style.css"> Powered by WordPress/6.4.2, WordPress v6.4.2',
           }),
         ],
       });
 
       const result = applySignature(context, wordpressSignature);
       expect(result).toBeDefined();
-      expect(result?.evidences?.some((e) => e.version === "6.4.2")).toBe(true);
+      expect(result?.evidences?.every((e) => e.version === undefined)).toBe(
+        true,
+      );
     });
 
     it("does not miscapture version from an unrelated script on the same page", () => {
