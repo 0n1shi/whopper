@@ -233,6 +233,7 @@ import { zoneJsSignature } from "./technologies/zone_js.js";
 import { tablePressSignature } from "./technologies/tablepress.js";
 import { zendeskSignature } from "./technologies/zendesk.js";
 import { cakePhpSignature } from "./technologies/cakephp.js";
+import { baserCmsSignature } from "./technologies/basercms.js";
 import { thinkPhpSignature } from "./technologies/thinkphp.js";
 import { alertifyJsSignature } from "./technologies/alertifyjs.js";
 import { adobeFlashSignature } from "./technologies/adobe_flash.js";
@@ -672,6 +673,7 @@ export const signatures: Signature[] = [
   tablePressSignature,
   zendeskSignature,
   cakePhpSignature,
+  baserCmsSignature,
   thinkPhpSignature,
   alertifyJsSignature,
   adobeFlashSignature,
