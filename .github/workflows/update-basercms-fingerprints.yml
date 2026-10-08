@@ -1,0 +1,89 @@
+name: Update baserCMS fingerprints
+
+on:
+  schedule:
+    # Monday 09:23 JST (00:23 UTC), away from the busy start of the hour.
+    - cron: "23 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-basercms-fingerprints
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.repository == '0n1shi/whopper' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache commit-pinned upstream assets
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: .cache/basercms
+          key: basercms-assets-v1-${{ runner.os }}-${{ hashFiles('scripts/basercms_sources.json', 'scripts/generate_basercms_fingerprints.mjs') }}
+          restore-keys: basercms-assets-v1-${{ runner.os }}-
+
+      - name: Discover releases and regenerate fingerprints
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/generate_basercms_fingerprints.mjs --update-sources
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet -- scripts/basercms_sources.json src/signatures/fingerprints/basercms.ts; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # GITHUB_TOKEN-created PRs do not trigger pull_request workflows, so
+      # validate the generated changes here before opening or updating a PR.
+      - name: Validate updates
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          npm test
+          npm run build
+          npx eslint scripts/basercms_releases.mjs scripts/generate_basercms_fingerprints.mjs src/signatures/fingerprints/basercms.ts
+          git diff --check
+
+      - name: Create or update pull request
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
+        with:
+          branch: chore/update-basercms-fingerprints
+          delete-branch: true
+          add-paths: |
+            scripts/basercms_sources.json
+            src/signatures/fingerprints/basercms.ts
+          author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          commit-message: "chore: update baserCMS fingerprints"
+          title: "chore: update baserCMS fingerprints"
+          body: |
+            ## Summary
+            Discover new stable baserCMS 4.x/5.x tags, pin their commit SHAs, and regenerate the admin-asset fingerprint dictionary. Existing pins are preserved; moved tags fail the update for manual review.
+
+            ## Validation
+            Tests, build, generated-file lint, and whitespace checks passed in the update workflow before this PR was created or updated.
+
+            Shared assets can still leave multiple version candidates. Review the source manifest and generated hashes before merging.
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

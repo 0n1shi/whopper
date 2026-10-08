@@ -4,11 +4,21 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
 import { format } from "prettier";
+import { discoverReleases } from "./basercms_releases.mjs";
+
+const updateSources = process.argv.includes("--update-sources");
+const offline = process.argv.includes("--offline");
+if (updateSources && offline)
+  throw new Error("--update-sources cannot be combined with --offline");
 
 const root = new URL("../", import.meta.url);
 const manifest = JSON.parse(
   await readFile(new URL("basercms_sources.json", import.meta.url), "utf8"),
 );
+if (updateSources)
+  manifest.releases = await discoverReleases(manifest, {
+    token: process.env.GH_TOKEN,
+  });
 const cache = new URL(".cache/basercms/", root);
 await mkdir(cache, { recursive: true });
 const concurrency = 6;
@@ -43,8 +53,7 @@ await Promise.all(
         body = JSON.parse(await readFile(cached, "utf8"));
       } catch (error) {
         if (error.code !== "ENOENT") throw error;
-        if (process.argv.includes("--offline"))
-          throw new Error(`Missing cached source: ${url}`);
+        if (offline) throw new Error(`Missing cached source: ${url}`);
         const response = await fetch(url, {
           signal: AbortSignal.timeout(30000),
         });
@@ -90,6 +99,13 @@ await writeFile(
     { parser: "typescript" },
   ),
 );
+// Publish the updated source list only after every release has valid coverage.
+if (updateSources) {
+  await writeFile(
+    new URL("basercms_sources.json", import.meta.url),
+    await format(JSON.stringify(manifest, null, 2), { parser: "json" }),
+  );
+}
 console.log(
   `Generated ${fileURLToPath(output)}: ${coverage.size} releases, ${fingerprints.length} asset paths, ${fingerprints.reduce((n, asset) => n + Object.keys(asset.hashes).length, 0)} hashes.`,
 );
