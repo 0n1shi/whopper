@@ -83,6 +83,8 @@ export function makeDetectCommandOutput(
         if (signature.cpe) {
           ds.cpe = signature.cpe + ":" + version;
         }
+      } else if (detection.versionCandidates?.length) {
+        ds.versionCandidates = [...detection.versionCandidates];
       }
       return ds;
     });
@@ -188,6 +190,9 @@ export function makeDetectCommandOutput(
     if (existing.cpe) {
       merged.cpe = existing.cpe;
     }
+    const versionCandidates =
+      existing.versionCandidates ?? software.versionCandidates;
+    if (versionCandidates) merged.versionCandidates = versionCandidates;
 
     const evidences = [
       ...(existing.evidences || []),
@@ -219,6 +224,8 @@ export function printDetectCommandOutputAsText(
     let message = `* ${chalk.green(detection.name)}`;
     if (detection.version) {
       message += ` ${detection.version}`;
+    } else if (detection.versionCandidates?.length) {
+      message += ` (version candidates: ${detection.versionCandidates.join(", ")})`;
     }
     console.log(message);
 
@@ -227,7 +234,8 @@ export function printDetectCommandOutputAsText(
     }
     for (const evidence of detection.evidences || []) {
       const evidenceValue =
-        evidence.type === "body" && evidence.sourceUrl
+        (evidence.type === "body" || evidence.type === "hash") &&
+        evidence.sourceUrl
           ? evidence.sourceUrl
           : evidence.value;
       console.log(`    [${evidence.type}] ${evidenceValue}`);

@@ -1,0 +1,563 @@
+{
+  "repository": "baserproject/basercms",
+  "releases": [
+    {
+      "version": "4.0.0",
+      "commit": "d14d49950dfdd88415232259e2e592d8f118856a"
+    },
+    {
+      "version": "4.0.1",
+      "commit": "7fdf5663614cb22081c8ed1ee0065d9d2f131cc4"
+    },
+    {
+      "version": "4.0.2",
+      "commit": "e70c4e26142db4c37debf805a6bf9877c0a3653c"
+    },
+    {
+      "version": "4.0.2.1",
+      "commit": "a4de409d4679a03028da9fe0ea0852fd2f8d024d"
+    },
+    {
+      "version": "4.0.3",
+      "commit": "520eb3b9963de477e1b0dee0f9e1187be37aff50"
+    },
+    {
+      "version": "4.0.4",
+      "commit": "f8f1e8328c99b5a0e095141d362f9c9251dab5dc"
+    },
+    {
+      "version": "4.0.5",
+      "commit": "1a3867ed9146cd7ea9cda5589e54007e027fd845"
+    },
+    {
+      "version": "4.0.5.1",
+      "commit": "50d8b4bd0bd7cb68d347e97f43283d63f2b48e80"
+    },
+    {
+      "version": "4.0.5.2",
+      "commit": "27230e79a5a9786209c6fa5639f831658878e1ca"
+    },
+    {
+      "version": "4.0.6",
+      "commit": "03044d7f06808ede18cb812b93627765963526ab"
+    },
+    {
+      "version": "4.0.7",
+      "commit": "fd75d84f5196bf10676dfa7b01045da0f1d04c44"
+    },
+    {
+      "version": "4.0.8",
+      "commit": "f15fb559026de682ebaab8f5994e41b29052301e"
+    },
+    {
+      "version": "4.0.9",
+      "commit": "89b0dcf4d83eca9dd6b7f62a1757a62f55907aef"
+    },
+    {
+      "version": "4.0.10",
+      "commit": "df169818688508c65c7cbc5b95acc228cb10d371"
+    },
+    {
+      "version": "4.0.10.1",
+      "commit": "d55bf4640eee929c45de1add3b831184f97829ef"
+    },
+    {
+      "version": "4.0.11",
+      "commit": "a26a77d6f64a82ee59e23f4013ee86d36f872d17"
+    },
+    {
+      "version": "4.1.0",
+      "commit": "e2f94330df488bf6dfac28e91805a7bd09394f55"
+    },
+    {
+      "version": "4.1.0.1",
+      "commit": "0394401af4b827ab6e3e779a4abac8e90eb4b54a"
+    },
+    {
+      "version": "4.1.1",
+      "commit": "bdc8c3d135d40cebe8a6919e6cb8b5213ce6209a"
+    },
+    {
+      "version": "4.1.2",
+      "commit": "d050babd60dac59a32553476704057620b0e6e5a"
+    },
+    {
+      "version": "4.1.3",
+      "commit": "beda3e661265044051cd0a92cf3e1b1bd70b16e8"
+    },
+    {
+      "version": "4.1.4",
+      "commit": "7d77f7d9b792871fc7b18d11b1e2a800118b79c7"
+    },
+    {
+      "version": "4.1.5",
+      "commit": "230cfb92f0239f2d1d554acd56d5d502c0f871cf"
+    },
+    {
+      "version": "4.1.6",
+      "commit": "c42d10f150b2d6c38fb126d11f10e02c5050da24"
+    },
+    {
+      "version": "4.1.7",
+      "commit": "19a24d6d553318e75b6267b9a5d82130e99f370e"
+    },
+    {
+      "version": "4.1.8",
+      "commit": "9a652596733358f96065f6ab9f4352ecbc3e4aad"
+    },
+    {
+      "version": "4.2.0",
+      "commit": "cb4a2ba8b6b07c1a43b8467621079783e3e2fcd1"
+    },
+    {
+      "version": "4.2.1",
+      "commit": "2dfed39702f4ba9762fa613b8daceff92390d55f"
+    },
+    {
+      "version": "4.2.2",
+      "commit": "6e0f73e8dedbe8a4bc8b2e86938e044cc88045e4"
+    },
+    {
+      "version": "4.2.3",
+      "commit": "e1ae2e4354f446e194654e51b29311fa3b7de9ae"
+    },
+    {
+      "version": "4.2.4",
+      "commit": "f8cb4d96f32452a70d1aae3b285db0e2b7d9ded1"
+    },
+    {
+      "version": "4.2.5",
+      "commit": "4d0e76ee7fa1629e3685e94d9f8d5c227953ab99"
+    },
+    {
+      "version": "4.3.0",
+      "commit": "da6c18ba7436540cae8504e7d6da29e7f363cab6"
+    },
+    {
+      "version": "4.3.1",
+      "commit": "36fa3fd48d8a62f25a87c45582ad099b3aaee4ed"
+    },
+    {
+      "version": "4.3.2",
+      "commit": "b77e244139ea32e0601bf908b93b26493e234083"
+    },
+    {
+      "version": "4.3.3",
+      "commit": "abae3b60ac4a555899cfa4c8af07ff0451b17cf0"
+    },
+    {
+      "version": "4.3.4",
+      "commit": "9cbd2e985f98527d638ff4e8f70ef86d13631407"
+    },
+    {
+      "version": "4.3.5",
+      "commit": "6dc3af6c868a1959e633797a0323f73206dd4ebc"
+    },
+    {
+      "version": "4.3.6",
+      "commit": "dd534bb8c9e8bd23000594e495e73265c3f4a015"
+    },
+    {
+      "version": "4.3.7",
+      "commit": "cef154f1937aa633d9d97530b9963581f2b6f633"
+    },
+    {
+      "version": "4.3.7.1",
+      "commit": "0f0c71073423006450f65ece82f7d45ef015b14b"
+    },
+    {
+      "version": "4.4.0",
+      "commit": "98c5d24daca66c38dfbd2b67c0ac85a3b5902b26"
+    },
+    {
+      "version": "4.4.1",
+      "commit": "adf218e5dcd797b332c9bd9dae69b15e73ba09de"
+    },
+    {
+      "version": "4.4.1.1",
+      "commit": "b84d2a50d722ce9dd387245f2a0e7802fbe6723a"
+    },
+    {
+      "version": "4.4.2",
+      "commit": "0e3df9cfce5b8cbc26969b972c25e8049b148a50"
+    },
+    {
+      "version": "4.4.2.1",
+      "commit": "c7521721d747f3c76cb5ee85d141a03f159c7cc4"
+    },
+    {
+      "version": "4.4.3",
+      "commit": "171801f3e0d33dee400082e5aec24640652c28a1"
+    },
+    {
+      "version": "4.4.4",
+      "commit": "7b22ec7df86184ccc66bdaefb15d3642767dbb54"
+    },
+    {
+      "version": "4.4.5",
+      "commit": "ac7824e7c617f54f12686cef01a2e30e5b07dd83"
+    },
+    {
+      "version": "4.4.6",
+      "commit": "3e541f29462c2812469bff86c7c87eb181c7b4ab"
+    },
+    {
+      "version": "4.4.7",
+      "commit": "d9702f4789409768f8c7311bc792be987f087993"
+    },
+    {
+      "version": "4.4.8",
+      "commit": "38239560ad70274620653508e71194e8621b519b"
+    },
+    {
+      "version": "4.5.0",
+      "commit": "45977e99f198fdeebe4ef308c1030ebf47850343"
+    },
+    {
+      "version": "4.5.1",
+      "commit": "85a9830292e3764724aa710ed9743a74ad92ec56"
+    },
+    {
+      "version": "4.5.2",
+      "commit": "3cc2d492dab043b0204b772a6ff86464fbcc59af"
+    },
+    {
+      "version": "4.5.3",
+      "commit": "408a31041943ee04fa1036ea17504224b2aa2a6c"
+    },
+    {
+      "version": "4.5.4",
+      "commit": "c995123770181b8e6b95dec2ff44dc2d63fab3f1"
+    },
+    {
+      "version": "4.5.5",
+      "commit": "5745546781179bedea0c3a4f03c79f842bf6a086"
+    },
+    {
+      "version": "4.5.6",
+      "commit": "4dfd9f2ea7d859c9a45eb511481999dad48a6f5c"
+    },
+    {
+      "version": "4.6.0",
+      "commit": "25e6fa15ca7044a1c7480fc4137ef6c81acf0acd"
+    },
+    {
+      "version": "4.6.1",
+      "commit": "26f64537a0ae3b87539a70b39ab40ad34d2f3af3"
+    },
+    {
+      "version": "4.6.1.1",
+      "commit": "55e0afbebf5aa3602031f0934431457eb2f5e420"
+    },
+    {
+      "version": "4.6.2",
+      "commit": "2cf450768b65caae52557a576630c42e13c5a704"
+    },
+    {
+      "version": "4.6.3",
+      "commit": "3485dfb7869b4373a5a7f8622dffdf1fedce4548"
+    },
+    {
+      "version": "4.7.0",
+      "commit": "c6c6a653624b0655d660b69d9c93ba58c8aa65f4"
+    },
+    {
+      "version": "4.7.2",
+      "commit": "3b46ad035e6d5d9bf907ac78daa865ee0d43f363"
+    },
+    {
+      "version": "4.7.3",
+      "commit": "aabac53157a076232e1abfe072285aa2f8c126c9"
+    },
+    {
+      "version": "4.7.5",
+      "commit": "9dce3143cf9ac5ea04e1056dfccadfa201c7f38a"
+    },
+    {
+      "version": "4.7.6",
+      "commit": "ee0f5327f665b9ecca10d926d554c6ebe735f4cf"
+    },
+    {
+      "version": "4.7.7",
+      "commit": "c33ca28c65b93cd3c5a7fac2ec120e28e20060de"
+    },
+    {
+      "version": "4.7.8",
+      "commit": "d2d82717cf39926e595c7e53cfa70a5b033c3d07"
+    },
+    {
+      "version": "4.8.0",
+      "commit": "d9014ad55c048264a0be07c8a95cfebff8ae4b4d"
+    },
+    {
+      "version": "4.8.1",
+      "commit": "be95a1121541af9b2b13efc1f19fc288206d5891"
+    },
+    {
+      "version": "4.8.2",
+      "commit": "b75f280c72432ebe981b7eff9b8d35fa9fda28df"
+    },
+    {
+      "version": "4.8.3",
+      "commit": "330c5569bc6f859520821b7b213dfa395b3c3878"
+    },
+    {
+      "version": "5.0.0",
+      "commit": "a09deed5c5f87babc4bc4c70e9ae3f6a7bc00988"
+    },
+    {
+      "version": "5.0.1",
+      "commit": "9de1c86e95ea3e53a6697ffac63bcd25550ba801"
+    },
+    {
+      "version": "5.0.2",
+      "commit": "2ccce397dbf4779d3b091a8ba7026c965599317f"
+    },
+    {
+      "version": "5.0.3",
+      "commit": "9ca9333b2d812486112f88ddef1c89bb5f9b1152"
+    },
+    {
+      "version": "5.0.4",
+      "commit": "92325b6f047f0ba0fe577d832c1f54d296240174"
+    },
+    {
+      "version": "5.0.5",
+      "commit": "a100bc8abd77fbf7bcd09ae86c77f17c844e62b4"
+    },
+    {
+      "version": "5.0.6",
+      "commit": "3df7012a4dda44a7104eed24e6d28228e393d1e8"
+    },
+    {
+      "version": "5.0.7",
+      "commit": "6be60473f0bdde3e0684c3fcfc797ee834630d3a"
+    },
+    {
+      "version": "5.0.8",
+      "commit": "8a98d96af67abfce900ad6bba7ff8ae0538ca39f"
+    },
+    {
+      "version": "5.0.9",
+      "commit": "e910715437796a408e0f201557fdcb4397e64ea9"
+    },
+    {
+      "version": "5.0.10",
+      "commit": "39e7aed9f20fdcdb8e831e2ab62c4e5bbcb692c0"
+    },
+    {
+      "version": "5.0.11",
+      "commit": "a4de6aed2f20a9fcf71bc7ca2d8819b099476786"
+    },
+    {
+      "version": "5.0.12",
+      "commit": "49f0d93b5c3e2bbfc8ffa29d1bd5e7e1942c6b22"
+    },
+    {
+      "version": "5.0.14",
+      "commit": "c5c52d85d6157b6969b13b996c2f0d03afe2df33"
+    },
+    {
+      "version": "5.0.15",
+      "commit": "0cf3b4dccadf3cda8190ce1be9da2ffdfefc98c8"
+    },
+    {
+      "version": "5.0.16",
+      "commit": "0b36199482c309e17eb5c3e58b568d7993a40fad"
+    },
+    {
+      "version": "5.0.17",
+      "commit": "ed585ab41337259f4f3b5110bd6c26305d4769fb"
+    },
+    {
+      "version": "5.0.18",
+      "commit": "4b37141f12ecbd032cc2ff506d673d8a532aa9b4"
+    },
+    {
+      "version": "5.0.19",
+      "commit": "0b8dd150d09669101b550938469ce7e0629a5c25"
+    },
+    {
+      "version": "5.0.20",
+      "commit": "e461be4b777517cf341965f744bab184d244d01f"
+    },
+    {
+      "version": "5.0.21",
+      "commit": "4ec1cabcbfbf57c43c898129ee58116c86820ee6"
+    },
+    {
+      "version": "5.1.0",
+      "commit": "197c54a085379b948a94c186c3ee048824152e37"
+    },
+    {
+      "version": "5.1.1",
+      "commit": "a2a00a6a89fa316c65820a01bc06244cf3abd0d7"
+    },
+    {
+      "version": "5.1.2",
+      "commit": "4c778aa9bc86d7c76499761dbb2364d11502f153"
+    },
+    {
+      "version": "5.1.3",
+      "commit": "c80ec6a5562299c1e35acc5151d60cc0d075402a"
+    },
+    {
+      "version": "5.1.4",
+      "commit": "818ab0b075752969f9dab9dc8d9e3adcbc45437c"
+    },
+    {
+      "version": "5.1.5",
+      "commit": "3ca87fbd2100851756133fc486a94bb2f5301642"
+    },
+    {
+      "version": "5.1.6",
+      "commit": "e3758dbd08a0562a92c2413cc0786bc39c4dc353"
+    },
+    {
+      "version": "5.1.7",
+      "commit": "c7c251b304fdafebe3704ad478968a0a7d331dfc"
+    },
+    {
+      "version": "5.1.8",
+      "commit": "58b936f1ae8a552f2459cd9727d755beb659a23e"
+    },
+    {
+      "version": "5.1.9",
+      "commit": "8908324c4e7867a64d0b43d248f48f1a51068892"
+    },
+    {
+      "version": "5.1.10",
+      "commit": "d35381e772705af5b1545bb0e75f1c04a0cbea02"
+    },
+    {
+      "version": "5.2.0",
+      "commit": "a26e6cb11cb9da636fc7e1fb9c6b0d54488dad65"
+    },
+    {
+      "version": "5.2.1",
+      "commit": "b9260a72b4e6ee0f55373bbe5442749db3e0063d"
+    },
+    {
+      "version": "5.2.2",
+      "commit": "4ad72f2765ec80eb9c0f13c5161a30eac6190889"
+    },
+    {
+      "version": "5.2.3",
+      "commit": "4cab078c93054f55d8fb36990a7ec7550f443932"
+    },
+    {
+      "version": "5.2.4",
+      "commit": "398d3eedd5a19d4c32451de12104cea44a4464d1"
+    },
+    {
+      "version": "5.2.5",
+      "commit": "3bc6a9f5d04253f20524dd17deeb4a050c560470"
+    },
+    {
+      "version": "5.2.5.1",
+      "commit": "3bc6a9f5d04253f20524dd17deeb4a050c560470"
+    },
+    {
+      "version": "5.2.6",
+      "commit": "35a7949e76c22dbbf3008996abacc39967fdac68"
+    },
+    {
+      "version": "5.2.7",
+      "commit": "58d9569a8143bfc2aa968a3a5d849d2aa06b8e8d"
+    },
+    {
+      "version": "5.2.8",
+      "commit": "d75f859bc82db92688a10b440f31534c05022bd9"
+    },
+    {
+      "version": "5.2.9",
+      "commit": "cb913b1b497287517aee77d47172b14b32af0ef2"
+    },
+    {
+      "version": "5.2.10",
+      "commit": "c46327fbdd19d8f1b48cd3390a262984862e77e8"
+    },
+    {
+      "version": "5.3.0",
+      "commit": "ef5ee92e5a2952e46874f12afbfee12f98f933bb"
+    },
+    {
+      "version": "5.3.1",
+      "commit": "a70288e411d0402b6da8a6eadec99255f02be0f2"
+    },
+    {
+      "version": "5.4.0",
+      "commit": "333b577ec315ee5bc90266a04065d5e795b9e9ad"
+    },
+    {
+      "version": "5.4.1",
+      "commit": "0f41a3169bedf3a5cc6cb4e7341fed6da8ca4901"
+    }
+  ],
+  "assets": [
+    {
+      "pathSuffix": "/js/admin/functions.js",
+      "sources": {
+        "4": [
+          "lib/Baser/webroot/js/admin/functions.js",
+          "app/webroot/theme/admin-third/js/admin/functions.js"
+        ]
+      }
+    },
+    {
+      "pathSuffix": "/js/admin/startup.js",
+      "sources": {
+        "4": [
+          "lib/Baser/webroot/js/admin/startup.js",
+          "app/webroot/theme/admin-third/js/admin/startup.js"
+        ]
+      }
+    },
+    {
+      "pathSuffix": "/js/admin/users/login.js",
+      "sources": {
+        "4": [
+          "lib/Baser/webroot/js/admin/users/login.js",
+          "app/webroot/theme/admin-third/js/admin/users/login.js"
+        ]
+      }
+    },
+    {
+      "pathSuffix": "/css/admin/login.css",
+      "sources": {
+        "4": [
+          "lib/Baser/webroot/css/admin/login.css",
+          "app/webroot/theme/admin-third/css/admin/login.css"
+        ]
+      }
+    },
+    {
+      "pathSuffix": "/css/admin/style.css",
+      "sources": {
+        "4": [
+          "lib/Baser/webroot/css/admin/style.css",
+          "app/webroot/theme/admin-third/css/admin/style.css"
+        ],
+        "5": ["plugins/bc-admin-third/webroot/css/admin/style.css"]
+      }
+    },
+    {
+      "pathSuffix": "/js/admin/common.bundle.js",
+      "sources": {
+        "5": ["plugins/bc-admin-third/webroot/js/admin/common.bundle.js"]
+      }
+    },
+    {
+      "pathSuffix": "/js/admin/startup.bundle.js",
+      "sources": {
+        "5": ["plugins/bc-admin-third/webroot/js/admin/startup.bundle.js"]
+      }
+    },
+    {
+      "pathSuffix": "/js/admin/users/login.bundle.js",
+      "sources": {
+        "5": ["plugins/bc-admin-third/webroot/js/admin/users/login.bundle.js"]
+      }
+    }
+  ]
+}

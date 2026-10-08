@@ -18,6 +18,7 @@ export async function fetchActiveRule(
   path: string,
   request: APIRequestContext,
   timeoutMs: number,
+  sameOriginOnly = false,
 ): Promise<Response | null> {
   if (!isRelativePath(path)) {
     logger.warn(`Active scan path must be relative: ${path}`);
@@ -28,16 +29,21 @@ export async function fetchActiveRule(
   try {
     url = new URL(path, baseUrl).toString();
   } catch {
-    logger.warn(`Invalid active scan baseUrl or path: baseUrl=${baseUrl}, path=${path}`);
+    logger.warn(
+      `Invalid active scan baseUrl or path: baseUrl=${baseUrl}, path=${path}`,
+    );
     return null;
   }
 
   const pageHost = getHostFromUrl(baseUrl) ?? "";
+  const deadline = Date.now() + timeoutMs;
   try {
     for (let hop = 0; hop <= MAX_REDIRECT_HOPS; hop++) {
+      const remaining = deadline - Date.now();
+      if (sameOriginOnly && remaining <= 0) return null;
       logger.info(`Active scan request: ${url}`);
       const res = await request.get(url, {
-        timeout: timeoutMs,
+        timeout: sameOriginOnly ? remaining : timeoutMs,
         maxRedirects: 0,
       });
       const status = res.status();
@@ -55,7 +61,12 @@ export async function fetchActiveRule(
           return null;
         }
         const nextHost = getHostFromUrl(nextUrl) ?? "";
-        if (!nextHost || !isSameHost(pageHost, nextHost)) {
+        if (
+          !nextHost ||
+          !isSameHost(pageHost, nextHost) ||
+          (sameOriginOnly &&
+            new URL(nextUrl).origin !== new URL(baseUrl).origin)
+        ) {
           logger.warn(
             `Active scan redirect to non-same-host blocked: ${nextUrl}`,
           );
@@ -79,9 +90,7 @@ export async function fetchActiveRule(
     return null;
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
-    logger.warn(
-      `Active scan fetch failed (${url}): ${message.split("\n")[0]}`,
-    );
+    logger.warn(`Active scan fetch failed (${url}): ${message.split("\n")[0]}`);
     return null;
   }
 }

@@ -48,6 +48,43 @@ Detection uses smart filtering by default:
 - Client-side third-party resources (for example CDN-hosted JS/CSS libraries) are included.
 - Third-party server-side hints (for example response headers and cookies) are excluded.
 
+### baserCMS version fingerprinting
+
+`whopper detect https://example.com/ --active --json` also fingerprints baserCMS
+when its passive markers are detected. It checks the default `/baser/admin/`
+(5.x) and `/admin/` (4.x) login pages, then compares the linked, same-origin
+admin JS/CSS against hashes from official releases. It needs no login credentials.
+Custom admin prefixes and subdirectory installations with different login URLs
+are not probed. Without `--active`, presence detection is unchanged.
+
+Two or more distinct asset paths must agree on a single release before Whopper
+reports an inferred `version` with medium confidence. Otherwise matching releases
+are returned as `versionCandidates`, without assigning a version-specific CPE.
+Unrecognized asset contents or conflicting matches suppress version inference.
+Requests are limited to eight known asset URLs, with a shared fingerprint timeout;
+cross-origin asset URLs and redirects are blocked.
+
+The dictionary covers the 123 official 4.x/5.x tags listed in
+[`scripts/basercms_sources.json`](scripts/basercms_sources.json), including
+four-part patch versions. Shared files cannot distinguish every patch release.
+Rebuilt/customized themes, stale assets, independently updated packages, and
+releases outside the dictionary can prevent or mislead inference; a fingerprint
+is not proof of the installed PHP code or a vulnerability's presence.
+
+To update the dictionary, add the official release's full commit SHA to that
+manifest (never a mutable tag as the download reference), then run:
+
+```bash
+npm ci
+node scripts/generate_basercms_fingerprints.mjs
+```
+
+The generator downloads only the selected assets, normalizes CRLF to LF, and
+hashes their UTF-8 text with SHA-256. Downloads are cached in `.cache/basercms/`;
+`--offline` regenerates from that cache. Commit the manifest and generated
+`src/signatures/fingerprints/basercms.ts` together. Tests do not contact GitHub
+or scan external hosts.
+
 ## ✨ Features
 
 - Detects a wide range of web technologies including CMS, frameworks, libraries, and more.

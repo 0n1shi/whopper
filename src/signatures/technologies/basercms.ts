@@ -1,9 +1,10 @@
 import type { Signature } from "../_types.js";
 import { cakePhpSignature } from "./cakephp.js";
 import { phpSignature } from "./php.js";
+import { baserCmsFingerprints } from "../fingerprints/basercms.js";
 
-// baserCMS is a Japanese CMS built on CakePHP. Detection only confirms that
-// the site runs baserCMS; the version is not exposed by any of these markers.
+// Passive markers identify the product. Active scans compare admin assets
+// with commit-pinned releases because the login page does not expose a version.
 export const baserCmsSignature: Signature = {
   name: "baserCMS",
   description:
@@ -22,8 +23,7 @@ export const baserCmsSignature: Signature = {
       "<meta(?=\\s)(?=[^>]*\\sname\\s*=\\s*[\"']generator[\"'])[^>]*\\scontent\\s*=\\s*[\"']basercms[\"']",
     ],
   },
-  // Supplementary confirmation only: /baser/admin/ is the default admin
-  // prefix (BASER_CORE_PREFIX / ADMIN_PREFIX) and can be changed per site.
+  // Default admin prefixes for 5.x and 4.x; sites may customize them.
   activeRules: [
     {
       path: "/baser/admin/",
@@ -32,6 +32,15 @@ export const baserCmsSignature: Signature = {
         "id=[\"']AdminUsersLoginScript[\"']",
         "class=[\"'][^\"']*\\bbca-login\\b",
       ],
+      assetFingerprints: baserCmsFingerprints,
+    },
+    {
+      path: "/admin/",
+      bodyRegexes: [
+        "class=[\"'][^\"']*\\bbca-login\\b",
+        "id=[\"']LoginCredit[\"']",
+      ],
+      assetFingerprints: baserCmsFingerprints,
     },
   ],
   impliedSoftwares: [cakePhpSignature.name, phpSignature.name],
