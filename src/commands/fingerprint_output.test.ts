@@ -18,6 +18,10 @@ const evidence: Evidence = {
   isFirstParty: true,
 };
 const signatures = [baserCmsSignature, phpSignature, cakePhpSignature];
+const presence: Evidence[] = [
+  { type: "cookie", value: "BASERCMS", version: undefined, confidence: "high" },
+  { type: "body", value: "bca-login", version: undefined, confidence: "high" },
+];
 
 describe("fingerprint output", () => {
   it("keeps candidates on the direct product without manufacturing versions or CPEs", () => {
@@ -27,12 +31,15 @@ describe("fingerprint output", () => {
         {
           name: "baserCMS",
           versionCandidates: ["5.0.0", "5.0.1"],
-          evidences: [evidence],
+          evidences: [...presence, evidence],
         },
       ],
       signatures,
     );
     const direct = output.detectedSoftwares.find((s) => s.name === "baserCMS")!;
+    expect(
+      output.detectedSoftwares.filter((s) => s.name === "baserCMS"),
+    ).toHaveLength(1);
     expect(direct.versionCandidates).toEqual(["5.0.0", "5.0.1"]);
     expect(output.detectedSoftwares.every((s) => !s.version && !s.cpe)).toBe(
       true,
@@ -62,20 +69,63 @@ describe("fingerprint output", () => {
   it("exports an inferred unique version with medium confidence", () => {
     const output = makeDetectCommandOutput(
       [],
-      [{ name: "baserCMS", evidences: [{ ...evidence, version: "5.0.1" }] }],
+      [
+        {
+          name: "baserCMS",
+          evidences: [
+            ...presence,
+            { ...evidence, version: "5.0.1" },
+            {
+              ...evidence,
+              sourceUrl: "https://example.com/css/admin/style.css",
+              version: "5.0.1",
+            },
+          ],
+        },
+      ],
       signatures,
     );
-    expect(
-      output.detectedSoftwares.find((s) => s.name === "baserCMS"),
-    ).toMatchObject({
+    const direct = output.detectedSoftwares.filter(
+      (s) => s.name === "baserCMS",
+    );
+    expect(direct).toHaveLength(1);
+    expect(direct[0]).toMatchObject({
       version: "5.0.1",
       cpe: "cpe:/a:basercms:basercms:5.0.1",
       confidence: "medium",
     });
+    expect(direct[0]!.evidences).toHaveLength(4);
+    expect(
+      direct[0]!.evidences!.filter((e) => e.version === undefined),
+    ).toEqual(expect.arrayContaining(presence));
     expect(
       output.detectedSoftwares
         .filter((s) => s.name !== "baserCMS")
         .every((s) => !s.version && !s.versionCandidates),
     ).toBe(true);
+  });
+
+  it("does not attach versionless evidence arbitrarily when multiple versions exist", () => {
+    const output = makeDetectCommandOutput(
+      [],
+      [
+        {
+          name: "baserCMS",
+          evidences: [
+            ...presence,
+            { ...evidence, version: "5.0.1" },
+            { ...evidence, version: "5.0.2" },
+          ],
+        },
+      ],
+      signatures,
+    );
+    const direct = output.detectedSoftwares.filter(
+      (s) => s.name === "baserCMS",
+    );
+    expect(direct.map((s) => s.version)).toEqual([undefined, "5.0.1", "5.0.2"]);
+    expect(direct.find((s) => !s.version)!.evidences).toEqual(
+      expect.arrayContaining(presence),
+    );
   });
 });

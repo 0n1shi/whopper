@@ -55,6 +55,23 @@ export function makeDetectCommandOutput(
       versionGroups.get(key)!.push(evidence);
     }
 
+    // Fingerprinting refines an existing presence detection; it does not
+    // identify another installation. Keep unresolved multi-version detections
+    // separate rather than assigning their presence evidence arbitrarily.
+    const inferredVersion = evidences.find(
+      (evidence) => evidence.type === "hash" && evidence.version,
+    )?.version;
+    const presenceEvidences = versionGroups.get(undefined);
+    if (inferredVersion && presenceEvidences && versionGroups.size === 2) {
+      versionGroups.set(
+        inferredVersion,
+        [...versionGroups.get(inferredVersion)!, ...presenceEvidences].sort(
+          compareEvidence,
+        ),
+      );
+      versionGroups.delete(undefined);
+    }
+
     // If no evidences, create a single entry
     if (versionGroups.size === 0) {
       const ds: DetectedSoftware = {
@@ -70,7 +87,13 @@ export function makeDetectCommandOutput(
     return [...versionGroups.entries()].map(([version, versionEvidences]) => {
       const ds: DetectedSoftware = {
         name: detection.name,
-        confidence: maxConfidence(versionEvidences.map((e) => e.confidence)),
+        // High-confidence product presence must not raise confidence in an
+        // inferred version that is supported only by medium-confidence hashes.
+        confidence: maxConfidence(
+          versionEvidences
+            .filter((e) => e.version === version)
+            .map((e) => e.confidence),
+        ),
       };
       if (signature.description) {
         ds.description = signature.description;
