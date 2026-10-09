@@ -24,7 +24,7 @@ const presence: Evidence[] = [
 ];
 
 describe("fingerprint output", () => {
-  it("keeps candidates on the direct product without manufacturing versions or CPEs", () => {
+  it("exports candidate CPEs on the direct product without setting a definite version or CPE", () => {
     const output = makeDetectCommandOutput(
       [],
       [
@@ -41,13 +41,18 @@ describe("fingerprint output", () => {
       output.detectedSoftwares.filter((s) => s.name === "baserCMS"),
     ).toHaveLength(1);
     expect(direct.versionCandidates).toEqual(["5.0.0", "5.0.1"]);
+    const expectedCpes = [
+      "cpe:/a:basercms:basercms:5.0.0",
+      "cpe:/a:basercms:basercms:5.0.1",
+    ];
+    expect(direct.cpeCandidates).toEqual(expectedCpes);
     expect(output.detectedSoftwares.every((s) => !s.version && !s.cpe)).toBe(
       true,
     );
     expect(
       output.detectedSoftwares
         .filter((s) => s.name !== "baserCMS")
-        .every((s) => !s.versionCandidates),
+        .every((s) => !s.versionCandidates && !s.cpeCandidates),
     ).toBe(true);
     const log = vi.spyOn(console, "log").mockImplementation(() => {});
     try {
@@ -61,6 +66,9 @@ describe("fingerprint output", () => {
         JSON.parse(log.mock.calls[0]![0]).detectedSoftwares[0]
           .versionCandidates,
       ).toEqual(["5.0.0", "5.0.1"]);
+      expect(
+        JSON.parse(log.mock.calls[0]![0]).detectedSoftwares[0].cpeCandidates,
+      ).toEqual(expectedCpes);
     } finally {
       log.mockRestore();
     }
@@ -95,6 +103,7 @@ describe("fingerprint output", () => {
       confidence: "medium",
     });
     expect(direct[0]!.evidences).toHaveLength(4);
+    expect(direct[0]!.cpeCandidates).toBeUndefined();
     expect(
       direct[0]!.evidences!.filter((e) => e.version === undefined),
     ).toEqual(expect.arrayContaining(presence));
@@ -104,6 +113,65 @@ describe("fingerprint output", () => {
         .every((s) => !s.version && !s.versionCandidates),
     ).toBe(true);
   });
+
+  it("omits candidate CPEs when the signature has no CPE", () => {
+    const signature = { ...baserCmsSignature };
+    delete signature.cpe;
+    const output = makeDetectCommandOutput(
+      [],
+      [
+        {
+          name: "baserCMS",
+          evidences: [evidence],
+          versionCandidates: ["5.0.1"],
+        },
+      ],
+      [signature],
+    );
+    expect(output.detectedSoftwares[0]!.versionCandidates).toEqual(["5.0.1"]);
+    expect(output.detectedSoftwares[0]!.cpeCandidates).toBeUndefined();
+  });
+
+  it("preserves candidate CPEs when duplicate product results are merged", () => {
+    const output = makeDetectCommandOutput(
+      [],
+      [
+        { name: "baserCMS", evidences: presence },
+        {
+          name: "baserCMS",
+          evidences: [evidence],
+          versionCandidates: ["4.3.7.1"],
+        },
+      ],
+      signatures,
+    );
+    const direct = output.detectedSoftwares.filter(
+      (s) => s.name === "baserCMS",
+    );
+    expect(direct).toHaveLength(1);
+    expect(direct[0]!.cpeCandidates).toEqual([
+      "cpe:/a:basercms:basercms:4.3.7.1",
+    ]);
+    expect(direct[0]!.versionCandidates).toEqual(["4.3.7.1"]);
+  });
+
+  it.each([undefined, []])(
+    "omits candidate CPEs without version candidates: %s",
+    (versionCandidates) => {
+      const output = makeDetectCommandOutput(
+        [],
+        [
+          {
+            name: "baserCMS",
+            evidences: presence,
+            ...(versionCandidates ? { versionCandidates } : {}),
+          },
+        ],
+        signatures,
+      );
+      expect(output.detectedSoftwares[0]!.cpeCandidates).toBeUndefined();
+    },
+  );
 
   it("does not attach versionless evidence arbitrarily when multiple versions exist", () => {
     const output = makeDetectCommandOutput(

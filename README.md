@@ -59,7 +59,10 @@ are not probed. Without `--active`, presence detection is unchanged.
 
 Two or more distinct asset paths must agree on a single release before Whopper
 reports an inferred `version` with medium confidence. Otherwise matching releases
-are returned as `versionCandidates`, without assigning a version-specific CPE.
+are returned as `versionCandidates` and corresponding `cpeCandidates` for
+vulnerability lookups, while the singular `version` and `cpe` remain unset.
+For example, candidates `5.4.0` and `5.4.1` produce
+`cpe:/a:basercms:basercms:5.4.0` and `cpe:/a:basercms:basercms:5.4.1`.
 Unrecognized asset contents or conflicting matches suppress version inference.
 Requests are limited to eight known asset URLs, with a shared fingerprint timeout;
 cross-origin asset URLs and redirects are blocked.

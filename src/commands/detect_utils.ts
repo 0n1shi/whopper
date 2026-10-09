@@ -108,6 +108,11 @@ export function makeDetectCommandOutput(
         }
       } else if (detection.versionCandidates?.length) {
         ds.versionCandidates = [...detection.versionCandidates];
+        if (signature.cpe) {
+          ds.cpeCandidates = ds.versionCandidates.map(
+            (candidate) => signature.cpe + ":" + candidate,
+          );
+        }
       }
       return ds;
     });
@@ -216,6 +221,8 @@ export function makeDetectCommandOutput(
     const versionCandidates =
       existing.versionCandidates ?? software.versionCandidates;
     if (versionCandidates) merged.versionCandidates = versionCandidates;
+    const cpeCandidates = existing.cpeCandidates ?? software.cpeCandidates;
+    if (cpeCandidates) merged.cpeCandidates = cpeCandidates;
 
     const evidences = [
       ...(existing.evidences || []),
