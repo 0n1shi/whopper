@@ -6,7 +6,9 @@ export type DetectedSoftware = {
   name: string;
   description?: string;
   version?: string;
+  versionCandidates?: string[];
   cpe?: string;
+  cpeCandidates?: string[];
   confidence: Confidence;
   evidences?: Evidence[];
   impliedBy?: string;

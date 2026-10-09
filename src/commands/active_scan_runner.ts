@@ -3,6 +3,7 @@ import { fetchActiveRule } from "../browser/active_scan.js";
 import { buildEvidenceValue, matchString } from "../analyzer/match.js";
 import type { Detection } from "../analyzer/types.js";
 import type { Signature } from "../signatures/_types.js";
+import { fingerprintAssets } from "./asset_fingerprint.js";
 
 export async function applyActiveScans(
   baseUrl: string,
@@ -45,6 +46,17 @@ export async function applyActiveScans(
         host: response.host,
         sourceUrl: response.url,
       });
+      if (activeRule.assetFingerprints?.length) {
+        const result = await fingerprintAssets(
+          response,
+          activeRule.assetFingerprints,
+          request,
+          timeoutMs,
+        );
+        detection.evidences.push(...result.evidences);
+        if (result.versionCandidates)
+          detection.versionCandidates = result.versionCandidates;
+      }
       break;
     }
   }

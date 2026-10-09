@@ -28,10 +28,17 @@ export type Rule = {
   requireAnyOfJavascriptVariables?: string[];
 };
 
+export type AssetFingerprint = {
+  pathSuffix: string;
+  // SHA-256 of UTF-8 text after CRLF-to-LF normalization.
+  hashes: Record<string, string[]>;
+};
+
 export type ActiveRule = {
   path: string;
   bodyRegexes: Regex[];
   confidence?: Confidence;
+  assetFingerprints?: AssetFingerprint[];
 };
 
 export type Signature = {

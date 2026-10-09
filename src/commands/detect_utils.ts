@@ -55,6 +55,23 @@ export function makeDetectCommandOutput(
       versionGroups.get(key)!.push(evidence);
     }
 
+    // Fingerprinting refines an existing presence detection; it does not
+    // identify another installation. Keep unresolved multi-version detections
+    // separate rather than assigning their presence evidence arbitrarily.
+    const inferredVersion = evidences.find(
+      (evidence) => evidence.type === "hash" && evidence.version,
+    )?.version;
+    const presenceEvidences = versionGroups.get(undefined);
+    if (inferredVersion && presenceEvidences && versionGroups.size === 2) {
+      versionGroups.set(
+        inferredVersion,
+        [...versionGroups.get(inferredVersion)!, ...presenceEvidences].sort(
+          compareEvidence,
+        ),
+      );
+      versionGroups.delete(undefined);
+    }
+
     // If no evidences, create a single entry
     if (versionGroups.size === 0) {
       const ds: DetectedSoftware = {
@@ -70,7 +87,13 @@ export function makeDetectCommandOutput(
     return [...versionGroups.entries()].map(([version, versionEvidences]) => {
       const ds: DetectedSoftware = {
         name: detection.name,
-        confidence: maxConfidence(versionEvidences.map((e) => e.confidence)),
+        // High-confidence product presence must not raise confidence in an
+        // inferred version that is supported only by medium-confidence hashes.
+        confidence: maxConfidence(
+          versionEvidences
+            .filter((e) => e.version === version)
+            .map((e) => e.confidence),
+        ),
       };
       if (signature.description) {
         ds.description = signature.description;
@@ -82,6 +105,13 @@ export function makeDetectCommandOutput(
         ds.version = version;
         if (signature.cpe) {
           ds.cpe = signature.cpe + ":" + version;
+        }
+      } else if (detection.versionCandidates?.length) {
+        ds.versionCandidates = [...detection.versionCandidates];
+        if (signature.cpe) {
+          ds.cpeCandidates = ds.versionCandidates.map(
+            (candidate) => signature.cpe + ":" + candidate,
+          );
         }
       }
       return ds;
@@ -188,6 +218,11 @@ export function makeDetectCommandOutput(
     if (existing.cpe) {
       merged.cpe = existing.cpe;
     }
+    const versionCandidates =
+      existing.versionCandidates ?? software.versionCandidates;
+    if (versionCandidates) merged.versionCandidates = versionCandidates;
+    const cpeCandidates = existing.cpeCandidates ?? software.cpeCandidates;
+    if (cpeCandidates) merged.cpeCandidates = cpeCandidates;
 
     const evidences = [
       ...(existing.evidences || []),
@@ -219,6 +254,8 @@ export function printDetectCommandOutputAsText(
     let message = `* ${chalk.green(detection.name)}`;
     if (detection.version) {
       message += ` ${detection.version}`;
+    } else if (detection.versionCandidates?.length) {
+      message += ` (version candidates: ${detection.versionCandidates.join(", ")})`;
     }
     console.log(message);
 
@@ -227,7 +264,8 @@ export function printDetectCommandOutputAsText(
     }
     for (const evidence of detection.evidences || []) {
       const evidenceValue =
-        evidence.type === "body" && evidence.sourceUrl
+        (evidence.type === "body" || evidence.type === "hash") &&
+        evidence.sourceUrl
           ? evidence.sourceUrl
           : evidence.value;
       console.log(`    [${evidence.type}] ${evidenceValue}`);

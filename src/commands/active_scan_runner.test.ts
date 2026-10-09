@@ -3,6 +3,8 @@ import type { APIRequestContext } from "playwright";
 import { applyActiveScans } from "./active_scan_runner.js";
 import type { Detection } from "../analyzer/types.js";
 import type { Signature } from "../signatures/_types.js";
+import { createHash } from "node:crypto";
+import { baserCmsSignature } from "../signatures/technologies/basercms.js";
 
 const makeRequest = (
   impl: (url: string) => {
@@ -35,6 +37,60 @@ const otherSig: Signature = {
 };
 
 describe("applyActiveScans", () => {
+  it("fingerprints assets after the baserCMS login match and preserves candidates", async () => {
+    const body = "const someValue = 1;";
+    const signature = structuredClone(baserCmsSignature);
+    signature.activeRules![0]!.assetFingerprints = [
+      {
+        pathSuffix: "/js/admin/common.bundle.js",
+        hashes: {
+          [createHash("sha256").update(body).digest("hex")]: ["5.0.0", "5.0.1"],
+        },
+      },
+    ];
+    const detections: Detection[] = [{ name: "baserCMS", evidences: [] }];
+    const { request, get } = makeRequest((url) => ({
+      status: 200,
+      body: url.endsWith("/baser/admin/")
+        ? '<div class="bca-login"></div><script src="/assets/js/admin/common.bundle.js"></script>'
+        : body,
+    }));
+    await applyActiveScans(
+      "https://example.com/",
+      detections,
+      [signature],
+      request,
+      5000,
+    );
+    expect(get).toHaveBeenCalledTimes(2);
+    expect(detections[0]!.versionCandidates).toEqual(["5.0.0", "5.0.1"]);
+    expect(detections[0]!.evidences!.map((e) => e.type)).toEqual([
+      "body",
+      "hash",
+    ]);
+    expect(
+      detections[0]!.evidences!.every((e) => e.version === undefined),
+    ).toBe(true);
+  });
+
+  it("does not fetch assets if the login page does not match", async () => {
+    const { request, get } = makeRequest(() => ({
+      status: 200,
+      body: '<script src="/assets/js/admin/common.bundle.js"></script>',
+    }));
+    await applyActiveScans(
+      "https://example.com/",
+      [{ name: "baserCMS" }],
+      [baserCmsSignature],
+      request,
+      5000,
+    );
+    expect(get.mock.calls.map(([url]) => url)).toEqual([
+      "https://example.com/baser/admin/",
+      "https://example.com/admin/",
+    ]);
+  });
+
   it("adds version evidence when detected and body matches", async () => {
     const detections: Detection[] = [{ name: "Magento", evidences: [] }];
     const { get, request } = makeRequest((url) => {
